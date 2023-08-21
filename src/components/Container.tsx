@@ -5,7 +5,7 @@ interface ContainerProps {
 export function Container({ children, center }: ContainerProps) {
   return (
     <div
-      className={`bg-white m-auto px-8 py-14 min-h-[80vh] mx-auto max-w-7xl 
+      className={`bg-white m-auto px-8 pt-40 pb-28 min-h-[90vh] mx-auto max-w-7xl 
     ${center && "grid place-items-center"}`}
     >
       {children}

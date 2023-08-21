@@ -31,7 +31,7 @@ export function Nav() {
 
       <nav
         className={`fixed transition-all duration-500 top-20 ${
-          menuIsOpen ? "p-10 bg-blueCol right-0 " : "-right-full"
+          menuIsOpen ? "px-6 pb-10 pt-4 bg-blueCol right-0 " : "-right-full"
         } sm:static`}
       >
         <div className=" text-white flex flex-col items-end gap-x-10 flex-wrap justify-end gap-y-2 sm:flex-row">
