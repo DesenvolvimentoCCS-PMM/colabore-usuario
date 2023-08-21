@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ForgetPassword } from "@/components/modals/ForgetPassword";
 import { notifyError } from "@/components/Toast";
+import { Button } from "@/components/buttons/DefaultButton";
 
 const signinSchema = z.object({
   email: z
@@ -97,7 +98,8 @@ export function SigninForm() {
         className="object-cover w-11/12 max-w-lg m-auto"
       />
 
-      <form onSubmit={handleSubmit(signin)} className="space-y-6 mt-4">
+      <form onSubmit={handleSubmit(signin)} className="space-y-6 mt-4 ">
+        {/* Campo de email */}
         <div className="flex flex-col items-start gap-y-1">
           <label
             htmlFor="email"
@@ -110,9 +112,9 @@ export function SigninForm() {
           <input
             type="email"
             id="email"
-            className={`w-11/12 bg-blueCol text-white p-4 rounded-[20px] text-base outline-none ${
+            className={`bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full ${
               errors.email && "border border-red-600"
-            }`}
+            } sm:text-base`}
             placeholder="Digite seu e-mail"
             {...register("email")}
           />
@@ -123,6 +125,7 @@ export function SigninForm() {
           )}
         </div>
 
+        {/* Campo de senha */}
         <div className="flex flex-col items-start gap-y-1 relative">
           <label
             htmlFor="password"
@@ -135,9 +138,9 @@ export function SigninForm() {
           <input
             type={showPassword ? "text" : "password"}
             id="password"
-            className={`w-11/12 bg-blueCol text-white p-4 rounded-[20px] text-base outline-none ${
+            className={`w-full bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none ${
               errors.password && "border border-red-600"
-            }`}
+            } sm:text-base`}
             placeholder="Digite sua senha"
             {...register("password")}
           />
@@ -148,8 +151,9 @@ export function SigninForm() {
             </small>
           )}
 
+          {/* Olho de visualizar senha */}
           <button
-            className={`absolute right-14 bottom-4 ${
+            className={`absolute right-4 bottom-4 ${
               errors.password && "bottom-9"
             }`}
             type="button"
@@ -164,13 +168,9 @@ export function SigninForm() {
         </div>
 
         <div className="flex flex-col justify-center items-center gap-y-6 pt-6">
-          <button
-            className="rounded-3xl bg-[#CC9935] w-2/4 py-2 text-white font-medium text-lg uppercase disabled:opacity-50 disabled:pointer-events-none"
-            type="submit"
-            disabled={isLogging}
-          >
+          <Button isLink={false} type="submit" disabled={isLogging}>
             {isLogging ? "Entrando..." : "Entrar >"}
-          </button>
+          </Button>
 
           <ForgetPassword />
         </div>

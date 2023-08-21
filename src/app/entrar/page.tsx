@@ -6,11 +6,11 @@ import { Container } from "@/components/Container";
 export default function Entrar() {
   return (
     <Container center>
-      <main className="flex items-center flex-wrap justify-center gap-10  m-auto xl:gap-40">
+      <main className="grid grid-cols-1 place-items-center space-y-10 sm:grid-cols-2 sm:space-y-0 sm:space-x-12">
         <Image
           src={Ilustration}
           alt="Ilustração de pessoas vendo um calendário"
-          className="w-11/12 max-w-lg 2xl:max-w-sm"
+          className="w-10/12 max-w-2xl sm:w-full"
         />
         <SigninForm />
       </main>
