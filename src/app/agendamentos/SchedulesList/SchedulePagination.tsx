@@ -1,8 +1,10 @@
 "use client";
 
+import { Button } from "@/components/buttons/DefaultButton";
 import { Schedule } from "./Schedule";
 import { ScheduleDataType } from "@/types/Schedule";
 import { useState } from "react";
+import { Clock } from "phosphor-react";
 
 interface SchedulePaginationProps {
   data: ScheduleDataType[];
@@ -38,6 +40,13 @@ export function SchedulePagination({ data }: SchedulePaginationProps) {
             </button>
           );
         })}
+      </div>
+
+      <div className="flex justify-center pt-10">
+        <Button isLink href="/agendamentos/agendar">
+          Agendar
+          <Clock size={24} />
+        </Button>
       </div>
     </div>
   );

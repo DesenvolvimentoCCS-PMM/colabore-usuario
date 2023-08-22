@@ -18,4 +18,5 @@ export interface ScheduleDataType {
   motivo: string;
   concluidoEm?: string;
   excluidoEm?: string;
+  criadoPor: string;
 }

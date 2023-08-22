@@ -40,7 +40,7 @@ export default function Agendamentos() {
             Olá, <span className="underline">{name}</span>
           </h1>
           <p className="text-gray-900 text-base sm:text-lg">
-            Acompanhe as solicitações e altere os status aqui
+            Acompanhe seu histórico e faça um novo agendamento aqui
           </p>
         </div>
 

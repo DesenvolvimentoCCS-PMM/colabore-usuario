@@ -39,17 +39,19 @@ export function ScheduleList() {
 
   return (
     <div className="w-full pt-24">
-      <Filter setFilteredData={setDataFiltered} data={data} />
+      <div className="flex items-center justify-between flex-wrap gap-4 mb-10">
+        <div className="flex items-center gap-x-2">
+          <div className="h-2 w-2 bg-green-500"></div>
+          <span>Confirmado</span>
 
-      <div className="flex items-center gap-x-2 mt-8">
-        <div className="h-2 w-2 bg-green-500"></div>
-        <span>Confirmado</span>
+          <div className="h-2 w-2 bg-yellow-500"></div>
+          <span>Pendente</span>
 
-        <div className="h-2 w-2 bg-yellow-500"></div>
-        <span>Pendente</span>
+          <div className="h-2 w-2 bg-red-500"></div>
+          <span>Cancelados</span>
+        </div>
 
-        <div className="h-2 w-2 bg-red-500"></div>
-        <span>Cancelados</span>
+        <Filter setFilteredData={setDataFiltered} data={data} />
       </div>
 
       {isFetching ? (

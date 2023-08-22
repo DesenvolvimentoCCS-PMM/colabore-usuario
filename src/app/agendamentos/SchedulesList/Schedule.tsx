@@ -10,6 +10,8 @@ import {
   Checks,
   CaretUp,
   XCircle,
+  File,
+  FileText,
 } from "phosphor-react";
 import { ScheduleDataType } from "@/types/Schedule";
 import { capitalize } from "@/utils/capitalize";
@@ -30,25 +32,6 @@ export function Schedule({ data }: ScheduleDataProps) {
   const { username } = useUserContext();
 
   const { setUpdateScheduleView } = useUpdateScheduleView();
-
-  const concludeSchedule = async () => {
-    if (confirm("Confirmar conclusão do agendamento?")) {
-      try {
-        const docRef = doc(db, "agendamento", data.uid);
-
-        await updateDoc(docRef, {
-          status: 1,
-          concluidoEm: currentDate(),
-        });
-        setUpdateScheduleView((state) => !state);
-        notifySuccess("Agendamento concluído com sucesso!");
-      } catch (error) {
-        notifyError(
-          "Não foi possível concluir seu agendamento, tente novamente mais tarde!"
-        );
-      }
-    }
-  };
 
   const deleteSchedule = async () => {
     if (confirm("Confirmar exclusão do agendamento? ")) {
@@ -76,10 +59,7 @@ export function Schedule({ data }: ScheduleDataProps) {
 
   const formatations = {
     date: dateToText(data.data),
-    whatsapp: data.whatsapp
-      .replace(/\(|\)|\-/g, "")
-      .split(" ")
-      .join(""),
+    whatsapp: "21987620686",
   };
 
   const styleVariants = {
@@ -129,61 +109,64 @@ export function Schedule({ data }: ScheduleDataProps) {
           <div className="flex flex-wrap w-full lg:w-4/5 ">
             {/* Nome e email do usuario */}
             <div className="w-full p-6 md:w-2/5">
-              <p className="text-base font-semibold">{data.nome}</p>
+              <p className="text-base font-semibold">Luan Henrique</p>
               <p className="flex items-center gap-x-1 text-sm text-left">
                 <EnvelopeSimple size={20} />
-                {data.email}
+                emailUsuario@gmail.com
               </p>
             </div>
 
             {/* Botões de ação */}
             <div className="flex items-center justify-center flex-wrap w-full gap-4 p-4  sm:justify-start md:w-3/5">
+              <button
+                className="px-3 py-3 rounded-3xl text-sm flex items-center justify-center gap-x-1 max-w-xs transition-all group bg-yellow-500 hover:scale-95 hover:brightness-95 sm:w-max "
+                onClick={deleteSchedule}
+              >
+                <FileText size={26} className="text-white" />
+
+                <span className="w-0 m-[-2px] overflow-hidden text-white transition-all duration-300 group-hover:w-28 group-hover:m-auto">
+                  Comprovante
+                </span>
+              </button>
               <a
                 href={whatsappLink}
+                className="px-3 py-3 rounded-3xl text-sm flex items-center h-12 justify-center gap-x-1 max-w-xs  group bg-green-600 hover:scale-95 hover:brightness-95 sm:w-max"
                 target="_blank"
-                className="flex items-center justify-center gap-x-1 bg-green-500 rounded-3xl text-white text-sm p-3 w-full max-w-xs transition-all hover:scale-95 hover:brightness-95 sm:w-max"
               >
-                <WhatsappLogo size={20} />
-                Entrar em contato
+                <WhatsappLogo size={26} color="white" />
+
+                <span className="w-0 m-[-2px] opacity-0 overflow-hidden text-white transition-all duration-300 group-hover:w-32 group-hover:m-auto group-hover:opacity-100">
+                  Entrar em contato
+                </span>
               </a>
+
               {scheduleConfigs.pending && (
-                <>
-                  {" "}
-                  <button
-                    className="text-white bg-green-500 px-3 py-3 rounded-3xl text-sm flex items-center justify-center gap-x-1 max-w-xs transition-all hover:scale-95 hover:brightness-95  sm:w-max"
-                    onClick={concludeSchedule}
-                  >
-                    <Check size={20} />
-                    Concluir
-                  </button>
-                  <Reschedule uid={data.uid} username={username} />
-                  <button
-                    className="px-3 py-3 rounded-3xl text-sm flex items-center justify-center gap-x-1 max-w-xs transition-all group bg-red-500 hover:scale-95 hover:brightness-95 sm:w-max "
-                    onClick={deleteSchedule}
-                  >
-                    <XCircle size={20} className="text-white" />
-                    <span className="w-0 m-[-2px] overflow-hidden text-white transition-all duration-300 group-hover:w-20 group-hover:m-auto">
-                      Cancelar
-                    </span>
-                  </button>
-                </>
+                <button
+                  className="px-3 py-3 rounded-3xl text-sm flex items-center justify-center gap-x-1 max-w-xs transition-all group bg-red-500 hover:scale-95 hover:brightness-95 sm:w-max "
+                  onClick={deleteSchedule}
+                >
+                  <XCircle size={26} className="text-white" />
+
+                  <span className="w-0 m-[-2px] overflow-hidden text-white transition-all duration-300 group-hover:w-20 group-hover:m-auto">
+                    Cancelar
+                  </span>
+                </button>
               )}
               {scheduleConfigs.completed && (
                 <button
-                  className="text-white bg-gray-500 p-2 rounded-3xl text-sm flex items-center justify-center gap-x-1 w-full max-w-xs sm:w-max"
+                  className="text-white bg-green-300 p-2 rounded-3xl text-sm flex items-center justify-center gap-x-1 w-full max-w-xs sm:w-max"
                   disabled
                 >
-                  <Checks size={20} />
+                  <Checks size={26} />
                   Concluído
                 </button>
               )}
               {scheduleConfigs.deleted && (
                 <button
-                  className="text-white bg-gray-500 p-2 rounded-3xl text-sm flex items-center justify-center gap-x-1 w-full max-w-xs  sm:w-max"
+                  className="text-white bg-red-300 p-3 rounded-3xl text-sm flex items-center justify-center gap-x-1 w-full max-w-xs  sm:w-max"
                   disabled
                 >
-                  <XCircle size={20} />
-                  Cancelado
+                  <XCircle size={26} />
                 </button>
               )}
             </div>
@@ -214,60 +197,18 @@ export function Schedule({ data }: ScheduleDataProps) {
           Detalhes da solicitação
         </h2>
 
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-8">
           {/* Col 1 */}
           <div className="flex flex-col">
-            <div className="inline-flex gap-x-2 my-1">
-              <h3 className="text-sm font-semibold">Nome:</h3>
-              <span className="text-sm">{data.nome}</span>
-            </div>
-
-            <div className="inline-flex gap-x-2 my-1">
-              <h3 className="text-sm font-semibold">Whatsapp:</h3>
-              <span className="text-sm">{data.whatsapp}</span>
-            </div>
-
-            <div className="inline-flex gap-x-2 my-1">
-              <h3 className="text-sm font-semibold">E-mail:</h3>
-              <span className="text-sm">{data.email}</span>
-            </div>
-
-            <div className="inline-flex gap-x-2 my-1">
-              <h3 className="text-sm font-semibold">CPF:</h3>
-              <span className="text-sm">{hiddenCpf(data.cpf)}</span>
-            </div>
-          </div>
-
-          {/* Col 2 */}
-          <div className="flex flex-col">
-            <div className="inline-flex gap-x-2 my-1">
-              <h3 className="text-sm font-semibold">CEP:</h3>
-              <span className="text-sm">{data.endereco.cep}</span>
-            </div>
-
-            <div className="inline-flex gap-x-2 my-1">
-              <h3 className="text-sm font-semibold">Rua:</h3>
-              <span className="text-sm">{data.endereco.rua}</span>
-            </div>
-
-            <div className="inline-flex gap-x-2 my-1">
-              <h3 className="text-sm font-semibold">Bairro:</h3>
-              <span className="text-sm">{data.endereco.bairro}</span>
-            </div>
-
-            <div className="inline-flex gap-x-2 my-1">
-              <h3 className="text-sm font-semibold">Cidade:</h3>
-              <span className="text-sm">
-                {capitalize(data.endereco.cidade)}
-              </span>
-            </div>
-          </div>
-
-          {/* Col 3 */}
-          <div className="flex flex-col">
-            <div className="inline-flex gap-x-2 my-1 max-w-xs">
+            <div className="inline-flex gap-x-2 my-1 w-full">
               <h3 className="text-sm font-semibold">Motivo da solicitação:</h3>
-              <span className="text-sm">{data.motivo}</span>
+              <p className="text-sm">
+                Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                Maxime, explicabo iure accusamus sed reprehenderit provident
+                quibusdam quo. Accusantium mollitia provident aperiam, voluptas
+                eaque, impedit, omnis consequuntur tenetur adipisci pariatur
+                neque?
+              </p>
             </div>
 
             <div className="inline-flex gap-x-2 my-1 items-center">

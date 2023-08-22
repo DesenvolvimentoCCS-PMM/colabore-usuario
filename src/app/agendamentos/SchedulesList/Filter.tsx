@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { ScheduleDataType } from "@/types/Schedule";
 import { Dispatch, SetStateAction } from "react";
+import { Funnel } from "phosphor-react";
 
 interface FilterProps {
   setFilteredData: Dispatch<SetStateAction<ScheduleDataType[]>>;
@@ -46,7 +47,7 @@ export function Filter({ data, setFilteredData }: FilterProps) {
 
   return (
     <div className="flex items-center">
-      <p>Mostrar: </p>
+      <Funnel size={24} className="text-blueCol" />
       <select
         className="border rounded-3xl ml-2 px-2 py-1 border-blueCol"
         ref={selectValueRef}
