@@ -11,7 +11,7 @@ import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../services/firebase";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ForgetPassword } from "@/components/modals/ForgetPassword";
+import { ForgetPassword } from "@/app/entrar/ForgetPassword";
 import { notifyError } from "@/components/Toast";
 import { Button } from "@/components/buttons/DefaultButton";
 

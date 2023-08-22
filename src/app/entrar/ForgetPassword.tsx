@@ -3,7 +3,7 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useRef, useState } from "react";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
-import { notifyError, notifySuccess } from "../Toast";
+import { notifyError, notifySuccess } from "../../components/Toast";
 
 export function ForgetPassword() {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,7 +21,9 @@ export function ForgetPassword() {
           setIsOpen(false);
         })
         .catch((error) => {
-          throw new Error(error);
+          if (error.code === "auth/user-not-found") {
+            notifyError("O e-mail digitado não se encontra cadastrado!");
+          }
         });
     } else {
       notifyError("O e-mail precisa ser preenchido!");

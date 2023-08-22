@@ -1,7 +1,11 @@
+import { Container } from "@/components/Container";
+
 export default function Cadastro() {
   return (
-    <div>
-      <h1>Cadastro</h1>
-    </div>
+    <Container>
+      <div>
+        <h1>Tela de Cadastro</h1>
+      </div>
+    </Container>
   );
 }
