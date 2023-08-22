@@ -14,6 +14,7 @@ export interface ScheduleDataType {
   status: number;
   data: string;
   horario: string;
+  tempoDeUso: string;
   tipoServico: string;
   motivo: string;
   concluidoEm?: string;
