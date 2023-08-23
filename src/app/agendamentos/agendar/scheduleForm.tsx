@@ -12,7 +12,6 @@ import { notifyError, notifySuccess } from "@/components/Toast";
 import { useRouter } from "next/navigation";
 import { useUserContext } from "@/context/userContext";
 import { capitalize } from "@/utils/capitalize";
-import Link from "next/link";
 
 const scheduleFormSchema = z.object({
   servico: z.string(),
@@ -59,6 +58,11 @@ const scheduleFormSchema = z.object({
     .nonempty("*Campo obrigatório")
     .toLowerCase()
     .max(240, "*Máximo de caracteres excedido"),
+  lgpd: z.literal(true, {
+    errorMap: () => ({
+      message: "É necessário concordar com nossos termos para prosseguir!",
+    }),
+  }),
 });
 
 type scheduleFormSchemaType = z.infer<typeof scheduleFormSchema>;
@@ -370,6 +374,27 @@ export function ScheduleForm() {
           className="absolute left-3 top-12 sm:top-[3.2rem]"
         />
       </div>
+
+      <div className="flex items-start gap-x-2 max-w-lg">
+        <input type="checkbox" {...register("lgpd")} id="lgpd" />
+        <label htmlFor="lgpd" className="text-xs">
+          Confirmo o envio de meus dados, autorizando a utilização dos mesmos,
+          seguindo as normas da LGPD (Lei Geral de Proteção de Dados Pessoais -
+          Nº13.709 de 14 de Agosto de 2018)
+          <a
+            href="https://lgpd.mesquita.rj.gov.br/?page_id=43"
+            target="_blank"
+            className="text-purpleCol font-medium"
+          >
+            (http://lgpd.mesquita.rj.gov.br/?page_id=43)
+          </a>
+        </label>
+      </div>
+      {errors.lgpd && (
+        <small className="text-red-500 pt-2 pl-2 text-xs max-w-[150px] sm:pl-4">
+          {errors.lgpd.message}
+        </small>
+      )}
 
       <div className="flex justify-end pt-6">
         <Button isLink={false} type="submit" disabled={isFetching}>
