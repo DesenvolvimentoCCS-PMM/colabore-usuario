@@ -30,11 +30,10 @@ interface ScheduleDataProps {
 export function Schedule({ data }: ScheduleDataProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { username } = useUserContext();
-
   const { setUpdateScheduleView } = useUpdateScheduleView();
 
-  const deleteSchedule = async () => {
-    if (confirm("Confirmar exclusão do agendamento? ")) {
+  const cancelSchedule = async () => {
+    if (confirm("Confirmar cancelamento do agendamento? ")) {
       try {
         const docRef = doc(db, "agendamento", data.uid);
 
@@ -59,7 +58,8 @@ export function Schedule({ data }: ScheduleDataProps) {
 
   const formatations = {
     date: dateToText(data.data),
-    whatsapp: "21987620686",
+    whatsapp: "21969718153",
+    resumeService: data.servico.split("(")[0],
   };
 
   const styleVariants = {
@@ -79,8 +79,6 @@ export function Schedule({ data }: ScheduleDataProps) {
   };
 
   const whatsappLink = `https://api.whatsapp.com/send?phone=${formatations.whatsapp}`;
-
-  //Criar div para desbugar abertura do botão de cancelar
 
   return (
     // Container principal
@@ -102,32 +100,22 @@ export function Schedule({ data }: ScheduleDataProps) {
               {data.horario}
             </p>
             <p className="tracking-wider text-base uppercase">
-              {data.tipoServico}
+              {formatations.resumeService}
             </p>
           </div>
 
           <div className="flex flex-wrap w-full lg:w-4/5 ">
             {/* Nome e email do usuario */}
             <div className="w-full p-6 md:w-2/5">
-              <p className="text-base font-semibold">Luan Henrique</p>
+              <p className="text-base font-semibold">{data.infoUsuario.nome}</p>
               <p className="flex items-center gap-x-1 text-sm text-left">
                 <EnvelopeSimple size={20} />
-                emailUsuario@gmail.com
+                {data.infoUsuario.email}
               </p>
             </div>
 
             {/* Botões de ação */}
             <div className="flex items-center justify-center flex-wrap w-full gap-4 p-4  sm:justify-start md:w-3/5">
-              <button
-                className="px-3 py-3 rounded-3xl text-sm flex items-center justify-center gap-x-1 max-w-xs transition-all group bg-yellow-500 hover:scale-95 hover:brightness-95 sm:w-max "
-                onClick={deleteSchedule}
-              >
-                <FileText size={26} className="text-white" />
-
-                <span className="w-0 m-[-2px] overflow-hidden text-white transition-all duration-300 group-hover:w-28 group-hover:m-auto">
-                  Comprovante
-                </span>
-              </button>
               <a
                 href={whatsappLink}
                 className="px-3 py-3 rounded-3xl text-sm flex items-center h-12 justify-center gap-x-1 max-w-xs  group bg-green-600 hover:scale-95 hover:brightness-95 sm:w-max"
@@ -143,7 +131,7 @@ export function Schedule({ data }: ScheduleDataProps) {
               {scheduleConfigs.pending && (
                 <button
                   className="px-3 py-3 rounded-3xl text-sm flex items-center justify-center gap-x-1 max-w-xs transition-all group bg-red-500 hover:scale-95 hover:brightness-95 sm:w-max "
-                  onClick={deleteSchedule}
+                  onClick={cancelSchedule}
                 >
                   <XCircle size={26} className="text-white" />
 
@@ -202,13 +190,12 @@ export function Schedule({ data }: ScheduleDataProps) {
           <div className="flex flex-col">
             <div className="inline-flex gap-x-2 my-1 w-full">
               <h3 className="text-sm font-semibold">Motivo da solicitação:</h3>
-              <p className="text-sm">
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                Maxime, explicabo iure accusamus sed reprehenderit provident
-                quibusdam quo. Accusantium mollitia provident aperiam, voluptas
-                eaque, impedit, omnis consequuntur tenetur adipisci pariatur
-                neque?
-              </p>
+              <p className="text-sm">{data.motivo}</p>
+            </div>
+
+            <div className="inline-flex gap-x-2 my-1 w-full">
+              <h3 className="text-sm font-semibold">Observação:</h3>
+              <p className="text-sm">{data.obs}</p>
             </div>
 
             <div className="inline-flex gap-x-2 my-1 items-center">
@@ -258,7 +245,7 @@ export function Schedule({ data }: ScheduleDataProps) {
 
             <div className="inline-flex gap-x-2 my-1">
               <h3 className="text-sm font-semibold">Serviço:</h3>
-              <span className="text-sm">{data.tipoServico}</span>
+              <span className="text-sm">{data.servico}</span>
             </div>
           </div>
         </div>

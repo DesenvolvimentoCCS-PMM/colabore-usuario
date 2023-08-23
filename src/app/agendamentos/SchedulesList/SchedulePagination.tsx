@@ -5,6 +5,7 @@ import { Schedule } from "./Schedule";
 import { ScheduleDataType } from "@/types/Schedule";
 import { useState } from "react";
 import { Clock } from "phosphor-react";
+import { auth } from "@/services/firebase";
 
 interface SchedulePaginationProps {
   data: ScheduleDataType[];
@@ -19,10 +20,15 @@ export function SchedulePagination({ data }: SchedulePaginationProps) {
   const endIndex = startIndex + datasPerPage;
   const currentDatas = data.slice(startIndex, endIndex);
 
+  const user = auth.currentUser;
+
   return (
     <div className="mt-4 space-y-8">
+      {}
       {currentDatas.map((datas, index) => {
-        return <Schedule data={datas} key={index} />;
+        if (user && user.uid === datas.criadoPor) {
+          return <Schedule data={datas} key={index} />;
+        }
       })}
 
       <div className="w-full flex justify-center gap-x-4">

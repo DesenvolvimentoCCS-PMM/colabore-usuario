@@ -1,23 +1,18 @@
 export interface ScheduleDataType {
   uid: string;
-  nome: string;
-  whatsapp: string;
-  email: string;
-  cpf: string;
-  endereco: {
-    cep: string;
-    rua: string;
-    cidade: string;
-    bairro: string;
-    numero: number;
+  infoUsuario: {
+    nome: string;
+    email: string;
   };
-  status: number;
+  criadoPor: string;
+  concluidoEm: string;
+  excluidoEm: string;
   data: string;
   horario: string;
-  tempoDeUso: string;
-  tipoServico: string;
+  horarioTotal: string;
   motivo: string;
-  concluidoEm?: string;
-  excluidoEm?: string;
-  criadoPor: string;
+  obs: string;
+  servico: string;
+  status: number;
+  temCoffeBreak: string;
 }
