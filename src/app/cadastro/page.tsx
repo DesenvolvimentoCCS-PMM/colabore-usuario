@@ -1,10 +1,11 @@
 import { Container } from "@/components/Container";
+import { SignupForm } from "@/app/cadastro/SignupForm";
 
 export default function Cadastro() {
   return (
     <Container>
       <div>
-        <h1>Tela de Cadastro</h1>
+        <SignupForm />
       </div>
     </Container>
   );
