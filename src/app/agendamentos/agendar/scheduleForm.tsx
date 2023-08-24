@@ -10,6 +10,8 @@ import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/services/firebase";
 import { notifyError, notifySuccess } from "@/components/Toast";
 import { useRouter } from "next/navigation";
+import { useUserContext } from "@/context/userContext";
+import { capitalize } from "@/utils/capitalize";
 
 const scheduleFormSchema = z.object({
   servico: z.string(),
@@ -56,6 +58,11 @@ const scheduleFormSchema = z.object({
     .nonempty("*Campo obrigatório")
     .toLowerCase()
     .max(240, "*Máximo de caracteres excedido"),
+  lgpd: z.literal(true, {
+    errorMap: () => ({
+      message: "É necessário concordar com nossos termos para prosseguir!",
+    }),
+  }),
 });
 
 type scheduleFormSchemaType = z.infer<typeof scheduleFormSchema>;
@@ -64,7 +71,7 @@ export function ScheduleForm() {
   const [isFetching, setIsFetching] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const user = auth.currentUser;
-
+  const { username } = useUserContext();
   const { push } = useRouter();
 
   const {
@@ -85,8 +92,13 @@ export function ScheduleForm() {
 
     try {
       await addDoc(collection(db, "agendamento"), {
+        infoUsuario: {
+          nome: username,
+          email: user?.email,
+        },
         ...data,
         criadoPor: user?.uid,
+        status: 0,
       });
       notifySuccess("Agendamento realizado com sucesso!");
       setIsFetching(false);
@@ -121,9 +133,9 @@ export function ScheduleForm() {
             {...register("servico")}
             className="bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full max-w-xs indent-5"
           >
-            <option>Reunião {"(8 pessoas)"}</option>
-            <option>Coworking {"(6 pessoas)"}</option>
-            <option>Treinamento {"(20 pessoas)"}</option>
+            <option>Reunião {"(máximo 8 pessoas)"}</option>
+            <option>Coworking {"(máximo 6 pessoas)"}</option>
+            <option>Treinamento {"(máximo 20 pessoas)"}</option>
           </select>
           {errors.servico && (
             <small className="text-red-500 pt-2 text-xs max-w-[150px]">
@@ -279,7 +291,7 @@ export function ScheduleForm() {
             )}
 
             {showAlert && (
-              <div className="p-3 bg-yellowCol relative rounded-3xl sm:w-[320px] lg:absolute lg:top-32">
+              <div className="p-3 bg-yellowCol relative rounded-3xl sm:w-[320px] md:absolute md:top-32">
                 <h2 className="text-white font-bold flex gap-x-2 items-center uppercase">
                   Atenção! <Info size={20} color="white" />
                 </h2>
@@ -362,6 +374,27 @@ export function ScheduleForm() {
           className="absolute left-3 top-12 sm:top-[3.2rem]"
         />
       </div>
+
+      <div className="flex items-start gap-x-2 max-w-lg">
+        <input type="checkbox" {...register("lgpd")} id="lgpd" />
+        <label htmlFor="lgpd" className="text-xs">
+          Confirmo o envio de meus dados, autorizando a utilização dos mesmos,
+          seguindo as normas da LGPD (Lei Geral de Proteção de Dados Pessoais -
+          Nº13.709 de 14 de Agosto de 2018)
+          <a
+            href="https://lgpd.mesquita.rj.gov.br/?page_id=43"
+            target="_blank"
+            className="text-purpleCol font-medium"
+          >
+            (http://lgpd.mesquita.rj.gov.br/?page_id=43)
+          </a>
+        </label>
+      </div>
+      {errors.lgpd && (
+        <small className="text-red-500 pt-2 pl-2 text-xs max-w-[150px] sm:pl-4">
+          {errors.lgpd.message}
+        </small>
+      )}
 
       <div className="flex justify-end pt-6">
         <Button isLink={false} type="submit" disabled={isFetching}>

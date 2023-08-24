@@ -31,8 +31,8 @@ export default function Agendamentos() {
 
   return (
     <Container>
-      <span className="absolute top-[100px] text-sm text-gray-400">
-        /Agendamentos
+      <span className="absolute top-28 text-xs text-gray-400">
+        /agendamentos
       </span>
       <header className="flex justify-between items-center w-full">
         <div className=" space-y-4 w-full max-w-sm">
