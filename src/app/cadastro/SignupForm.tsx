@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { z } from "zod";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -7,11 +7,9 @@ import Image from "next/image";
 import Logo from "@/assets/logoColabore.svg";
 import EyeIcon from "@/assets/icons/eyeIcon.svg";
 import CloseEyeIcon from "@/assets/icons/closeEyeIcon.svg";
-import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../../services/firebase";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { ForgetPassword } from "@/app/entrar/ForgetPassword";
+import { useState } from "react";
 import { notifyError } from "@/components/Toast";
 import { Button } from "@/components/buttons/DefaultButton";
 import { ToastContainer, toast } from "react-toastify";
@@ -23,20 +21,22 @@ const signupSchema = z
 .object({
     fullName: z
     .string()
-    .nonempty('*O nome completo é obrigatório!')
+    .nonempty("*O nome completo é obrigatório")
+    .toLowerCase()
     .transform((fullname) => {
       return fullname
         .trim()
-        .split(' ')
+        .split(" ")
         .map((word) => {
-          return word[0].toLocaleUpperCase() + word.substring(1);
+          return word[0].toLocaleUpperCase().concat(word.substring(1));
         })
-        .join(' ');
+        .join(" ");
     }),
     email: z
         .string()
         .email("Digite um e-mail válido")
-        .nonempty("O e-mail é obrigatório"),
+        .nonempty("O e-mail é obrigatório")
+        .toLowerCase(),
     gender: z.string().nonempty("*O gênero é obrigatório"),
     whatsapp: z
         .string()
@@ -83,9 +83,9 @@ const signupSchema = z
     }),
   }),
 })
-.refine (data => data.password === data.passwordConfirmation, {
-    message: '*As senhas devem ser iguais!',
-    path: ['passwordConfirmation'],
+.refine((data) => data.password === data.passwordConfirmation, {
+    message: "As senhas devem ser iguais!",
+    path: ["passwordConfirmation"],
 });
 
 export type signupSchemaType = z.infer<typeof signupSchema>;
@@ -119,16 +119,13 @@ export function SignupForm() {
     });
 
     const signupUser = (data: signupSchemaType) => {
-        console.log('step 1 ')
         createUserWithEmailAndPassword(auth, data.email, data.password)
             .then(({ user }) => {
                 const uid = user?.uid;
                 registerUser(data, uid);
                 sendEmailVerification(user);
-                console.log('step 2')
             })
             .catch((error) => {
-                console.log('step 3')
                 console.log(error);
                 if(error.code === 'auth/email-already-in-use') {
                     notifyError('Esse e-mail já está em uso!');
@@ -152,7 +149,7 @@ export function SignupForm() {
         signupUser(data);
       };
 
-     /* const handleSelectedFile = (files: FileList | null) => {
+      const handleSelectedFile = (files: FileList | null) => {
         if (files) {
           const maxSize = 5000000;
           const selectedFile = files[0];
@@ -169,7 +166,7 @@ export function SignupForm() {
             setImageFile(undefined);
           }
         }
-      }; */
+      }; 
 
 
     return (
@@ -178,7 +175,7 @@ export function SignupForm() {
  <ToastContainer />
 
     <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1">
-    <h2 className="mt-5 ">Dados pessoais</h2>
+    <h2 className="mt-5 relative left-0 text-white w-full px-5 flex font-medium bg-amber-500">Dados pessoais</h2>
     <div className="flex mt-10 flex-col sm:flex-row w-full gap-y-6 gap-x-16">
         {/* NAME */}
         <div className="flex flex-col w-full sm:w-1/2 gap-y-2">
@@ -306,9 +303,9 @@ export function SignupForm() {
                     {errors.profession && <small className="text-red-500 text-[10px] ml-2">{errors.profession.message}</small>}
                 </div>
 
-                {/* PHOTO 
+                {/* PHOTO  */}
                 <div className="flex flex-col w-1/3 gap-y-2">
-                    <label htmlFor="photo" className={`text-sm font-medium ${errors.photo ? 'text-red-500' : ''} dark:text-gray-800`}>
+                    <label htmlFor="photo" className={`text-sm font-medium dark:text-gray-800`}>
                         Foto
                     </label>
                     <input
@@ -327,13 +324,14 @@ export function SignupForm() {
                                     {imageFile ? imageFile.name : "Selecione um arquivo"}
                                 </span>
                             </label>
-                            {errors.photo && <small className="text-red-500 text-[10px] ml-2">{errors.photo.message}</small>}
+                          
 
-                </div>  */}
+                </div> 
                 
         </div>
-
-        <h2 className="mt-10">Endereço</h2>
+                            
+                            
+        <h2 className="mt-5 relative left-0 text-white w-full px-5 flex font-medium bg-amber-500">Endereço</h2>
 
         <div className="flex flex-col sm:flex-row w-full mt-5 gap-y-6 gap-x-6">
                 {/* CEP */}
@@ -468,7 +466,7 @@ export function SignupForm() {
                 </div> 
         </div>
 
-        <h2 className="mt-10">Dados de login</h2>
+        <h2 className="mt-5 relative left-0 text-white w-full px-5 flex font-medium bg-amber-500">Dados de login</h2>
         <div className="flex sm:flex-row flex-col w-full mt-5  gap-y-6 gap-x-6">
                 {/* EMAIL */}
                 <div className="flex flex-col w-full sm:w-1/2 gap-y-2">
@@ -586,7 +584,7 @@ export function SignupForm() {
             </div>
             {/* SUBMIT */}
             <div className="flex flex-col w-full sm:w-1/2 gap-y-2">
-                <Button isLink={false}  type="submit" className="w-full">
+                <Button isLink={true} href="/agendamentos" >
                     Cadastrar
                 </Button>
             </div>
