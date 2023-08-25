@@ -20,16 +20,27 @@ export function SchedulePagination({ data }: SchedulePaginationProps) {
   const endIndex = startIndex + datasPerPage;
   const currentDatas = data.slice(startIndex, endIndex);
 
-  const user = auth.currentUser;
+  const notShowData = () => {
+    return (
+      <h1 className="text-blueCol text-lg text-center font-medium pt-20">
+        Não há dados a serem exibidos ainda 😕
+      </h1>
+    );
+  };
+
+  const showDatas = () => {
+    return currentDatas.map((datas, index) => {
+      return <Schedule data={datas} key={index} />;
+    });
+  };
 
   return (
     <div className="mt-4 space-y-8">
-      {currentDatas.map((datas, index) => {
-        if (user && user.uid === datas.criadoPor) {
-          return <Schedule data={datas} key={index} />;
-        }
-      })}
+      {/* Dados */}
 
+      {data.length === 0 ? notShowData() : showDatas()}
+
+      {/* Navegação */}
       <div className="w-full flex justify-center gap-x-4">
         {Array.from(Array(qtdPages), (_, index) => {
           return (
@@ -47,6 +58,7 @@ export function SchedulePagination({ data }: SchedulePaginationProps) {
         })}
       </div>
 
+      {/* Botão agendar */}
       <div className="flex justify-center pt-10">
         <Button isLink href="/agendamentos/agendar">
           Agendar

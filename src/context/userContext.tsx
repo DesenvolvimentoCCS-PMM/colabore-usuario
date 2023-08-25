@@ -32,6 +32,7 @@ const UserContext = createContext<UserContextType>({
     photo: "",
     lgpd: false,
     terms: false,
+    uid: "",
   },
   setUserData: () => {},
 });
@@ -54,6 +55,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     photo: "",
     lgpd: false,
     terms: false,
+    uid: "",
   });
 
   return (

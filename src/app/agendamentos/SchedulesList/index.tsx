@@ -5,7 +5,7 @@ import { Filter } from "./Filter";
 import { useEffect, useState } from "react";
 import { SchedulePagination } from "./SchedulePagination";
 import { DocumentData, collection, getDocs } from "firebase/firestore";
-import { db } from "@/services/firebase";
+import { auth, db } from "@/services/firebase";
 import { useUpdateScheduleView } from "@/context/schedulesViewContext";
 
 export function ScheduleList() {
@@ -19,6 +19,8 @@ export function ScheduleList() {
     getData();
   }, [updateScheduleView]);
 
+  const user = auth.currentUser;
+
   const getData = async () => {
     const querySnapshot = await getDocs(collection(db, "agendamento"));
     const allDocuments: DocumentData[] = [];
@@ -31,8 +33,14 @@ export function ScheduleList() {
     });
 
     const data = allDocuments as ScheduleDataType[];
-    setData(data);
-    setDataFiltered(data);
+    const dataToDisplay = data.filter((doc) => {
+      if (user) {
+        return doc.criadoPor === user?.uid;
+      }
+    });
+
+    setData(dataToDisplay);
+    setDataFiltered(dataToDisplay);
     setIsFetching(false);
   };
 

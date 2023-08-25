@@ -92,20 +92,34 @@ const signupSchema = z
 export type signupSchemaType = z.infer<typeof signupSchema>;
 
 export function SignupForm() {
-  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirmation, setShowPasswordConfirmation] =
     useState(false);
   const [imageFile, setImageFile] = useState<File>();
+  const router = useRouter();
 
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<signupSchemaType>({
     resolver: zodResolver(signupSchema),
     mode: "onBlur",
   });
+
+  const cep = watch("cep");
+
+  const handleCEP = async () => {
+    const req = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+    const data = (await req.json()) as Cep;
+
+    setValue("city", data.localidade);
+    setValue("neighborhood", data.bairro);
+    setValue("street", data.logradouro);
+    setValue("state", data.uf);
+  };
 
   const signupUser = (data: signupSchemaType) => {
     createUserWithEmailAndPassword(auth, data.email, data.password)
@@ -362,14 +376,12 @@ export function SignupForm() {
             </label>
             <InputMask
               placeholder="99999-999"
-              {...register("cep")}
               className={`bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full ${
                 errors.email && "border border-red-600"
               } sm:text-base`}
               mask="99999-999"
-              inputRef={(inputProps: any) => (
-                <input {...inputProps} type="tel" />
-              )}
+              {...register("cep")}
+              onBlur={handleCEP}
             />
             {errors.cep && (
               <small className="text-red-500 text-[10px] ml-2">
@@ -699,6 +711,9 @@ export function SignupForm() {
 
         {/* SUBMIT */}
         <div className="flex justify-end w-full gap-y-2 ">
+          <button onChange={handleCEP} type="button">
+            CEP
+          </button>
           <Button type="submit">Cadastrar</Button>
         </div>
       </form>

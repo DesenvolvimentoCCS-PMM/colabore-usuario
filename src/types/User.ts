@@ -15,4 +15,5 @@ interface User {
   email: string;
   lgpd: boolean;
   terms: boolean;
+  uid: string;
 }

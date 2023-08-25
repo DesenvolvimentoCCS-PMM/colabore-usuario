@@ -11,6 +11,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useUserDataContext } from "@/context/userContext";
 import { doc, getDoc } from "firebase/firestore";
 import { SchedulePageSkeletonLoading } from "@/components/loading/SchedulePageSkeletonLoading";
+import { notifySuccess } from "@/components/Toast";
 
 export default function Agendamentos() {
   const [loading, setLoading] = useState(true);
@@ -21,12 +22,14 @@ export default function Agendamentos() {
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const docRef = doc(db, "users", user.uid);
+        const uid = user.uid;
+        const docRef = doc(db, "users", uid);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
           const data = docSnap.data() as User;
-          setUserData(data);
+
+          setUserData({ ...data, uid });
         }
 
         setLoading(false);

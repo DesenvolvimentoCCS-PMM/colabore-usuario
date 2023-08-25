@@ -100,6 +100,7 @@ export function ScheduleForm() {
         criadoPor: user?.uid,
         status: 0,
       });
+
       notifySuccess("Agendamento realizado com sucesso!");
       setIsFetching(false);
       push("/agendamentos");
