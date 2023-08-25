@@ -15,7 +15,7 @@ import {
 } from "phosphor-react";
 import { ScheduleDataType } from "@/types/Schedule";
 import { capitalize } from "@/utils/capitalize";
-import { useUserContext } from "@/context/userContext";
+import { useUserDataContext } from "@/context/userContext";
 import { db } from "@/services/firebase";
 import { notifyError, notifySuccess } from "@/components/Toast";
 import { useUpdateScheduleView } from "@/context/schedulesViewContext";
@@ -29,7 +29,7 @@ interface ScheduleDataProps {
 
 export function Schedule({ data }: ScheduleDataProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const { username } = useUserContext();
+  const { userData } = useUserDataContext();
   const { setUpdateScheduleView } = useUpdateScheduleView();
 
   const cancelSchedule = async () => {
@@ -75,7 +75,7 @@ export function Schedule({ data }: ScheduleDataProps) {
     pending: data.status === 0,
     deleted: data.status === 2,
     completed: data.status === 1,
-    hasAdmin: username.includes("Admin"),
+    hasAdmin: userData.fullName.includes("Admin"),
   };
 
   const whatsappLink = `https://api.whatsapp.com/send?phone=${formatations.whatsapp}`;

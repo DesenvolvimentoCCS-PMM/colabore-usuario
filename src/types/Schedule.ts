@@ -1,5 +1,4 @@
 export interface ScheduleDataType {
-  uid: string;
   infoUsuario: {
     nome: string;
     email: string;

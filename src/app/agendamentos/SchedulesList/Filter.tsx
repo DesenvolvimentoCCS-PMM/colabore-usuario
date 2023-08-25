@@ -37,7 +37,7 @@ export function Filter({ data, setFilteredData }: FilterProps) {
           setFilteredData(concluedData);
           break;
         case "deleted":
-          setFilteredData(concluedData);
+          setFilteredData(deletedData);
           break;
         default:
           setFilteredData(data);

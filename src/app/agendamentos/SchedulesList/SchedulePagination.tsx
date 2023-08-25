@@ -24,7 +24,6 @@ export function SchedulePagination({ data }: SchedulePaginationProps) {
 
   return (
     <div className="mt-4 space-y-8">
-      {}
       {currentDatas.map((datas, index) => {
         if (user && user.uid === datas.criadoPor) {
           return <Schedule data={datas} key={index} />;

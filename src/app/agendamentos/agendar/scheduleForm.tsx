@@ -10,7 +10,7 @@ import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/services/firebase";
 import { notifyError, notifySuccess } from "@/components/Toast";
 import { useRouter } from "next/navigation";
-import { useUserContext } from "@/context/userContext";
+import { useUserDataContext } from "@/context/userContext";
 import { capitalize } from "@/utils/capitalize";
 
 const scheduleFormSchema = z.object({
@@ -71,7 +71,7 @@ export function ScheduleForm() {
   const [isFetching, setIsFetching] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const user = auth.currentUser;
-  const { username } = useUserContext();
+  const { userData } = useUserDataContext();
   const { push } = useRouter();
 
   const {
@@ -93,7 +93,7 @@ export function ScheduleForm() {
     try {
       await addDoc(collection(db, "agendamento"), {
         infoUsuario: {
-          nome: username,
+          nome: userData.fullName,
           email: user?.email,
         },
         ...data,
