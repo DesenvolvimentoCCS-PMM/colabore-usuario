@@ -133,7 +133,7 @@ export function ScheduleForm() {
             {...register("servico")}
             className="bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full max-w-xs indent-5"
           >
-            <option>Reunião {"(máximo 8 pessoas)"}</option>
+            <option>Reunião {"(máximo 6 pessoas)"}</option>
             <option>Coworking {"(máximo 6 pessoas)"}</option>
             <option>Treinamento {"(máximo 20 pessoas)"}</option>
           </select>
