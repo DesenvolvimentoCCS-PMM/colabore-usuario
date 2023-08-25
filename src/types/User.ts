@@ -1,19 +1,18 @@
 interface User {
-  nome: string;
+  fullName: string;
   whatsapp: string;
-  dataDeNascimento: string;
+  birthDate: string;
   cpf: string;
-  telefoneSecundario: string;
-  profissao?: string;
-  foto?: string;
-  endereco: [
-    cep: string,
-    rua: string,
-    bairro: string,
-    numero: string,
-    cidade: string,
-    estado: string
-  ];
+  otherPhone: string;
+  profession: string;
+  photo?: string;
+  cep: string;
+  street: string;
+  neighborhood: string;
+  number: string;
+  city: string;
+  state: string;
   email: string;
-  senha: string;
+  lgpd: boolean;
+  terms: boolean;
 }

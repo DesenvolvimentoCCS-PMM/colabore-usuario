@@ -10,25 +10,59 @@ import {
 } from "react";
 
 interface UserContextType {
-  username: string;
-  setUsername: Dispatch<SetStateAction<string>>;
+  userData: User;
+  setUserData: Dispatch<SetStateAction<User>>;
 }
 
 const UserContext = createContext<UserContextType>({
-  username: "",
-  setUsername: (): string => "",
+  userData: {
+    fullName: "",
+    birthDate: "",
+    cep: "",
+    city: "",
+    cpf: "",
+    email: "",
+    neighborhood: "",
+    number: "",
+    otherPhone: "",
+    profession: "",
+    state: "",
+    street: "",
+    whatsapp: "",
+    photo: "",
+    lgpd: false,
+    terms: false,
+  },
+  setUserData: () => {},
 });
 
 export const UserContextProvider = ({ children }: { children: ReactNode }) => {
-  const [username, setUsername] = useState("");
+  const [userData, setUserData] = useState<User>({
+    fullName: "",
+    birthDate: "",
+    cep: "",
+    city: "",
+    cpf: "",
+    email: "",
+    neighborhood: "",
+    number: "",
+    otherPhone: "",
+    profession: "",
+    state: "",
+    street: "",
+    whatsapp: "",
+    photo: "",
+    lgpd: false,
+    terms: false,
+  });
 
   return (
-    <UserContext.Provider value={{ username, setUsername }}>
+    <UserContext.Provider value={{ userData, setUserData }}>
       {children}
     </UserContext.Provider>
   );
 };
 
-export const useUserContext = () => {
+export const useUserDataContext = () => {
   return useContext(UserContext);
 };

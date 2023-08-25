@@ -3,51 +3,70 @@
 import { Container } from "@/components/Container";
 import { ScheduleList } from "./SchedulesList";
 import { LogoutButton } from "@/components/buttons/LogoutButton";
-import { auth } from "@/services/firebase";
+import { auth, db } from "@/services/firebase";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { capitalize } from "@/utils/capitalize";
 import { onAuthStateChanged } from "firebase/auth";
-import { useUserContext } from "@/context/userContext";
+import { useUserDataContext } from "@/context/userContext";
+import { doc, getDoc } from "firebase/firestore";
+import { SchedulePageSkeletonLoading } from "@/components/loading/SchedulePageSkeletonLoading";
 
 export default function Agendamentos() {
-  const [name, setName] = useState("");
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  const { setUsername } = useUserContext();
+  const { setUserData, userData } = useUserDataContext();
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user && user.email) {
-        const userData = user.email?.split(".")[0];
-        const nameFormated = capitalize(userData);
-        setName(nameFormated);
-        setUsername(nameFormated);
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data() as User;
+          setUserData(data);
+        }
+
+        setLoading(false);
       } else {
-        router.push("/");
+        router.push("/entrar");
       }
     });
   }, []);
 
+  const formations = {
+    name: `${userData.fullName.split(" ")[0]} ${
+      userData.fullName.split(" ")[1]
+    }`,
+  };
+
   return (
     <Container>
-      <span className="absolute top-28 text-xs text-gray-400">
-        /agendamentos
-      </span>
-      <header className="flex justify-between items-center w-full">
-        <div className=" space-y-4 w-full max-w-sm">
-          <h1 className="text-blueCol font-medium text-3xl sm:text-4xl">
-            Olá, <span className="underline">{name}</span>
-          </h1>
-          <p className="text-gray-900 text-base sm:text-lg">
-            Acompanhe seu histórico e faça um novo agendamento aqui
-          </p>
-        </div>
+      {loading ? (
+        <SchedulePageSkeletonLoading />
+      ) : (
+        <>
+          <span className="absolute top-28 text-xs text-gray-400">
+            /agendamentos
+          </span>
+          <header className="flex justify-between items-center w-full">
+            <div className=" space-y-4 w-full max-w-sm">
+              <h1 className="text-blueCol font-medium text-3xl sm:text-4xl">
+                Olá, <span className="underline">{formations.name}!</span>
+              </h1>
+              <p className="text-gray-900 text-base sm:text-lg">
+                Acompanhe seu histórico e faça um novo agendamento aqui
+              </p>
+            </div>
 
-        <LogoutButton />
-      </header>
+            <LogoutButton />
+          </header>
 
-      <ScheduleList />
+          <ScheduleList />
+        </>
+      )}
     </Container>
   );
 }

@@ -4,7 +4,6 @@ import { ScheduleDataType } from "@/types/Schedule";
 import { Filter } from "./Filter";
 import { useEffect, useState } from "react";
 import { SchedulePagination } from "./SchedulePagination";
-import { ScheduleSkeletonLoading } from "@/components/loading/ScheduleSkeletonLoading";
 import { DocumentData, collection, getDocs } from "firebase/firestore";
 import { db } from "@/services/firebase";
 import { useUpdateScheduleView } from "@/context/schedulesViewContext";
@@ -54,11 +53,7 @@ export function ScheduleList() {
         <Filter setFilteredData={setDataFiltered} data={data} />
       </div>
 
-      {isFetching ? (
-        <ScheduleSkeletonLoading />
-      ) : (
-        <SchedulePagination data={dataFiltered} />
-      )}
+      <SchedulePagination data={dataFiltered} />
     </div>
   );
 }

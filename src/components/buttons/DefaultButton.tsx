@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ButtonHTMLAttributes, ReactNode } from "react";
 
 interface DefaultButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  isLink: boolean;
+  isLink?: boolean;
   href?: string;
   children: ReactNode;
 }
