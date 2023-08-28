@@ -10,22 +10,22 @@ import {
 } from "react";
 
 interface IScheduleViewContext {
-  updateScheduleView: boolean;
-  setUpdateScheduleView: Dispatch<SetStateAction<boolean>>;
+  updateScheduleView: () => void;
 }
 
 const ScheduleViewContext = createContext<IScheduleViewContext>({
-  setUpdateScheduleView: (): boolean => false,
-  updateScheduleView: false,
+  updateScheduleView: () => {},
 });
 
 export const ScheduleViewProvider = ({ children }: { children: ReactNode }) => {
-  const [updateScheduleView, setUpdateScheduleView] = useState(false);
+  const [ScheduleView, setScheduleView] = useState(false);
+
+  const updateScheduleView = () => {
+    setScheduleView((state) => !state);
+  };
 
   return (
-    <ScheduleViewContext.Provider
-      value={{ updateScheduleView, setUpdateScheduleView }}
-    >
+    <ScheduleViewContext.Provider value={{ updateScheduleView }}>
       {children}
     </ScheduleViewContext.Provider>
   );

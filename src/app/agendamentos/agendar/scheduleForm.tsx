@@ -14,8 +14,8 @@ import { useUserDataContext } from "@/context/userContext";
 import { capitalize } from "@/utils/capitalize";
 
 const scheduleFormSchema = z.object({
-  servico: z.string(),
-  data: z
+  service: z.string(),
+  date: z
     .string()
     .nonempty("*Selecione uma data para continuar!")
     .refine(
@@ -39,16 +39,16 @@ const scheduleFormSchema = z.object({
         message: "A data deve estar entre 1 e 7 dias a partir de hoje.",
       }
     ),
-  horario: z
+  time: z
     .string()
     .nonempty("*Selecione um horário para continuar!")
     .regex(
       /^(0?[9]|1[0-7]):[0-5][0-9]$/,
       "O horário inserido deve estar entre 9h e 17h"
     ),
-  horarioTotal: z.string().nonempty("*Campo obrigatório"),
-  temCoffeBreak: z.string().nonempty("*Campo obrigatório"),
-  motivo: z
+  totTime: z.string().nonempty("*Campo obrigatório"),
+  hasCoffeBreak: z.string().nonempty("*Campo obrigatório"),
+  motive: z
     .string()
     .nonempty("*Campo obrigatório")
     .toLowerCase()
@@ -81,8 +81,8 @@ export function ScheduleForm() {
   } = useForm<scheduleFormSchemaType>({
     resolver: zodResolver(scheduleFormSchema),
     defaultValues: {
-      horarioTotal: "",
-      temCoffeBreak: "",
+      totTime: "",
+      hasCoffeBreak: "",
     },
     mode: "onBlur",
   });
@@ -91,13 +91,13 @@ export function ScheduleForm() {
     setIsFetching(true);
 
     try {
-      await addDoc(collection(db, "agendamento"), {
-        infoUsuario: {
-          nome: userData.fullName,
+      const dataToDb = await addDoc(collection(db, "schedules"), {
+        userInfo: {
+          name: userData.fullName,
           email: user?.email,
         },
         ...data,
-        criadoPor: user?.uid,
+        created_by: user?.uid,
         status: 0,
       });
 
@@ -124,23 +124,23 @@ export function ScheduleForm() {
           <label
             htmlFor="servico"
             className={`font-semibold text-purpleCol ${
-              errors.servico && "text-red-500"
+              errors.service && "text-red-500"
             } sm:text-lg`}
           >
             Serviço
           </label>
           <select
-            id="servico"
-            {...register("servico")}
+            id="service"
+            {...register("service")}
             className="bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full max-w-xs indent-5"
           >
             <option>Reunião {"(máximo 6 pessoas)"}</option>
             <option>Coworking {"(máximo 6 pessoas)"}</option>
             <option>Treinamento {"(máximo 20 pessoas)"}</option>
           </select>
-          {errors.servico && (
+          {errors.service && (
             <small className="text-red-500 pt-2 text-xs max-w-[150px]">
-              {errors.servico.message}
+              {errors.service.message}
             </small>
           )}
 
@@ -157,7 +157,7 @@ export function ScheduleForm() {
             <label
               htmlFor="date"
               className={`font-semibold text-purpleCol ${
-                errors.data && "text-red-500"
+                errors.date && "text-red-500"
               } sm:text-lg`}
             >
               Data
@@ -165,12 +165,12 @@ export function ScheduleForm() {
             <input
               type="date"
               id="data"
-              {...register("data")}
+              {...register("date")}
               className="bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full max-w-max"
             />
-            {errors.data && (
+            {errors.date && (
               <small className="text-red-500 pt-2 text-xs max-w-[150px]">
-                {errors.data.message}
+                {errors.date.message}
               </small>
             )}
           </div>
@@ -179,20 +179,20 @@ export function ScheduleForm() {
             <label
               htmlFor="time"
               className={`font-semibold text-purpleCol ${
-                errors.horario && "text-red-500"
+                errors.time && "text-red-500"
               } sm:text-lg`}
             >
               Horário
             </label>
             <input
               type="time"
-              id="horario"
-              {...register("horario")}
+              id="time"
+              {...register("time")}
               className="bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full max-w-xs"
             />
-            {errors.horario && (
+            {errors.time && (
               <small className="text-red-500 pt-2 text-xs max-w-[150px]">
-                {errors.horario.message}
+                {errors.time.message}
               </small>
             )}
           </div>
@@ -205,7 +205,7 @@ export function ScheduleForm() {
           <div className="flex flex-col gap-2">
             <span
               className={`font-semibold text-purpleCol text-sm ${
-                errors.horarioTotal && "text-red-500"
+                errors.totTime && "text-red-500"
               }`}
             >
               De quanto tempo você precisa?
@@ -216,7 +216,7 @@ export function ScheduleForm() {
                 type="radio"
                 id="oneHour"
                 value={"1 hora"}
-                {...register("horarioTotal")}
+                {...register("totTime")}
                 className="cursor-pointer"
               />
               <label
@@ -229,7 +229,7 @@ export function ScheduleForm() {
                 type="radio"
                 id="twoHour"
                 value={"2 horas"}
-                {...register("horarioTotal")}
+                {...register("totTime")}
                 className="cursor-pointer"
               />
               <label
@@ -240,15 +240,15 @@ export function ScheduleForm() {
               </label>
             </div>
 
-            {errors.horarioTotal && (
+            {errors.totTime && (
               <small className="text-red-500 pt-2 text-xs max-w-[150px]">
-                {errors.horarioTotal.message}
+                {errors.totTime.message}
               </small>
             )}
 
             <span
               className={`font-semibold text-purpleCol text-sm ${
-                errors.temCoffeBreak && "text-red-500"
+                errors.hasCoffeBreak && "text-red-500"
               }`}
             >
               Vai ter coffe break?
@@ -258,7 +258,7 @@ export function ScheduleForm() {
               <input
                 type="radio"
                 id="hasCB"
-                {...register("temCoffeBreak")}
+                {...register("hasCoffeBreak")}
                 className="cursor-pointer"
                 onClick={() => setShowAlert(true)}
                 value={"sim"}
@@ -272,7 +272,7 @@ export function ScheduleForm() {
               <input
                 type="radio"
                 id="hasNotCB"
-                {...register("temCoffeBreak")}
+                {...register("hasCoffeBreak")}
                 className="cursor-pointer"
                 onClick={() => setShowAlert(false)}
                 value={"nao"}
@@ -285,9 +285,9 @@ export function ScheduleForm() {
               </label>
             </div>
 
-            {errors.temCoffeBreak && (
+            {errors.hasCoffeBreak && (
               <small className="text-red-500 pt-2 text-xs max-w-[150px]">
-                {errors.temCoffeBreak.message}
+                {errors.hasCoffeBreak.message}
               </small>
             )}
 
@@ -307,13 +307,13 @@ export function ScheduleForm() {
           </div>
         </div>
 
-        {/* Motivo */}
+        {/* motive */}
         <div className="flex flex-col gap-2 w-full max-w-sm relative">
           <div className="flex justify-between items-center">
             <label
               htmlFor="motivo"
               className={`text-purpleCol font-semibold ${
-                errors.motivo && "text-red-500"
+                errors.motive && "text-red-500"
               } sm:text-lg`}
             >
               Motivo
@@ -324,14 +324,14 @@ export function ScheduleForm() {
           <input
             type="text"
             id="motivo"
-            {...register("motivo")}
+            {...register("motive")}
             maxLength={240}
-            placeholder="Descreva aqui o motivo do seu agendamento"
+            placeholder="Descreva aqui o motive do seu agendamento"
             className="bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full indent-6"
           />
-          {errors.motivo && (
+          {errors.motive && (
             <small className="text-red-500 pt-2 text-xs max-w-[150px]">
-              {errors.motivo.message}
+              {errors.motive.message}
             </small>
           )}
           <ChatCenteredText

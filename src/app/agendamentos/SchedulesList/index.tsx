@@ -13,7 +13,7 @@ export function ScheduleList() {
   const [dataFiltered, setDataFiltered] = useState<ScheduleDataType[]>([]);
   const [isFetching, setIsFetching] = useState(true);
 
-  const { setUpdateScheduleView, updateScheduleView } = useUpdateScheduleView();
+  const { updateScheduleView } = useUpdateScheduleView();
 
   useEffect(() => {
     getData();
@@ -22,7 +22,7 @@ export function ScheduleList() {
   const user = auth.currentUser;
 
   const getData = async () => {
-    const querySnapshot = await getDocs(collection(db, "agendamento"));
+    const querySnapshot = await getDocs(collection(db, "schedules"));
     const allDocuments: DocumentData[] = [];
 
     querySnapshot.forEach((doc) => {
@@ -35,7 +35,7 @@ export function ScheduleList() {
     const data = allDocuments as ScheduleDataType[];
     const dataToDisplay = data.filter((doc) => {
       if (user) {
-        return doc.criadoPor === user?.uid;
+        return doc.created_by === user?.uid;
       }
     });
 

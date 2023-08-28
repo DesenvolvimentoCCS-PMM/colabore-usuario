@@ -30,7 +30,7 @@ interface ScheduleDataProps {
 export function Schedule({ data }: ScheduleDataProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { userData } = useUserDataContext();
-  const { setUpdateScheduleView } = useUpdateScheduleView();
+  const { updateScheduleView } = useUpdateScheduleView();
 
   const cancelSchedule = async () => {
     if (confirm("Confirmar cancelamento do agendamento? ")) {
@@ -39,10 +39,10 @@ export function Schedule({ data }: ScheduleDataProps) {
 
         await updateDoc(docRef, {
           status: 2,
-          excluidoEm: currentDate(),
-          excluidPor: username,
+          deleted_at: currentDate(),
+          deleted_by: userData.fullName,
         });
-        setUpdateScheduleView((state) => !state);
+        updateScheduleView();
         notifySuccess("Agendamento excluído com sucesso!");
       } catch (error) {
         notifyError(
@@ -57,9 +57,9 @@ export function Schedule({ data }: ScheduleDataProps) {
   };
 
   const formatations = {
-    date: dateToText(data.data),
+    date: dateToText(data.date),
     whatsapp: "21969718153",
-    resumeService: data.servico.split("(")[0],
+    resumeService: data.service.split("(")[0],
   };
 
   const styleVariants = {
@@ -97,7 +97,7 @@ export function Schedule({ data }: ScheduleDataProps) {
                 scheduleConfigs.pending ? "border-black" : "border-white"
               }`}
             >
-              {data.horario}
+              {data.time}
             </p>
             <p className="tracking-wider text-base uppercase">
               {formatations.resumeService}
@@ -107,10 +107,10 @@ export function Schedule({ data }: ScheduleDataProps) {
           <div className="flex flex-wrap w-full lg:w-4/5 ">
             {/* Nome e email do usuario */}
             <div className="w-full p-6 md:w-2/5">
-              <p className="text-base font-semibold">{data.infoUsuario.nome}</p>
+              <p className="text-base font-semibold">{data.userInfo.name}</p>
               <p className="flex items-center gap-x-1 text-sm text-left">
                 <EnvelopeSimple size={20} />
-                {data.infoUsuario.email}
+                {data.userInfo.email}
               </p>
             </div>
 
@@ -190,7 +190,7 @@ export function Schedule({ data }: ScheduleDataProps) {
           <div className="flex flex-col">
             <div className="inline-flex gap-x-2 my-1 w-full">
               <h3 className="text-sm font-semibold">Motivo da solicitação:</h3>
-              <p className="text-sm">{data.motivo}</p>
+              <p className="text-sm">{data.motive}</p>
             </div>
 
             <div className="inline-flex gap-x-2 my-1 w-full">
@@ -210,21 +210,21 @@ export function Schedule({ data }: ScheduleDataProps) {
             </div>
 
             {/* Data de agendamentos concluidos */}
-            {data.concluidoEm && !scheduleConfigs.deleted && (
+            {data.conclued_at && !scheduleConfigs.deleted && (
               <div className="inline-flex gap-x-2 my-1 items-center">
                 <h3 className="text-sm font-semibold">Concluído em:</h3>
                 <span className={`text-sm text-green-500 font-semibold p-1 `}>
-                  {dateToDDMMAA(data.concluidoEm)}
+                  {dateToDDMMAA(data.conclued_at)}
                 </span>
               </div>
             )}
 
             {/* Data de agendamentos cancelados */}
-            {data.excluidoEm && !scheduleConfigs.completed && (
+            {data.deleted_at && !scheduleConfigs.completed && (
               <div className="inline-flex gap-x-2 my-1 items-center">
                 <h3 className="text-sm font-semibold">Excluído em:</h3>
                 <span className={`text-sm text-red-500 font-semibold p-1 `}>
-                  {dateToDDMMAA(data.excluidoEm)}
+                  {dateToDDMMAA(data.deleted_at)}
                 </span>
               </div>
             )}
@@ -233,19 +233,19 @@ export function Schedule({ data }: ScheduleDataProps) {
               <h3 className="text-sm font-semibold">
                 Agendado para:
                 <span className="text-sm font-normal ml-2">
-                  {dateToDDMMAA(data.data)}
+                  {dateToDDMMAA(data.date)}
                 </span>
               </h3>
 
               <h3 className="text-sm font-semibold">
                 Horário:
-                <span className="text-sm font-normal ml-2">{data.horario}</span>
+                <span className="text-sm font-normal ml-2">{data.time}</span>
               </h3>
             </div>
 
             <div className="inline-flex gap-x-2 my-1">
               <h3 className="text-sm font-semibold">Serviço:</h3>
-              <span className="text-sm">{data.servico}</span>
+              <span className="text-sm">{data.service}</span>
             </div>
           </div>
         </div>

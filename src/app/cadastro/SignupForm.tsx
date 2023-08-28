@@ -14,10 +14,7 @@ import { notifyError, notifySuccess } from "@/components/Toast";
 import { Button } from "@/components/buttons/DefaultButton";
 import { doc, setDoc } from "firebase/firestore";
 import InputMask from "react-input-mask";
-import {
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-} from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 const signupSchema = z
   .object({
@@ -126,7 +123,6 @@ export function SignupForm() {
       .then(({ user }) => {
         const uid = user?.uid;
         registerUser(data, uid);
-        sendEmailVerification(user);
       })
       .catch((error) => {
         console.log(error);

@@ -1,17 +1,20 @@
 export interface ScheduleDataType {
-  infoUsuario: {
-    nome: string;
+  uid: string;
+  userInfo: {
+    name: string;
     email: string;
   };
-  criadoPor: string;
-  concluidoEm: string;
-  excluidoEm: string;
-  data: string;
-  horario: string;
-  horarioTotal: string;
-  motivo: string;
+  created_by: string;
+  conclued_at?: string;
+  deleted_by?: string;
+  deleted_at?: string;
+  date: string;
+  time: string;
+  totTime: string;
+  motive: string;
   obs: string;
-  servico: string;
+  service: string;
   status: number;
-  temCoffeBreak: string;
+  hasCoffeBreak: string;
+  lgpd: boolean;
 }
