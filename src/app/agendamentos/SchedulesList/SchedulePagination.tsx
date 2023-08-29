@@ -5,7 +5,6 @@ import { Schedule } from "./Schedule";
 import { ScheduleDataType } from "@/types/Schedule";
 import { useState } from "react";
 import { Clock } from "phosphor-react";
-import { auth } from "@/services/firebase";
 
 interface SchedulePaginationProps {
   data: ScheduleDataType[];

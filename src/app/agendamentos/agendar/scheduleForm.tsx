@@ -6,12 +6,11 @@ import { ChatCenteredText, Info } from "phosphor-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useState } from "react";
-import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
 import { auth, db } from "@/services/firebase";
 import { notifyError, notifySuccess } from "@/components/Toast";
 import { useRouter } from "next/navigation";
 import { useUserDataContext } from "@/context/userContext";
-import { capitalize } from "@/utils/capitalize";
 
 const scheduleFormSchema = z.object({
   service: z.string(),

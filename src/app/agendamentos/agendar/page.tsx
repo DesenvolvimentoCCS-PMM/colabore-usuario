@@ -1,5 +1,4 @@
 import { Container } from "@/components/Container";
-import { Button } from "@/components/buttons/DefaultButton";
 import { ScheduleForm } from "./scheduleForm";
 import Link from "next/link";
 

@@ -6,22 +6,16 @@ import {
   CaretDown,
   EnvelopeSimple,
   WhatsappLogo,
-  Check,
   Checks,
   CaretUp,
   XCircle,
-  File,
-  FileText,
 } from "phosphor-react";
 import { ScheduleDataType } from "@/types/Schedule";
-import { capitalize } from "@/utils/capitalize";
 import { useUserDataContext } from "@/context/userContext";
 import { db } from "@/services/firebase";
 import { notifyError, notifySuccess } from "@/components/Toast";
 import { useUpdateScheduleView } from "@/context/schedulesViewContext";
 import { doc, updateDoc } from "firebase/firestore";
-import { Reschedule } from "@/components/modals/EditSchedule";
-import { hiddenCpf } from "@/utils/hiddenCPF";
 
 interface ScheduleDataProps {
   data: ScheduleDataType;

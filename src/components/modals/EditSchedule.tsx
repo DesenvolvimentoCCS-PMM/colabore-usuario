@@ -62,7 +62,7 @@ type rescheduleSchemaType = z.infer<typeof rescheduleSchema>;
 export function Reschedule({ uid, username }: RescheduleProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const { setUpdateScheduleView } = useUpdateScheduleView();
+  const { updateScheduleView } = useUpdateScheduleView();
 
   const {
     register,
@@ -82,7 +82,7 @@ export function Reschedule({ uid, username }: RescheduleProps) {
         horario: data.time,
         data: dateToDefaultDb(data.date),
       });
-      setUpdateScheduleView((state) => !state);
+      updateScheduleView();
       notifySuccess("Agendamento alterado com sucesso!");
     } catch (error) {
       console.error(error);

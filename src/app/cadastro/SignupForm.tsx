@@ -4,7 +4,6 @@ import { z } from "zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import Logo from "@/assets/logoColabore.svg";
 import EyeIcon from "@/assets/icons/eyeIcon.svg";
 import CloseEyeIcon from "@/assets/icons/closeEyeIcon.svg";
 import { auth, db } from "../../services/firebase";

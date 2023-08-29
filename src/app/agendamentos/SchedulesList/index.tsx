@@ -11,7 +11,6 @@ import { useUpdateScheduleView } from "@/context/schedulesViewContext";
 export function ScheduleList() {
   const [data, setData] = useState<ScheduleDataType[]>([]);
   const [dataFiltered, setDataFiltered] = useState<ScheduleDataType[]>([]);
-  const [isFetching, setIsFetching] = useState(true);
 
   const { updateScheduleView } = useUpdateScheduleView();
 
@@ -41,7 +40,6 @@ export function ScheduleList() {
 
     setData(dataToDisplay);
     setDataFiltered(dataToDisplay);
-    setIsFetching(false);
   };
 
   return (

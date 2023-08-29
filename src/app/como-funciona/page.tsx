@@ -3,8 +3,7 @@
 import Ilustration from "@/assets/ilustration-about.jpg";
 import { Container } from "@/components/Container";
 import Image from "next/image";
-import Link from "next/link";
-import { ArrowLeft, CaretDoubleLeft, CaretDoubleRight } from "phosphor-react";
+import { CaretDoubleLeft, CaretDoubleRight } from "phosphor-react";
 import { useState } from "react";
 
 export default function ComoFunciona() {
