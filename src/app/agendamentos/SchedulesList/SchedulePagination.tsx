@@ -5,6 +5,9 @@ import { Schedule } from "./Schedule";
 import { ScheduleDataType } from "@/types/Schedule";
 import { useState } from "react";
 import { Clock } from "phosphor-react";
+import Image from "next/image";
+
+import NoDataImage from "@/assets/noData.svg";
 
 interface SchedulePaginationProps {
   data: ScheduleDataType[];
@@ -21,9 +24,13 @@ export function SchedulePagination({ data }: SchedulePaginationProps) {
 
   const notShowData = () => {
     return (
-      <h1 className="text-blueCol text-lg text-center font-medium pt-20">
-        Não há dados a serem exibidos ainda 😕
-      </h1>
+      <div className="flex flex-col justify-center items-center">
+        <h1 className="text-blueCol text-lg text-center font-medium pt-10">
+          Ainda não há informações para exibir. 😕
+        </h1>
+
+        <Image src={NoDataImage} alt="Não há dados!" className="max-w-sm" />
+      </div>
     );
   };
 

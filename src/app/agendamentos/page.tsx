@@ -6,12 +6,10 @@ import { LogoutButton } from "@/components/buttons/LogoutButton";
 import { auth, db } from "@/services/firebase";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { capitalize } from "@/utils/capitalize";
 import { onAuthStateChanged } from "firebase/auth";
 import { useUserDataContext } from "@/context/userContext";
 import { doc, getDoc } from "firebase/firestore";
 import { SchedulePageSkeletonLoading } from "@/components/loading/SchedulePageSkeletonLoading";
-import { notifySuccess } from "@/components/Toast";
 
 export default function Agendamentos() {
   const [loading, setLoading] = useState(true);
