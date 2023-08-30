@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { Toast } from "@/components/Toast";
 import { UserContextProvider } from "@/context/userContext";
 import { ScheduleViewProvider } from "@/context/schedulesViewContext";
+import { SchedulesContextProvider } from "@/context/schedulesContext";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -27,12 +28,14 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${poppins.variable} font-sans min-h-screen`}>
         <ScheduleViewProvider>
-          <UserContextProvider>
-            <Toast />
-            <Header />
-            {children}
-            <Footer />
-          </UserContextProvider>
+          <SchedulesContextProvider>
+            <UserContextProvider>
+              <Toast />
+              <Header />
+              {children}
+              <Footer />
+            </UserContextProvider>
+          </SchedulesContextProvider>
         </ScheduleViewProvider>
       </body>
     </html>

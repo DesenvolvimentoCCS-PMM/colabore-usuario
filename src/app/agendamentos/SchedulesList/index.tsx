@@ -7,13 +7,14 @@ import { SchedulePagination } from "./SchedulePagination";
 import { DocumentData, collection, getDocs } from "firebase/firestore";
 import { auth, db } from "@/services/firebase";
 import { useUpdateScheduleView } from "@/context/schedulesViewContext";
+import { useScheduleContext } from "@/context/schedulesContext";
 
 export function ScheduleList() {
   const [data, setData] = useState<ScheduleDataType[]>([]);
   const [dataFiltered, setDataFiltered] = useState<ScheduleDataType[]>([]);
 
   const { updateScheduleView } = useUpdateScheduleView();
-
+  const { setScheduleData } = useScheduleContext();
   useEffect(() => {
     getData();
   }, [updateScheduleView]);
@@ -38,6 +39,7 @@ export function ScheduleList() {
       }
     });
 
+    setScheduleData(data);
     setData(dataToDisplay);
     setDataFiltered(dataToDisplay);
   };

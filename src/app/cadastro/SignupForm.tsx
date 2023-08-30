@@ -46,11 +46,7 @@ const signupSchema = z
       .min(12, "*O CPF deve ter 11 dígitos")
       .max(14, "*O CPF deve ter 11 dígitos"),
     birthDate: z.string().nonempty("*A data de nascimento é obrigatória"),
-    otherPhone: z
-      .string()
-      .nonempty("*O número de whatsapp é obrigatório")
-      .min(13, "*O número de contato deve ter 11 dígitos")
-      .max(15, "*O número de contato deve ter 11 dígitos"),
+    otherPhone: z.string(),
     profession: z.string().nonempty("*A profissão é obrigatória!"),
     password: z
       .string()
@@ -91,7 +87,7 @@ export function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirmation, setShowPasswordConfirmation] =
     useState(false);
-  const [imageFile, setImageFile] = useState<File>();
+  // const [imageFile, setImageFile] = useState<File>();
   const router = useRouter();
 
   const {
@@ -143,21 +139,21 @@ export function SignupForm() {
     signupUser(data);
   };
 
-  const handleSelectedFile = (files: FileList | null) => {
-    if (files) {
-      const maxSize = 5000000;
-      const selectedFile = files[0];
+  // const handleSelectedFile = (files: FileList | null) => {
+  //   if (files) {
+  //     const maxSize = 5000000;
+  //     const selectedFile = files[0];
 
-      if (selectedFile && selectedFile.size <= maxSize) {
-        setImageFile(selectedFile);
-        console.log(selectedFile);
-      } else if (selectedFile && selectedFile.size > maxSize) {
-        notifyError("Ops! O arquivo dever ser menor que 5MB");
-      } else {
-        setImageFile(undefined);
-      }
-    }
-  };
+  //     if (selectedFile && selectedFile.size <= maxSize) {
+  //       setImageFile(selectedFile);
+  //       console.log(selectedFile);
+  //     } else if (selectedFile && selectedFile.size > maxSize) {
+  //       notifyError("Ops! O arquivo dever ser menor que 5MB");
+  //     } else {
+  //       setImageFile(undefined);
+  //     }
+  //   }
+  // };
 
   return (
     <div className="w-full">
@@ -289,19 +285,12 @@ export function SignupForm() {
             <InputMask
               placeholder="(21)99999-9999"
               {...register("otherPhone")}
-              className={`bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full ${
-                errors.email && "border border-red-600"
-              } sm:text-base`}
+              className={`bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full} sm:text-base`}
               mask="(99)99999-9999"
               inputRef={(inputProps: any) => (
                 <input {...inputProps} type="tel" />
               )}
             />
-            {errors.otherPhone && (
-              <small className="text-red-500 text-[10px] ml-2">
-                {errors.otherPhone.message}
-              </small>
-            )}
           </div>
         </div>
 
@@ -333,7 +322,7 @@ export function SignupForm() {
           </div>
 
           {/* PHOTO  */}
-          <div className="flex flex-col w-1/3 gap-y-2">
+          {/* <div className="flex flex-col w-1/3 gap-y-2">
             <label htmlFor="photo" className={`text-sm font-medium `}>
               Foto
             </label>
@@ -351,7 +340,7 @@ export function SignupForm() {
                 {imageFile ? imageFile.name : "Selecione um arquivo"}
               </span>
             </label>
-          </div>
+          </div> */}
         </div>
 
         <h2 className="mt-5 relative left-0 text-white w-full px-5 py-3 flex font-medium bg-amber-500">
@@ -706,9 +695,6 @@ export function SignupForm() {
 
         {/* SUBMIT */}
         <div className="flex justify-end w-full gap-y-2 ">
-          <button onChange={handleCEP} type="button">
-            CEP
-          </button>
           <Button type="submit">Cadastrar</Button>
         </div>
       </form>

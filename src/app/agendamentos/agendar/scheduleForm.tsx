@@ -11,6 +11,7 @@ import { auth, db } from "@/services/firebase";
 import { notifyError, notifySuccess } from "@/components/Toast";
 import { useRouter } from "next/navigation";
 import { useUserDataContext } from "@/context/userContext";
+import { useScheduleContext } from "@/context/schedulesContext";
 
 const scheduleFormSchema = z.object({
   service: z.string(),
@@ -86,6 +87,11 @@ export function ScheduleForm() {
     mode: "onBlur",
   });
 
+  const { scheduleData } = useScheduleContext();
+
+  console.log(scheduleData);
+  const handleTime = () => {};
+
   const submit: SubmitHandler<scheduleFormSchemaType> = async (data) => {
     setIsFetching(true);
 
@@ -117,7 +123,7 @@ export function ScheduleForm() {
       className="pl-2 space-y-6 mt-10 sm:pl-8"
       onSubmit={handleSubmit(submit)}
     >
-      <div className="flex flex-col gap-4 sm:flex-row sm:gap-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:gap-8">
         {/* Serviço */}
         <div className="flex flex-col gap-2 relative">
           <label
@@ -151,7 +157,7 @@ export function ScheduleForm() {
         </div>
 
         {/* Data */}
-        <div className="flex gap-4 flex-wrap sm:gap-8">
+        <div className="flex gap-4 sm:gap-8">
           <div className="flex flex-col gap-2 relative">
             <label
               htmlFor="date"
@@ -196,6 +202,13 @@ export function ScheduleForm() {
             )}
           </div>
         </div>
+
+        <button
+          onClick={handleTime}
+          className="bg-blue-600 text-white p-3 rounded-3xl w-max"
+        >
+          Verificar disponibilidade
+        </button>
       </div>
 
       {/* Hora e Coffe Break */}
