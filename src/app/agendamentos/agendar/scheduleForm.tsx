@@ -65,21 +65,39 @@ const scheduleFormSchema = z.object({
   }),
 });
 
+//Tarefas:
+
+//Verificar se o dia e o horário já está contido no banco de dados
+
+//Não permitir agendamentos de 2h após as 17h
+
+//Se o usuario agendar no dia atual, não pode ser permitido agendar em um horário menor que o horário atual.
+
+//Não permitir agendamentos no sabádo e no domingo
+
+//Não permitir agendamentos após as 16h45
+
 type scheduleFormSchemaType = z.infer<typeof scheduleFormSchema>;
 
 export function ScheduleForm() {
   const [isFetching, setIsFetching] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  const user = auth.currentUser;
+  const [timeIsValid, setTimeIsValid] = useState<null | boolean>(null);
+
+  //Contexts
   const { userData } = useUserDataContext();
+  const { scheduleData } = useScheduleContext();
   const { push } = useRouter();
+  const user = auth.currentUser;
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<scheduleFormSchemaType>({
     resolver: zodResolver(scheduleFormSchema),
+
     defaultValues: {
       totTime: "",
       hasCoffeBreak: "",
@@ -87,10 +105,26 @@ export function ScheduleForm() {
     mode: "onBlur",
   });
 
-  const { scheduleData } = useScheduleContext();
+  const handleTime = () => {
+    const inputDate = watch("date");
+    const inputTime = watch("time");
+    const inputService = watch("service");
 
-  console.log(scheduleData);
-  const handleTime = () => {};
+    const scheduleAlreadyExists = scheduleData.some((data) => {
+      return (
+        data.time === inputTime &&
+        data.date === inputDate &&
+        inputService === data.service
+      );
+    });
+
+    if (scheduleAlreadyExists || inputDate == "" || inputTime == "") {
+      setTimeIsValid(false);
+      notifyError("Horário indisponível");
+    } else {
+      setTimeIsValid(true);
+    }
+  };
 
   const submit: SubmitHandler<scheduleFormSchemaType> = async (data) => {
     setIsFetching(true);
@@ -194,6 +228,7 @@ export function ScheduleForm() {
               id="time"
               {...register("time")}
               className="bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full max-w-xs"
+              onChange={() => setTimeIsValid(false)}
             />
             {errors.time && (
               <small className="text-red-500 pt-2 text-xs max-w-[150px]">
@@ -203,217 +238,225 @@ export function ScheduleForm() {
           </div>
         </div>
 
-        <button
-          onClick={handleTime}
-          className="bg-blue-600 text-white p-3 rounded-3xl w-max"
-        >
-          Verificar disponibilidade
-        </button>
+        {!timeIsValid && (
+          <button
+            onClick={handleTime}
+            className="bg-blue-600 text-white p-3 rounded-3xl w-max hover:opacity-80 transition-all"
+            type="button"
+          >
+            Verificar disponibilidade
+          </button>
+        )}
       </div>
 
       {/* Hora e Coffe Break */}
-      <div className="flex flex-col flex-wrap gap-6 sm:flex-row-reverse sm:justify-end">
-        <div className="space-y-6 max-w-sm relative md:ml-14">
-          <div className="flex flex-col gap-2">
-            <span
-              className={`font-semibold text-purpleCol text-sm ${
-                errors.totTime && "text-red-500"
-              }`}
-            >
-              De quanto tempo você precisa?
-            </span>
 
-            <div className="space-x-2">
-              <input
-                type="radio"
-                id="oneHour"
-                value={"1 hora"}
-                {...register("totTime")}
-                className="cursor-pointer"
-              />
-              <label
-                htmlFor="oneHour"
-                className="text-purpleCol text-sm cursor-pointer"
-              >
-                1 hora
-              </label>
-              <input
-                type="radio"
-                id="twoHour"
-                value={"2 horas"}
-                {...register("totTime")}
-                className="cursor-pointer"
-              />
-              <label
-                htmlFor="twoHour"
-                className="text-purpleCol text-sm cursor-pointer"
-              >
-                2 horas
-              </label>
-            </div>
+      {timeIsValid && (
+        <>
+          <div className="flex flex-col flex-wrap gap-6 sm:flex-row-reverse sm:justify-end">
+            <div className="space-y-6 max-w-sm relative md:ml-14">
+              <div className="flex flex-col gap-2">
+                <span
+                  className={`font-semibold text-purpleCol text-sm ${
+                    errors.totTime && "text-red-500"
+                  }`}
+                >
+                  De quanto tempo você precisa?
+                </span>
 
-            {errors.totTime && (
-              <small className="text-red-500 pt-2 text-xs max-w-[150px]">
-                {errors.totTime.message}
-              </small>
-            )}
+                <div className="space-x-2">
+                  <input
+                    type="radio"
+                    id="oneHour"
+                    value={"1 hora"}
+                    {...register("totTime")}
+                    className="cursor-pointer"
+                  />
+                  <label
+                    htmlFor="oneHour"
+                    className="text-purpleCol text-sm cursor-pointer"
+                  >
+                    1 hora
+                  </label>
+                  <input
+                    type="radio"
+                    id="twoHour"
+                    value={"2 horas"}
+                    {...register("totTime")}
+                    className="cursor-pointer"
+                  />
+                  <label
+                    htmlFor="twoHour"
+                    className="text-purpleCol text-sm cursor-pointer"
+                  >
+                    2 horas
+                  </label>
+                </div>
 
-            <span
-              className={`font-semibold text-purpleCol text-sm ${
-                errors.hasCoffeBreak && "text-red-500"
-              }`}
-            >
-              Vai ter coffe break?
-            </span>
+                {errors.totTime && (
+                  <small className="text-red-500 pt-2 text-xs max-w-[150px]">
+                    {errors.totTime.message}
+                  </small>
+                )}
 
-            <div className="space-x-2">
-              <input
-                type="radio"
-                id="hasCB"
-                {...register("hasCoffeBreak")}
-                className="cursor-pointer"
-                onClick={() => setShowAlert(true)}
-                value={"sim"}
-              />
-              <label
-                htmlFor="hasCB"
-                className="text-purpleCol text-sm cursor-pointer"
-              >
-                Sim
-              </label>
-              <input
-                type="radio"
-                id="hasNotCB"
-                {...register("hasCoffeBreak")}
-                className="cursor-pointer"
-                onClick={() => setShowAlert(false)}
-                value={"nao"}
-              />
-              <label
-                htmlFor="hasNotCB"
-                className="text-purpleCol text-sm cursor-pointer"
-              >
-                Não
-              </label>
-            </div>
+                <span
+                  className={`font-semibold text-purpleCol text-sm ${
+                    errors.hasCoffeBreak && "text-red-500"
+                  }`}
+                >
+                  Vai ter coffe break?
+                </span>
 
-            {errors.hasCoffeBreak && (
-              <small className="text-red-500 pt-2 text-xs max-w-[150px]">
-                {errors.hasCoffeBreak.message}
-              </small>
-            )}
+                <div className="space-x-2">
+                  <input
+                    type="radio"
+                    id="hasCB"
+                    {...register("hasCoffeBreak")}
+                    className="cursor-pointer"
+                    onClick={() => setShowAlert(true)}
+                    value={"sim"}
+                  />
+                  <label
+                    htmlFor="hasCB"
+                    className="text-purpleCol text-sm cursor-pointer"
+                  >
+                    Sim
+                  </label>
+                  <input
+                    type="radio"
+                    id="hasNotCB"
+                    {...register("hasCoffeBreak")}
+                    className="cursor-pointer"
+                    onClick={() => setShowAlert(false)}
+                    value={"nao"}
+                  />
+                  <label
+                    htmlFor="hasNotCB"
+                    className="text-purpleCol text-sm cursor-pointer"
+                  >
+                    Não
+                  </label>
+                </div>
 
-            {showAlert && (
-              <div className="p-3 bg-yellowCol relative rounded-3xl sm:w-[320px] md:absolute md:top-32">
-                <h2 className="text-white font-bold flex gap-x-2 items-center uppercase">
-                  Atenção! <Info size={20} color="white" />
-                </h2>
+                {errors.hasCoffeBreak && (
+                  <small className="text-red-500 pt-2 text-xs max-w-[150px]">
+                    {errors.hasCoffeBreak.message}
+                  </small>
+                )}
 
-                <p className="text-white text-sm">
-                  O coffee break deve acontecer dentro do período agendado. Os
-                  comes e bebes, bem como a conservação do espaço,{" "}
-                  <b>é de total responsabilidade do usuário.</b>
-                </p>
+                {showAlert && (
+                  <div className="p-3 bg-yellowCol relative rounded-3xl sm:w-[320px] md:absolute md:top-32">
+                    <h2 className="text-white font-bold flex gap-x-2 items-center uppercase">
+                      Atenção! <Info size={20} color="white" />
+                    </h2>
+
+                    <p className="text-white text-sm">
+                      O coffee break deve acontecer dentro do período agendado.
+                      Os comes e bebes, bem como a conservação do espaço,{" "}
+                      <b>é de total responsabilidade do usuário.</b>
+                    </p>
+                  </div>
+                )}
               </div>
+            </div>
+
+            {/* motive */}
+            <div className="flex flex-col gap-2 w-full max-w-sm relative">
+              <div className="flex justify-between items-center">
+                <label
+                  htmlFor="motivo"
+                  className={`text-purpleCol font-semibold ${
+                    errors.motive && "text-red-500"
+                  } sm:text-lg`}
+                >
+                  Motivo
+                </label>
+                <small className=" text-purpleCol">Até 240 caracteres</small>
+              </div>
+
+              <input
+                type="text"
+                id="motivo"
+                {...register("motive")}
+                maxLength={240}
+                placeholder="Descreva aqui o motive do seu agendamento"
+                className="bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full indent-6"
+              />
+              {errors.motive && (
+                <small className="text-red-500 pt-2 text-xs max-w-[150px]">
+                  {errors.motive.message}
+                </small>
+              )}
+              <ChatCenteredText
+                size={20}
+                color="white"
+                className="absolute left-3 top-12 sm:top-[3.2rem]"
+              />
+            </div>
+          </div>
+
+          {/* Observações */}
+          <div className="flex flex-col gap-2 relative max-w-sm ">
+            <div className="flex items-center justify-between">
+              <label
+                htmlFor="obs"
+                className={`text-purpleCol font-semibold ${
+                  errors.obs && "text-red-500"
+                } sm:text-lg`}
+              >
+                Observações
+              </label>
+              <small className=" text-purpleCol">Até 240 caracteres</small>
+            </div>
+
+            <textarea
+              id="obs"
+              {...register("obs")}
+              cols={30}
+              rows={10}
+              placeholder="Descreva aqui observações que você considere relevantes (ex: número de pessoas que irão participar da reunião)"
+              className="bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full indent-6"
+            />
+            {errors.obs && (
+              <small className="text-red-500 pt-2 text-xs max-w-[150px]">
+                {errors.obs.message}
+              </small>
             )}
+            <ChatCenteredText
+              size={20}
+              color="white"
+              className="absolute left-3 top-12 sm:top-[3.2rem]"
+            />
           </div>
-        </div>
 
-        {/* motive */}
-        <div className="flex flex-col gap-2 w-full max-w-sm relative">
-          <div className="flex justify-between items-center">
-            <label
-              htmlFor="motivo"
-              className={`text-purpleCol font-semibold ${
-                errors.motive && "text-red-500"
-              } sm:text-lg`}
-            >
-              Motivo
+          <div className="flex items-start gap-x-2 max-w-lg">
+            <input type="checkbox" {...register("lgpd")} id="lgpd" />
+            <label htmlFor="lgpd" className="text-xs">
+              Confirmo o envio de meus dados, autorizando a utilização dos
+              mesmos, seguindo as normas da LGPD (Lei Geral de Proteção de Dados
+              Pessoais - Nº13.709 de 14 de Agosto de 2018)
+              <a
+                href="https://lgpd.mesquita.rj.gov.br/?page_id=43"
+                target="_blank"
+                className="text-purpleCol font-medium"
+              >
+                (http://lgpd.mesquita.rj.gov.br/?page_id=43)
+              </a>
             </label>
-            <small className=" text-purpleCol">Até 240 caracteres</small>
           </div>
-
-          <input
-            type="text"
-            id="motivo"
-            {...register("motive")}
-            maxLength={240}
-            placeholder="Descreva aqui o motive do seu agendamento"
-            className="bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full indent-6"
-          />
-          {errors.motive && (
-            <small className="text-red-500 pt-2 text-xs max-w-[150px]">
-              {errors.motive.message}
+          {errors.lgpd && (
+            <small className="text-red-500 pt-2 pl-2 text-xs max-w-[150px] sm:pl-4">
+              {errors.lgpd.message}
             </small>
           )}
-          <ChatCenteredText
-            size={20}
-            color="white"
-            className="absolute left-3 top-12 sm:top-[3.2rem]"
-          />
-        </div>
-      </div>
 
-      {/* Observações */}
-      <div className="flex flex-col gap-2 relative max-w-sm ">
-        <div className="flex items-center justify-between">
-          <label
-            htmlFor="obs"
-            className={`text-purpleCol font-semibold ${
-              errors.obs && "text-red-500"
-            } sm:text-lg`}
-          >
-            Observações
-          </label>
-          <small className=" text-purpleCol">Até 240 caracteres</small>
-        </div>
-
-        <textarea
-          id="obs"
-          {...register("obs")}
-          cols={30}
-          rows={10}
-          placeholder="Descreva aqui observações que você considere relevantes (ex: número de pessoas que irão participar da reunião)"
-          className="bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full indent-6"
-        />
-        {errors.obs && (
-          <small className="text-red-500 pt-2 text-xs max-w-[150px]">
-            {errors.obs.message}
-          </small>
-        )}
-        <ChatCenteredText
-          size={20}
-          color="white"
-          className="absolute left-3 top-12 sm:top-[3.2rem]"
-        />
-      </div>
-
-      <div className="flex items-start gap-x-2 max-w-lg">
-        <input type="checkbox" {...register("lgpd")} id="lgpd" />
-        <label htmlFor="lgpd" className="text-xs">
-          Confirmo o envio de meus dados, autorizando a utilização dos mesmos,
-          seguindo as normas da LGPD (Lei Geral de Proteção de Dados Pessoais -
-          Nº13.709 de 14 de Agosto de 2018)
-          <a
-            href="https://lgpd.mesquita.rj.gov.br/?page_id=43"
-            target="_blank"
-            className="text-purpleCol font-medium"
-          >
-            (http://lgpd.mesquita.rj.gov.br/?page_id=43)
-          </a>
-        </label>
-      </div>
-      {errors.lgpd && (
-        <small className="text-red-500 pt-2 pl-2 text-xs max-w-[150px] sm:pl-4">
-          {errors.lgpd.message}
-        </small>
+          <div className="flex justify-end pt-6">
+            <Button isLink={false} type="submit" disabled={isFetching}>
+              {isFetching ? "Agendando..." : "Agendar >"}
+            </Button>
+          </div>
+        </>
       )}
-
-      <div className="flex justify-end pt-6">
-        <Button isLink={false} type="submit" disabled={isFetching}>
-          {isFetching ? "Agendando..." : "Agendar >"}
-        </Button>
-      </div>
     </form>
   );
 }
