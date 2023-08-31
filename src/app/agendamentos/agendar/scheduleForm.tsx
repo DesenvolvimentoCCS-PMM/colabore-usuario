@@ -20,31 +20,46 @@ const scheduleFormSchema = z.object({
     .nonempty("*Selecione uma data para continuar!")
     .refine(
       (date) => {
+        const currentDate = new Date();
         const inputDate = new Date(date);
         inputDate.setDate(inputDate.getDate() + 1);
 
-        const currentDate = new Date();
-        currentDate.setHours(0, 0, 0, 0);
+        function isWeekday(date: Date): boolean {
+          return date.getDay() >= 1 && date.getDay() <= 5;
+        }
 
-        const minDate = new Date(currentDate.getTime() + 0 * 60 * 60 * 1000); // Adiciona 1 dia à data atual
+        const daysAllowed = 7;
+        let daysChecked = 0;
 
-        const maxDate = new Date(
-          currentDate.getTime() + 7 * 24 * 60 * 60 * 1000
-        ); // Adiciona 7 dias à data atual
+        while (daysChecked < daysAllowed) {
+          if (isWeekday(currentDate)) {
+            daysChecked++;
+          }
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
 
-        const validation = inputDate < minDate || inputDate > maxDate;
-        return validation === false; //deve colocar oq é esperado
+        return inputDate <= currentDate;
       },
       {
-        message: "A data deve estar entre 1 e 7 dias a partir de hoje.",
+        message:
+          "Data indisponível! A data deve estar entre 1 e 7 dias úteis a partir de hoje.",
       }
+    )
+    .refine(
+      (date) => {
+        const inputDate = new Date(date);
+        inputDate.setDate(inputDate.getDate() + 1);
+
+        return inputDate.getDay() != 0 && inputDate.getDay() != 6;
+      },
+      { message: "Data indisponível! Não funcionamos no fim de semana." }
     ),
   time: z
     .string()
     .nonempty("*Selecione um horário para continuar!")
     .regex(
-      /^(0?[9]|1[0-7]):[0-5][0-9]$/,
-      "O horário inserido deve estar entre 9h e 17h"
+      /^(10|11|12|13|14|15|16|17|18):[0-5][0-9]$/,
+      "O horário inserido deve estar entre 10h e 18h"
     ),
   totTime: z.string().nonempty("*Campo obrigatório"),
   hasCoffeBreak: z.string().nonempty("*Campo obrigatório"),
@@ -237,68 +252,72 @@ export function ScheduleForm() {
             )}
           </div>
         </div>
+      </div>
 
-        {!timeIsValid && (
-          <button
-            onClick={handleTime}
-            className="bg-blue-600 text-white p-3 rounded-3xl w-max hover:opacity-80 transition-all"
-            type="button"
+      <div className="flex flex-col space-y-10 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-2">
+          <span
+            className={`font-semibold text-purpleCol text-sm ${
+              errors.totTime && "text-red-500"
+            }`}
           >
-            Verificar disponibilidade
-          </button>
+            De quanto tempo você precisa?
+          </span>
+
+          <div className="space-x-2">
+            <input
+              type="radio"
+              id="oneHour"
+              value={"1 hora"}
+              {...register("totTime")}
+              className="cursor-pointer"
+            />
+            <label
+              htmlFor="oneHour"
+              className="text-purpleCol text-sm cursor-pointer"
+            >
+              1 hora
+            </label>
+            <input
+              type="radio"
+              id="twoHour"
+              value={"2 horas"}
+              {...register("totTime")}
+              className="cursor-pointer"
+            />
+            <label
+              htmlFor="twoHour"
+              className="text-purpleCol text-sm cursor-pointer"
+            >
+              2 horas
+            </label>
+          </div>
+
+          {errors.totTime && (
+            <small className="text-red-500 pt-2 text-xs max-w-[150px]">
+              {errors.totTime.message}
+            </small>
+          )}
+        </div>
+        {!timeIsValid && (
+          <div className="flex justify-end">
+            <button
+              onClick={handleTime}
+              className="bg-yellowCol text-white p-3 rounded-3xl w-max hover:opacity-80 transition-all"
+              type="button"
+            >
+              Verificar disponibilidade
+            </button>
+          </div>
         )}
       </div>
 
       {/* Hora e Coffe Break */}
-
       {timeIsValid && (
         <>
           <div className="flex flex-col flex-wrap gap-6 sm:flex-row-reverse sm:justify-end">
             <div className="space-y-6 max-w-sm relative md:ml-14">
               <div className="flex flex-col gap-2">
-                <span
-                  className={`font-semibold text-purpleCol text-sm ${
-                    errors.totTime && "text-red-500"
-                  }`}
-                >
-                  De quanto tempo você precisa?
-                </span>
-
-                <div className="space-x-2">
-                  <input
-                    type="radio"
-                    id="oneHour"
-                    value={"1 hora"}
-                    {...register("totTime")}
-                    className="cursor-pointer"
-                  />
-                  <label
-                    htmlFor="oneHour"
-                    className="text-purpleCol text-sm cursor-pointer"
-                  >
-                    1 hora
-                  </label>
-                  <input
-                    type="radio"
-                    id="twoHour"
-                    value={"2 horas"}
-                    {...register("totTime")}
-                    className="cursor-pointer"
-                  />
-                  <label
-                    htmlFor="twoHour"
-                    className="text-purpleCol text-sm cursor-pointer"
-                  >
-                    2 horas
-                  </label>
-                </div>
-
-                {errors.totTime && (
-                  <small className="text-red-500 pt-2 text-xs max-w-[150px]">
-                    {errors.totTime.message}
-                  </small>
-                )}
-
                 <span
                   className={`font-semibold text-purpleCol text-sm ${
                     errors.hasCoffeBreak && "text-red-500"
