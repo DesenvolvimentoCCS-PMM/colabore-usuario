@@ -34,7 +34,13 @@ const signupSchema = z
       .string()
       .email("Digite um e-mail válido")
       .nonempty("O e-mail é obrigatório")
-      .toLowerCase(),
+      .toLowerCase()
+      .refine(
+        (email) => {
+          return !email.endsWith("@mesquita.rj.gov.br");
+        },
+        { message: "Esse e-mail não é válido para essa aplicação!" }
+      ),
     whatsapp: z
       .string()
       .nonempty("*O número de whatsapp é obrigatório")

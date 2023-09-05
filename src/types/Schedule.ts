@@ -9,7 +9,7 @@ export interface ScheduleDataType {
   deleted_by?: string;
   deleted_at?: string;
   date: string;
-  time: string;
+  startHour: string;
   totTime: string;
   motive: string;
   obs: string;
@@ -17,4 +17,5 @@ export interface ScheduleDataType {
   status: number;
   hasCoffeBreak: string;
   lgpd: boolean;
+  reservedTimes: string[];
 }

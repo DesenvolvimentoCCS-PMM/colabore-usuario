@@ -91,7 +91,7 @@ export function Schedule({ data }: ScheduleDataProps) {
                 scheduleConfigs.pending ? "border-black" : "border-white"
               }`}
             >
-              {data.time}
+              {data.startHour}
             </p>
             <p className="tracking-wider text-base uppercase">
               {formatations.resumeService}
@@ -233,7 +233,9 @@ export function Schedule({ data }: ScheduleDataProps) {
 
               <h3 className="text-sm font-semibold">
                 Horário:
-                <span className="text-sm font-normal ml-2">{data.time}</span>
+                <span className="text-sm font-normal ml-2">
+                  {data.startHour}
+                </span>
               </h3>
             </div>
 

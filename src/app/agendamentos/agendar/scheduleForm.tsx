@@ -1,17 +1,18 @@
 "use client";
 
-import { z } from "zod";
+import { array, z } from "zod";
 import { Button } from "@/components/buttons/DefaultButton";
 import { ChatCenteredText, Info } from "phosphor-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { addDoc, collection } from "firebase/firestore";
 import { auth, db } from "@/services/firebase";
 import { notifyError, notifySuccess } from "@/components/Toast";
 import { useRouter } from "next/navigation";
 import { useUserDataContext } from "@/context/userContext";
 import { useScheduleContext } from "@/context/schedulesContext";
+import { dateToDDMMAA } from "@/utils/dateFunctions";
 
 const scheduleFormSchema = z.object({
   service: z.string(),
@@ -54,13 +55,7 @@ const scheduleFormSchema = z.object({
       },
       { message: "Data indisponível! Não funcionamos no fim de semana." }
     ),
-  time: z
-    .string()
-    .nonempty("*Selecione um horário para continuar!")
-    .regex(
-      /^(10|11|12|13|14|15|16|17|18):[0-5][0-9]$/,
-      "O horário inserido deve estar entre 10h e 18h"
-    ),
+  startHour: z.string().nonempty("*Selecione um horário para continuar!"),
   totTime: z.string().nonempty("*Campo obrigatório"),
   hasCoffeBreak: z.string().nonempty("*Campo obrigatório"),
   motive: z
@@ -80,31 +75,31 @@ const scheduleFormSchema = z.object({
   }),
 });
 
-//Tarefas:
-
-//Verificar se o dia e o horário já está contido no banco de dados
-
-//Não permitir agendamentos de 2h após as 17h
-
-//Se o usuario agendar no dia atual, não pode ser permitido agendar em um horário menor que o horário atual.
-
-//Não permitir agendamentos no sabádo e no domingo
-
-//Não permitir agendamentos após as 16h45
+const hoursWith1hUsage = [
+  "10:00",
+  "11:00",
+  "12:00",
+  "13:00",
+  "14:00",
+  "15:00",
+  "16:00",
+  "17:00",
+  "18:00",
+];
+const hoursWith2hUsage = [
+  "10:00",
+  "11:00",
+  "12:00",
+  "13:00",
+  "14:00",
+  "15:00",
+  "16:00",
+  "17:00",
+];
 
 type scheduleFormSchemaType = z.infer<typeof scheduleFormSchema>;
 
 export function ScheduleForm() {
-  const [isFetching, setIsFetching] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
-  const [timeIsValid, setTimeIsValid] = useState<null | boolean>(null);
-
-  //Contexts
-  const { userData } = useUserDataContext();
-  const { scheduleData } = useScheduleContext();
-  const { push } = useRouter();
-  const user = auth.currentUser;
-
   const {
     register,
     handleSubmit,
@@ -120,29 +115,102 @@ export function ScheduleForm() {
     mode: "onBlur",
   });
 
+  const inputDate = watch("date");
+  const inputTime = watch("startHour");
+  const inputService = watch("service");
+  const inputTotTime = watch("totTime");
+
+  const [isFetching, setIsFetching] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [timeIsValid, setTimeIsValid] = useState<null | boolean>(null);
+  const [showAlertTime, setShowAlertTime] = useState(false);
+
+  useEffect(() => {
+    if (inputTotTime === "2" && inputTime === "18:00") {
+      setShowAlertTime(true);
+    } else {
+      setShowAlertTime(false);
+    }
+  }, [inputTotTime]);
+
+  //Contexts
+  const { userData } = useUserDataContext();
+  const { scheduleData } = useScheduleContext();
+  const { push } = useRouter();
+  const user = auth.currentUser;
+
   const handleTime = () => {
-    const inputDate = watch("date");
-    const inputTime = watch("time");
-    const inputService = watch("service");
+    //Pegar os horarios reservados do bd
+    const timeIsReserved = getReservedTimes(inputTime);
+
+    const timeNotAvaiableForCurrentDay = checkIfTimeIsAvaiableToday(
+      inputDate,
+      inputTime
+    );
 
     const scheduleAlreadyExists = scheduleData.some((data) => {
       return (
-        data.time === inputTime &&
+        //Deve acontecer:
+        timeIsReserved &&
         data.date === inputDate &&
         inputService === data.service
       );
     });
 
-    if (scheduleAlreadyExists || inputDate == "" || inputTime == "") {
-      setTimeIsValid(false);
-      notifyError("Horário indisponível");
+    const fieldsEmpty = !inputDate || !inputTime || !inputTotTime;
+
+    if (fieldsEmpty) {
+      return notifyError("Preencha todos os campos para continuar!");
+    } else if (scheduleAlreadyExists) {
+      return notifyError("Esse agendamento já foi realizado.");
+    } else if (timeNotAvaiableForCurrentDay) {
+      return notifyError("Este horário não está mais disponivel para hoje.");
     } else {
-      setTimeIsValid(true);
+      notifySuccess("Horário disponível, prossiga!");
+      return setTimeIsValid(true);
     }
+  };
+
+  const checkIfTimeIsAvaiableToday = (date: string, inputTime: string) => {
+    const currentDate = new Date();
+    const inputDate = new Date(date);
+    inputDate.setDate(inputDate.getDate() + 1);
+
+    const datesIsEquals =
+      currentDate.toLocaleDateString() === inputDate.toLocaleDateString();
+
+    const inputHours = Number(inputTime.split(":")[0]);
+    const currentHours = currentDate.getHours();
+
+    return datesIsEquals && inputHours < currentHours;
+  };
+
+  const setReservedTimes = (inputTime: string, usageTime: string) => {
+    //Exemplo => inputTime: '12:00' / usageTime: '2'
+    const reservedTimes: string[] = [];
+
+    const splitedFullStartHour = inputTime.split(":"); //['12', '00']
+    const startHour = splitedFullStartHour[0]; //'12'
+    const endHour = eval(`${startHour} + ${usageTime}`); //'14'
+
+    for (let i = Number(startHour); i <= Number(endHour); i++) {
+      const newTime = `${String(i)}:00`;
+      reservedTimes.push(newTime);
+    }
+
+    return reservedTimes;
+  };
+
+  const getReservedTimes = (inputTime: string) => {
+    return scheduleData.some((data) => {
+      return data.reservedTimes.includes(inputTime);
+    });
   };
 
   const submit: SubmitHandler<scheduleFormSchemaType> = async (data) => {
     setIsFetching(true);
+
+    const reservedTimes = setReservedTimes(inputTime, inputTotTime);
 
     try {
       const dataToDb = await addDoc(collection(db, "schedules"), {
@@ -153,6 +221,7 @@ export function ScheduleForm() {
         ...data,
         created_by: user?.uid,
         status: 0,
+        reservedTimes,
       });
 
       notifySuccess("Agendamento realizado com sucesso!");
@@ -220,6 +289,7 @@ export function ScheduleForm() {
               type="date"
               id="data"
               {...register("date")}
+              onClick={() => setTimeIsValid(false)}
               className="bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full max-w-max"
             />
             {errors.date && (
@@ -233,23 +303,24 @@ export function ScheduleForm() {
             <label
               htmlFor="time"
               className={`font-semibold text-purpleCol ${
-                errors.time && "text-red-500"
+                errors.startHour && "text-red-500"
               } sm:text-lg`}
             >
               Horário
             </label>
-            <input
-              type="time"
-              id="time"
-              {...register("time")}
-              className="bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full max-w-xs"
-              onChange={() => setTimeIsValid(false)}
-            />
-            {errors.time && (
-              <small className="text-red-500 pt-2 text-xs max-w-[150px]">
-                {errors.time.message}
-              </small>
-            )}
+
+            <select
+              className="bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full max-w-max"
+              {...register("startHour")}
+            >
+              {inputTotTime === "2"
+                ? hoursWith2hUsage.map((hour, index) => {
+                    return <option value={hour}>{hour}</option>;
+                  })
+                : hoursWith1hUsage.map((hour, index) => {
+                    return <option value={hour}>{hour}</option>;
+                  })}
+            </select>
           </div>
         </div>
       </div>
@@ -268,7 +339,7 @@ export function ScheduleForm() {
             <input
               type="radio"
               id="oneHour"
-              value={"1 hora"}
+              value={1}
               {...register("totTime")}
               className="cursor-pointer"
             />
@@ -281,7 +352,7 @@ export function ScheduleForm() {
             <input
               type="radio"
               id="twoHour"
-              value={"2 horas"}
+              value={2}
               {...register("totTime")}
               className="cursor-pointer"
             />
@@ -296,6 +367,12 @@ export function ScheduleForm() {
           {errors.totTime && (
             <small className="text-red-500 pt-2 text-xs max-w-[150px]">
               {errors.totTime.message}
+            </small>
+          )}
+          {showAlertTime && (
+            <small className="text-yellow-500 bg-yellow-100  font-semibold p-2 text-xs max-w-xs">
+              *Agendamentos com 2h de uso só podem ser agendados até às 17h,
+              escolha um novo horário por favor!
             </small>
           )}
         </div>
@@ -315,7 +392,9 @@ export function ScheduleForm() {
       {/* Hora e Coffe Break */}
       {timeIsValid && (
         <>
-          <div className="flex flex-col flex-wrap gap-6 sm:flex-row-reverse sm:justify-end">
+          <div
+            className={`flex flex-col flex-wrap gap-6 sm:flex-row-reverse sm:justify-end`}
+          >
             <div className="space-y-6 max-w-sm relative md:ml-14">
               <div className="flex flex-col gap-2">
                 <span
