@@ -140,34 +140,36 @@ export function ScheduleForm() {
   const user = auth.currentUser;
 
   const handleTime = () => {
-    //Pegar os horarios reservados do bd
-    const timeIsReserved = getReservedTimes(inputTime);
-
-    const timeNotAvaiableForCurrentDay = checkIfTimeIsAvaiableToday(
-      inputDate,
-      inputTime
-    );
-
-    const scheduleAlreadyExists = scheduleData.some((data) => {
-      return (
-        //Deve acontecer:
-        timeIsReserved &&
-        data.date === inputDate &&
-        inputService === data.service
-      );
-    });
-
     const fieldsEmpty = !inputDate || !inputTime || !inputTotTime;
 
     if (fieldsEmpty) {
       return notifyError("Preencha todos os campos para continuar!");
-    } else if (scheduleAlreadyExists) {
-      return notifyError("Esse agendamento já foi realizado.");
-    } else if (timeNotAvaiableForCurrentDay) {
-      return notifyError("Este horário não está mais disponivel para hoje.");
     } else {
-      notifySuccess("Horário disponível, prossiga!");
-      return setTimeIsValid(true);
+      //Pegar os horarios reservados do bd
+      const timeIsReserved = getReservedTimes(inputTime);
+
+      const timeNotAvaiableForCurrentDay = checkIfTimeIsAvaiableToday(
+        inputDate,
+        inputTime
+      );
+
+      const scheduleAlreadyExists = scheduleData.some((data) => {
+        return (
+          //Deve acontecer:
+          timeIsReserved &&
+          data.date === inputDate &&
+          inputService === data.service
+        );
+      });
+
+      if (scheduleAlreadyExists) {
+        return notifyError("Esse agendamento já foi realizado.");
+      } else if (timeNotAvaiableForCurrentDay) {
+        return notifyError("Este horário não está mais disponivel para hoje.");
+      } else {
+        notifySuccess("Horário disponível, prossiga!");
+        return setTimeIsValid(true);
+      }
     }
   };
 
