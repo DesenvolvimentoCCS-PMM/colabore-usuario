@@ -82,6 +82,9 @@ const signupSchema = z
       }),
     }),
   })
+  .refine((data) => data.whatsapp !== data.otherPhone, {
+    message: "Os números de telefone devem ser diferentes!",
+  })
   .refine((data) => data.password === data.passwordConfirmation, {
     message: "As senhas devem ser iguais!",
     path: ["passwordConfirmation"],
@@ -110,13 +113,23 @@ export function SignupForm() {
   const cep = watch("cep");
 
   const handleCEP = async () => {
-    const req = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-    const data = (await req.json()) as Cep;
+    try {
+      const req = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      const data = (await req.json()) as Cep;
 
-    setValue("city", data.localidade);
-    setValue("neighborhood", data.bairro);
-    setValue("street", data.logradouro);
-    setValue("state", data.uf);
+      if (data.erro) {
+        notifyError("CEP não encontrado, tente novamente!");
+        setValue("cep", "");
+      } else {
+        setValue("city", data.localidade);
+        setValue("neighborhood", data.bairro);
+        setValue("street", data.logradouro);
+        setValue("state", data.uf);
+      }
+    } catch (error) {
+      console.error("Erro inesperado:", error);
+      notifyError("Erro inesperado ao consultar o CEP!");
+    }
   };
 
   const signupUser = (data: signupSchemaType) => {

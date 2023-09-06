@@ -52,7 +52,7 @@ export function Schedule({ data }: ScheduleDataProps) {
 
   const formatations = {
     date: dateToText(data.date),
-    whatsapp: "21969718153",
+    whatsapp: "5521969718153",
     resumeService: data.service.split("(")[0],
   };
 

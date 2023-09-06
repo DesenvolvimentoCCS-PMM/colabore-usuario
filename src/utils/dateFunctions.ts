@@ -17,7 +17,7 @@ export function dateToText(date: string) {
   ];
 
   const newDate = new Date(date);
-  const day = newDate.getDate();
+  const day = newDate.getDate() + 1;
   const month = newDate.getMonth();
 
   return `${day < 10 ? "0" + day : day} ${months[month]}`;
@@ -25,7 +25,7 @@ export function dateToText(date: string) {
 
 export function dateToDDMMAA(date: string) {
   const newDate = new Date(date);
-  const day = newDate.getDate();
+  const day = newDate.getDate() + 1;
   const month = newDate.getMonth() + 1;
   const year = newDate.getFullYear();
 
@@ -36,7 +36,7 @@ export function dateToDDMMAA(date: string) {
 
 export function currentDate() {
   const newDate = new Date();
-  const day = newDate.getDate();
+  const day = newDate.getDate() + 1;
   const month = newDate.getMonth() + 1;
   const year = newDate.getFullYear();
 

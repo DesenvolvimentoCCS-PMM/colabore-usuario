@@ -9,4 +9,5 @@ interface Cep {
   gia?: string;
   ddd: string;
   siafi: string;
+  erro?: boolean;
 }
