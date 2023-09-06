@@ -82,10 +82,11 @@ const signupSchema = z
       }),
     }),
   })
-  .refine((data) => data.whatsapp !== data.otherPhone, {
+  .refine((fields) => fields.whatsapp !== fields.otherPhone, {
     message: "Os números de telefone devem ser diferentes!",
+    path: ["otherPhone"],
   })
-  .refine((data) => data.password === data.passwordConfirmation, {
+  .refine((fields) => fields.password === fields.passwordConfirmation, {
     message: "As senhas devem ser iguais!",
     path: ["passwordConfirmation"],
   });
@@ -310,6 +311,11 @@ export function SignupForm() {
                 <input {...inputProps} type="tel" />
               )}
             />
+            {errors.otherPhone && (
+              <small className="text-red-500 text-[10px] ml-2">
+                {errors.otherPhone.message}
+              </small>
+            )}
           </div>
         </div>
 

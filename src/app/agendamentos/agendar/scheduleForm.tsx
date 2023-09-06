@@ -261,7 +261,7 @@ export function ScheduleForm() {
           >
             <option>Reunião {"(máximo 6 pessoas)"}</option>
             <option>Coworking {"(máximo 6 pessoas)"}</option>
-            <option>Treinamento {"(máximo 20 pessoas)"}</option>
+            <option>Palestras {"(máximo 20 pessoas)"}</option>
           </select>
           {errors.service && (
             <small className="text-red-500 pt-2 text-xs max-w-[150px]">
