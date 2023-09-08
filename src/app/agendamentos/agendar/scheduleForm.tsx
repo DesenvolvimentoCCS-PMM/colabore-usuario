@@ -12,7 +12,11 @@ import { notifyError, notifySuccess } from "@/components/Toast";
 import { useRouter } from "next/navigation";
 import { useUserDataContext } from "@/context/userContext";
 import { useScheduleContext } from "@/context/schedulesContext";
-import { dateToDDMMAA } from "@/utils/dateFunctions";
+import {
+  currentDate,
+  dateToDDMMAA,
+  dateToDefaultDb,
+} from "@/utils/dateFunctions";
 
 const scheduleFormSchema = z.object({
   service: z.string(),
@@ -54,7 +58,15 @@ const scheduleFormSchema = z.object({
         return inputDate.getDay() != 0 && inputDate.getDay() != 6;
       },
       { message: "Data indisponível! Não funcionamos no fim de semana." }
-    ),
+    )
+    .refine((date) => {
+      const currentDate = new Date().toLocaleDateString();
+      const inputDate = new Date(date);
+      inputDate.setDate(inputDate.getDate() + 1);
+      const localeInputDate = inputDate.toLocaleDateString();
+
+      return currentDate <= localeInputDate;
+    }, "Essa data já passou!"),
   startHour: z.string().nonempty("*Selecione um horário para continuar!"),
   totTime: z.string().nonempty("*Campo obrigatório"),
   hasCoffeBreak: z.string().nonempty("*Campo obrigatório"),
@@ -126,7 +138,7 @@ export function ScheduleForm() {
   const [showAlertTime, setShowAlertTime] = useState(false);
 
   useEffect(() => {
-    if (inputTotTime === "2" && inputTime === "18:00") {
+    if (inputTotTime === "2") {
       setShowAlertTime(true);
     } else {
       setShowAlertTime(false);
@@ -184,7 +196,7 @@ export function ScheduleForm() {
     const inputHours = Number(inputTime.split(":")[0]);
     const currentHours = currentDate.getHours();
 
-    return datesIsEquals && inputHours < currentHours;
+    return datesIsEquals && inputHours <= currentHours;
   };
 
   const setReservedTimes = (inputTime: string, usageTime: string) => {
@@ -373,8 +385,8 @@ export function ScheduleForm() {
           )}
           {showAlertTime && (
             <small className="text-yellow-500 bg-yellow-100  font-semibold p-2 text-xs max-w-xs">
-              *Agendamentos com 2h de uso só podem ser agendados até às 17h,
-              escolha um novo horário por favor!
+              {"[AVISO]"} Agendamentos com 2h de uso só podem ser agendados até
+              às 17h.
             </small>
           )}
         </div>

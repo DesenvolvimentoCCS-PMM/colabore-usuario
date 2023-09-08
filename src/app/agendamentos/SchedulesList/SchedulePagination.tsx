@@ -65,7 +65,7 @@ export function SchedulePagination({ data }: SchedulePaginationProps) {
       </div>
 
       {/* Botão agendar */}
-      <div className="flex justify-center pt-10">
+      <div className="flex justify-center pt-4">
         <Button isLink href="/agendamentos/agendar">
           Agendar
           <Clock size={24} />

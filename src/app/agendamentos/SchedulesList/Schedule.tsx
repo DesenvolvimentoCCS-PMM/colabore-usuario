@@ -27,6 +27,7 @@ export function Schedule({ data }: ScheduleDataProps) {
   const { updateScheduleView } = useUpdateScheduleView();
 
   const cancelSchedule = async () => {
+    //Notificar a equipe ?
     if (confirm("Confirmar cancelamento do agendamento? ")) {
       try {
         const docRef = doc(db, "agendamento", data.uid);
@@ -37,10 +38,10 @@ export function Schedule({ data }: ScheduleDataProps) {
           deleted_by: userData.fullName,
         });
         updateScheduleView();
-        notifySuccess("Agendamento excluído com sucesso!");
+        notifySuccess("Agendamento cancelado com sucesso!");
       } catch (error) {
         notifyError(
-          "Não foi possível excluir o agendamento, tente novamente mais tarde!"
+          "Não foi possível cancelar o agendamento, tente novamente mais tarde!"
         );
       }
     }
@@ -54,19 +55,21 @@ export function Schedule({ data }: ScheduleDataProps) {
     date: dateToText(data.date),
     whatsapp: "5521969718153",
     resumeService: data.service.split("(")[0],
+    endTime: data.reservedTimes[data.reservedTimes.length - 1],
   };
 
   const styleVariants = {
-    pendingColor: data.status === 0 && "bg-yellow-500 text-black border-black",
-    completedColor: data.status === 1 && "bg-green-500 text-white",
+    scheduled: data.status === 0 && "bg-green-600 text-white",
+    completedColor:
+      data.status === 1 && "bg-gray-500 text-gray-300 border-black",
     deletedColor: data.status === 2 && "bg-red-500 text-white",
-    pendingTextColor: data.status === 0 && "text-yellow-500",
-    completedTextColor: data.status === 1 && "text-green-500",
+    scheduledTextColor: data.status === 0 && "text-green-500",
+    completedTextColor: data.status === 1 && "text-gray-400",
     deletedTextColor: data.status === 2 && "text-red-500",
   };
 
   const scheduleConfigs = {
-    pending: data.status === 0,
+    scheduled: data.status === 0,
     deleted: data.status === 2,
     completed: data.status === 1,
     hasAdmin: userData.fullName.includes("Admin"),
@@ -83,12 +86,12 @@ export function Schedule({ data }: ScheduleDataProps) {
         <div className="flex items-center lg:justify-between flex-wrap flex-col md:flex-row">
           {/* Dados da reunião */}
           <div
-            className={`flex flex-col items-center justify-center gap-y-2 ${styleVariants.pendingColor} ${styleVariants.completedColor} ${styleVariants.deletedColor} h-28 w-full lg:w-40`}
+            className={`flex flex-col items-center justify-center gap-y-2 ${styleVariants.scheduled} ${styleVariants.completedColor} ${styleVariants.deletedColor} h-28 w-full lg:w-40`}
           >
             <p className="text-lg font-medium">{formatations.date}</p>
             <p
               className={`text-base rounded-sm px-3 border  ${
-                scheduleConfigs.pending ? "border-black" : "border-white"
+                scheduleConfigs.scheduled ? "border-black" : "border-white"
               }`}
             >
               {data.startHour}
@@ -122,7 +125,7 @@ export function Schedule({ data }: ScheduleDataProps) {
                 </span>
               </a>
 
-              {scheduleConfigs.pending && (
+              {scheduleConfigs.scheduled && (
                 <button
                   className="px-3 py-3 rounded-3xl text-sm flex items-center justify-center gap-x-1 max-w-xs transition-all group bg-red-500 hover:scale-95 hover:brightness-95 sm:w-max "
                   onClick={cancelSchedule}
@@ -136,7 +139,7 @@ export function Schedule({ data }: ScheduleDataProps) {
               )}
               {scheduleConfigs.completed && (
                 <button
-                  className="text-white bg-green-300 p-2 rounded-3xl text-sm flex items-center justify-center gap-x-1 w-full max-w-xs sm:w-max"
+                  className="text-white bg-gray-500 p-2 rounded-3xl text-sm flex items-center justify-center gap-x-1 w-full max-w-xs sm:w-max"
                   disabled
                 >
                   <Checks size={26} />
@@ -195,11 +198,11 @@ export function Schedule({ data }: ScheduleDataProps) {
             <div className="inline-flex gap-x-2 my-1 items-center">
               <h3 className="text-sm font-semibold">Status:</h3>
               <span
-                className={`text-sm p-1 rounded-3xl font-semibold ${styleVariants.completedTextColor} ${styleVariants.deletedTextColor} ${styleVariants.pendingTextColor}`}
+                className={`text-sm p-1 rounded-3xl font-semibold ${styleVariants.completedTextColor} ${styleVariants.deletedTextColor} ${styleVariants.scheduledTextColor}`}
               >
-                {scheduleConfigs.pending && "Pendente"}
+                {scheduleConfigs.scheduled && "Agendado"}
                 {scheduleConfigs.completed && "Concluído"}
-                {scheduleConfigs.deleted && "Excluído"}
+                {scheduleConfigs.deleted && "Cancelado"}
               </span>
             </div>
 
@@ -234,7 +237,7 @@ export function Schedule({ data }: ScheduleDataProps) {
               <h3 className="text-sm font-semibold">
                 Horário:
                 <span className="text-sm font-normal ml-2">
-                  {data.startHour}
+                  {data.startHour} às {formatations.endTime}
                 </span>
               </h3>
             </div>

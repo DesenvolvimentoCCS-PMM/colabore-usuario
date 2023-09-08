@@ -19,8 +19,10 @@ const signinSchema = z.object({
   email: z
     .string()
     .email("Digite um e-mail válido")
-    .nonempty("O e-mail é obrigatório"),
-    
+    .nonempty("O e-mail é obrigatório")
+    .refine((email) => {
+      return !email.endsWith("@mesquita.rj.gov.br");
+    }, "E-mail inválido!"),
   password: z
     .string()
     .min(6, "A senha deve ter pelo menos 6 caracteres")

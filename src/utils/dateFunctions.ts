@@ -36,7 +36,7 @@ export function dateToDDMMAA(date: string) {
 
 export function currentDate() {
   const newDate = new Date();
-  const day = newDate.getDate() + 1;
+  const day = newDate.getDate();
   const month = newDate.getMonth() + 1;
   const year = newDate.getFullYear();
 

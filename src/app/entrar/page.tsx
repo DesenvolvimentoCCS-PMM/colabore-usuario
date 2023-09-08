@@ -12,7 +12,7 @@ export default function Entrar() {
         <Image
           src={Ilustration}
           alt="Ilustração de pessoas vendo um calendário"
-          className="w-10/12 max-w-2xl sm:w-full"
+          className="w-10/12 max-w-2xl hidden sm:block sm:w-full"
         />
         <SigninForm />
       </main>
