@@ -329,10 +329,18 @@ export function ScheduleForm() {
             >
               {inputTotTime === "2"
                 ? hoursWith2hUsage.map((hour, index) => {
-                    return <option value={hour}>{hour}</option>;
+                    return (
+                      <option value={hour} key={index}>
+                        {hour}
+                      </option>
+                    );
                   })
                 : hoursWith1hUsage.map((hour, index) => {
-                    return <option value={hour}>{hour}</option>;
+                    return (
+                      <option value={hour} key={index}>
+                        {hour}
+                      </option>
+                    );
                   })}
             </select>
           </div>
