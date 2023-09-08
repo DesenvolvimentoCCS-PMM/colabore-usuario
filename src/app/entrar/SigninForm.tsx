@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { ForgetPassword } from "@/app/entrar/ForgetPassword";
 import { notifyError } from "@/components/Toast";
 import { Button } from "@/components/buttons/DefaultButton";
+import { useUserLoggedContext } from "@/context/userLogged";
 
 const signinSchema = z.object({
   email: z
@@ -34,6 +35,8 @@ type signinSchemaType = z.infer<typeof signinSchema>;
 export function SigninForm() {
   const [isLogging, setIsLogging] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const { setHasUserLogged } = useUserLoggedContext();
 
   const router = useRouter();
 
@@ -58,6 +61,7 @@ export function SigninForm() {
     setIsLogging(true);
     signInWithEmailAndPassword(auth, data.email, data.password)
       .then(() => {
+        setHasUserLogged(true);
         router.push("/agendamentos");
       })
       .catch((error) => {

@@ -1,8 +1,18 @@
+"use client";
+
 import { Container } from "@/components/Container";
 import { ScheduleForm } from "./scheduleForm";
 import Link from "next/link";
+import { useUserLoggedContext } from "@/context/userLogged";
+import { useRouter } from "next/navigation";
 
 export default function Agendar() {
+  const { push } = useRouter();
+  const { hasUserLogged } = useUserLoggedContext();
+
+  if (!hasUserLogged) {
+    push("/entrar");
+  }
   return (
     <Container>
       <nav className="absolute top-28">

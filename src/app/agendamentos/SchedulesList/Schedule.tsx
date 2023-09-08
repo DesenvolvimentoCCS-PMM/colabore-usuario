@@ -76,12 +76,12 @@ export function Schedule({ data }: ScheduleDataProps) {
   };
 
   const styleVariants = {
-    scheduled: data.status === 0 && "bg-green-600 text-white",
+    scheduled: data.status === 0 && "bg-blueCol text-white",
     completedColor:
-      data.status === 1 && "bg-gray-500 text-gray-300 border-black",
+      data.status === 1 && "bg-green-600 text-gray-300 border-black",
     deletedColor: data.status === 2 && "bg-red-500 text-white",
-    scheduledTextColor: data.status === 0 && "text-green-500",
-    completedTextColor: data.status === 1 && "text-gray-400",
+    scheduledTextColor: data.status === 0 && "text-blueCol",
+    completedTextColor: data.status === 1 && "text-green-600",
     deletedTextColor: data.status === 2 && "text-red-500",
   };
 

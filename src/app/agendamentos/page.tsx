@@ -10,12 +10,14 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useUserDataContext } from "@/context/userContext";
 import { doc, getDoc } from "firebase/firestore";
 import { SchedulePageSkeletonLoading } from "@/components/loading/SchedulePageSkeletonLoading";
+import { useUserLoggedContext } from "@/context/userLogged";
 
 export default function Agendamentos() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   const { setUserData, userData } = useUserDataContext();
+  const { hasUserLogged } = useUserLoggedContext();
 
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
@@ -42,6 +44,10 @@ export default function Agendamentos() {
       userData.fullName.split(" ")[1]
     }`,
   };
+
+  if (!hasUserLogged) {
+    router.push("/entrar");
+  }
 
   return (
     <Container>
