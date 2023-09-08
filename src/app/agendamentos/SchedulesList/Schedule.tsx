@@ -9,6 +9,7 @@ import {
   Checks,
   CaretUp,
   XCircle,
+  Note,
 } from "phosphor-react";
 import { ScheduleDataType } from "@/types/Schedule";
 import { useUserDataContext } from "@/context/userContext";
@@ -16,6 +17,8 @@ import { db } from "@/services/firebase";
 import { notifyError, notifySuccess } from "@/components/Toast";
 import { useUpdateScheduleView } from "@/context/schedulesViewContext";
 import { doc, updateDoc } from "firebase/firestore";
+import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
+import { ScheduleVoucher } from "@/components/Voucher";
 
 interface ScheduleDataProps {
   data: ScheduleDataType;
@@ -27,25 +30,39 @@ export function Schedule({ data }: ScheduleDataProps) {
   const { updateScheduleView } = useUpdateScheduleView();
 
   const cancelSchedule = async () => {
-    //Notificar a equipe ?
-    if (confirm("Confirmar cancelamento do agendamento? ")) {
-      try {
-        const docRef = doc(db, "agendamento", data.uid);
+    const cDate = new Date().toLocaleDateString();
 
-        await updateDoc(docRef, {
-          status: 2,
-          deleted_at: currentDate(),
-          deleted_by: userData.fullName,
-        });
-        updateScheduleView();
-        notifySuccess("Agendamento cancelado com sucesso!");
-      } catch (error) {
-        notifyError(
-          "Não foi possível cancelar o agendamento, tente novamente mais tarde!"
-        );
+    const date = new Date(data.date);
+    date.setDate(date.getDate() + 1);
+    const inputDate = date.toLocaleDateString();
+
+    if (cDate === inputDate) {
+      notifyError(
+        "Lamentamos informar que não é possível cancelar o agendamento hoje, pois já é o dia do agendamento. Caso haja necessidade de alteração, por favor, entre em contato conosco para que possamos ajudá-lo(a) "
+      );
+    } else {
+      if (confirm("Confirmar cancelamento do agendamento? ")) {
+        try {
+          const docRef = doc(db, "agendamento", data.uid);
+
+          await updateDoc(docRef, {
+            status: 2,
+            deleted_at: currentDate(),
+            deleted_by: userData.fullName,
+          });
+          updateScheduleView();
+          notifySuccess("Agendamento cancelado com sucesso!");
+        } catch (error) {
+          notifyError(
+            "Não foi possível cancelar o agendamento, tente novamente mais tarde!"
+          );
+        }
       }
     }
+    //Notificar a equipe ?
   };
+
+  const downloadVoucher = () => {};
 
   const toggleModal = () => {
     setIsOpen(!isOpen);
@@ -124,6 +141,34 @@ export function Schedule({ data }: ScheduleDataProps) {
                   Entrar em contato
                 </span>
               </a>
+
+              <PDFDownloadLink
+                className="px-3 py-3 rounded-3xl text-sm flex items-center justify-center gap-x-1 max-w-xs transition-all group bg-yellow-600 hover:scale-95 hover:brightness-95 sm:w-max "
+                document={
+                  <ScheduleVoucher
+                    date={dateToDDMMAA(data.date)}
+                    name={data.userInfo.name}
+                    scheduleCode={data.uid.slice(0, 6)}
+                    service={formatations.resumeService}
+                    time={data.startHour}
+                  />
+                }
+              >
+                <Note size={26} className="text-white" />
+                <span className="w-0 m-[-2px] overflow-hidden text-white transition-all duration-300 group-hover:w-28 group-hover:m-auto">
+                  Comprovante
+                </span>
+              </PDFDownloadLink>
+
+              {/* <PDFViewer>
+                <ScheduleVoucher
+                  date={dateToDDMMAA(data.date)}
+                  name={data.userInfo.name}
+                  scheduleCode={123}
+                  service={formatations.resumeService}
+                  time={data.startHour}
+                />
+              </PDFViewer> */}
 
               {scheduleConfigs.scheduled && (
                 <button

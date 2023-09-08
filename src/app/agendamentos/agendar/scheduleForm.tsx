@@ -236,6 +236,7 @@ export function ScheduleForm() {
         created_by: user?.uid,
         status: 0,
         reservedTimes,
+        scheduleCode: user?.uid.slice(0, 4),
       });
 
       notifySuccess("Agendamento realizado com sucesso!");
