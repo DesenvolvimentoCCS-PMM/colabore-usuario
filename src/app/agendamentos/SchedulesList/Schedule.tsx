@@ -100,7 +100,7 @@ export function Schedule({ data }: ScheduleDataProps) {
     <div className="w-full max-w-7xl z-20">
       {/* Container de interação*/}
       <div className="shadow-md rounded-lg bg-slate-50 z-20 relative transition-all hover:bg-slate-100">
-        <div className="flex items-center lg:justify-between flex-wrap flex-col md:flex-row">
+        <div className="flex items-center lg:justify-between flex-wrap relative flex-col md:flex-row">
           {/* Dados da reunião */}
           <div
             className={`flex flex-col items-center justify-center gap-y-2 ${styleVariants.scheduled} ${styleVariants.completedColor} ${styleVariants.deletedColor} h-28 w-full lg:w-40`}

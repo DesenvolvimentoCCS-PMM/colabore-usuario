@@ -67,7 +67,7 @@ export function ScheduleVoucher({
   service,
 }: ScheduleVoucherProps) {
   return (
-    <Document title="Comprovante de agendamento - Espaço Colabore">
+    <Document title="Comprovante - Espaço Colabore">
       <Page size="A4" style={styles.page}>
         <View style={styles.section}>
           <Text style={styles.logo}>Espaço Colabore</Text>
@@ -95,7 +95,7 @@ export function ScheduleVoucher({
           <Text>
             ----------------------------------------------------------------------------------------------
           </Text>
-          <Text style={{ marginTop: 10, fontSize: 14 }}>
+          <Text style={{ marginTop: 10, fontSize: 12 }}>
             - Ao chegar no local, apresente este comprovante para uma das
             recepcionistas.
           </Text>
@@ -115,7 +115,7 @@ export function ScheduleVoucher({
             agendamentos.
           </Text>
 
-          <Text style={{ marginTop: 40, fontWeight: "semibold", fontSize: 12 }}>
+          <Text style={{ marginTop: 20, fontWeight: "semibold", fontSize: 12 }}>
             Equipe Espaço Colabore - Mesquita, 2023
           </Text>
         </View>
