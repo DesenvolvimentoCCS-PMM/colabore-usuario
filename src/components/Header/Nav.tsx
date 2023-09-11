@@ -5,7 +5,7 @@ import homeIcon from "@/assets/icons/homeIcon.svg";
 import infoIcon from "@/assets/icons/infoIcon.svg";
 import arrobaIcon from "@/assets/icons/arrobaIcon.svg";
 import Link from "next/link";
-import { List, X } from "phosphor-react";
+import { At, House, Info, List, X } from "phosphor-react";
 import { useState } from "react";
 
 export function Nav() {
@@ -34,39 +34,29 @@ export function Nav() {
           menuIsOpen ? "px-6 pb-10 pt-4 bg-blueCol right-0 " : "-right-full"
         } sm:static`}
       >
-        <div className=" text-white flex flex-col items-end gap-x-10 flex-wrap justify-end gap-y-2 sm:flex-row">
+        <div className=" text-blueCol flex flex-col items-end gap-x-10 flex-wrap justify-end gap-y-2 sm:flex-row">
           <Link
             href={"/"}
-            className={`flex items-center text-sm gap-x-3 transition-all border-b-2 border-b-blueCol hover:scale-105`}
+            className={`flex items-center text-sm gap-x-3 transition-all hover:scale-105`}
           >
-            <Image src={homeIcon} alt="Ícone de Home" height={18} width={18} />
+            <House size={24} className="text-blueCol" />
             Ínicio
           </Link>
 
           <Link
             target="_blank"
             href={"http://espacocolabore.mesquita.rj.gov.br/"}
-            className={`flex items-center text-sm gap-x-3 transition-all border-b-2 border-b-blueCol hover:scale-105`}
+            className={`flex items-center text-sm gap-x-3 transition-allhover:scale-105`}
           >
-            <Image
-              src={arrobaIcon}
-              alt="Ícone de Home"
-              height={18}
-              width={18}
-            />
+            <At size={24} className="text-blueCol" />
             Ir para o site
           </Link>
 
           <Link
             href={"/como-funciona"}
-            className={`flex items-center text-sm gap-x-3 transition-all border-b-2 border-b-blueCol hover:scale-105`}
+            className={`flex items-center text-sm gap-x-3 transition-all hover:scale-105`}
           >
-            <Image
-              src={infoIcon}
-              alt="Ícone de Informação"
-              height={18}
-              width={18}
-            />
+            <Info size={24} className="text-blueCol" />
             Como funciona
           </Link>
         </div>
