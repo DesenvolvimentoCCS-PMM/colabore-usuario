@@ -148,7 +148,7 @@ export function Schedule({ data }: ScheduleDataProps) {
                   <ScheduleVoucher
                     date={dateToDDMMAA(data.date)}
                     name={data.userInfo.name}
-                    scheduleCode={data.uid.slice(0, 6)}
+                    scheduleCode={data.scheduleCode}
                     service={formatations.resumeService}
                     time={data.startHour}
                   />
