@@ -9,6 +9,7 @@ import { auth, db } from "@/services/firebase";
 import { useUpdateScheduleView } from "@/context/schedulesViewContext";
 import { useScheduleContext } from "@/context/schedulesContext";
 import { sendEmailVerification } from "firebase/auth";
+import { notifySuccess } from "@/components/Toast";
 
 export function ScheduleList() {
   const [data, setData] = useState<ScheduleDataType[]>([]);
@@ -45,6 +46,10 @@ export function ScheduleList() {
     setDataFiltered(dataToDisplay);
   };
 
+  const reloadPage = () => {
+    window.location.reload();
+  };
+
   return (
     <div className="w-full pt-24">
       {user && !user.emailVerified ? (
@@ -54,11 +59,25 @@ export function ScheduleList() {
             não tenha recebido o email de confirmação,{" "}
             <button
               className="text-blue-500"
-              onClick={() => sendEmailVerification(user)}
+              onClick={() => {
+                sendEmailVerification(user);
+                notifySuccess(
+                  "E-mail enviado, verifique a sua caixa de mensagens!"
+                );
+              }}
             >
               clique aqui.
             </button>
           </p>
+
+          <div className="mt-4">
+            <button
+              onClick={reloadPage}
+              className="px-4 py-2 bg-blueCol text-white rounded-2xl"
+            >
+              Já verifiquei
+            </button>
+          </div>
         </div>
       ) : (
         <div>
