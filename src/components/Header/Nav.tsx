@@ -18,14 +18,14 @@ export function Nav() {
           className="sm:hidden"
           onClick={() => setMenuIsOpen((state) => !state)}
         >
-          <X size={40} color="white" />
+          <X size={40} className="text-blueCol" />
         </button>
       ) : (
         <button
           className="sm:hidden"
           onClick={() => setMenuIsOpen((state) => !state)}
         >
-          <List size={40} color="white" />
+          <List size={40} className="text-blueCol" />
         </button>
       )}
 
@@ -34,12 +34,12 @@ export function Nav() {
           menuIsOpen ? "px-6 pb-10 pt-4 bg-blueCol right-0 " : "-right-full"
         } sm:static`}
       >
-        <div className=" text-blueCol flex flex-col items-end gap-x-10 flex-wrap justify-end gap-y-2 sm:flex-row">
+        <div className=" text-white flex flex-col items-end gap-x-10 flex-wrap justify-end gap-y-2 sm:flex-row sm:text-blueCol">
           <Link
             href={"/"}
             className={`flex items-center text-sm gap-x-3 transition-all hover:scale-105`}
           >
-            <House size={24} className="text-blueCol" />
+            <House size={24} className="text-white sm:text-blueCol" />
             Ínicio
           </Link>
 
@@ -48,7 +48,7 @@ export function Nav() {
             href={"http://espacocolabore.mesquita.rj.gov.br/"}
             className={`flex items-center text-sm gap-x-3 transition-allhover:scale-105`}
           >
-            <At size={24} className="text-blueCol" />
+            <At size={24} className="text-white sm:text-blueCol" />
             Ir para o site
           </Link>
 
@@ -56,7 +56,7 @@ export function Nav() {
             href={"/como-funciona"}
             className={`flex items-center text-sm gap-x-3 transition-all hover:scale-105`}
           >
-            <Info size={24} className="text-blueCol" />
+            <Info size={24} className="text-white sm:text-blueCol" />
             Como funciona
           </Link>
         </div>

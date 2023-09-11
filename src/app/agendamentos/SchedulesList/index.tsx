@@ -58,14 +58,6 @@ export function ScheduleList() {
             >
               clique aqui.
             </button>
-            <div className="mt-4">
-              <button
-                className="bg-blueCol py-2 px-4 rounded-2xl text-white"
-                onClick={updateScheduleView}
-              >
-                Já verifiquei
-              </button>
-            </div>
           </p>
         </div>
       ) : (

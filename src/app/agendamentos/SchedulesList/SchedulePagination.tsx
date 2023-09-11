@@ -8,6 +8,7 @@ import { Clock } from "phosphor-react";
 import Image from "next/image";
 
 import NoDataImage from "@/assets/noData.svg";
+import Link from "next/link";
 
 interface SchedulePaginationProps {
   data: ScheduleDataType[];
@@ -66,10 +67,13 @@ export function SchedulePagination({ data }: SchedulePaginationProps) {
 
       {/* Botão agendar */}
       <div className="flex justify-center">
-        <Button href="/agendamentos/agendar">
+        <Link
+          className="flex items-center gap-x-2 rounded-3xl bg-[#CC9935] px-10 py-2 max-w-max text-white font-medium text-sm uppercase disabled:opacity-50 disabled:pointer-events-none sm:text-base"
+          href="/agendamentos/agendar"
+        >
           Agendar
           <Clock size={24} />
-        </Button>
+        </Link>
       </div>
     </div>
   );
