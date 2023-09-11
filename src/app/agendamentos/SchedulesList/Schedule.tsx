@@ -160,16 +160,6 @@ export function Schedule({ data }: ScheduleDataProps) {
                 </span>
               </PDFDownloadLink>
 
-              {/* <PDFViewer>
-                <ScheduleVoucher
-                  date={dateToDDMMAA(data.date)}
-                  name={data.userInfo.name}
-                  scheduleCode={123}
-                  service={formatations.resumeService}
-                  time={data.startHour}
-                />
-              </PDFViewer> */}
-
               {scheduleConfigs.scheduled && (
                 <button
                   className="px-3 py-3 rounded-3xl text-sm flex items-center justify-center gap-x-1 max-w-xs transition-all group bg-red-500 hover:scale-95 hover:brightness-95 sm:w-max "
@@ -230,6 +220,12 @@ export function Schedule({ data }: ScheduleDataProps) {
         <div className="grid grid-cols-1 gap-8">
           {/* Col 1 */}
           <div className="flex flex-col">
+            <div className="inline-flex items-center gap-x-2 my-1 w-full">
+              <h3 className="text-sm font-semibold ">Código de agendamento:</h3>
+              <p className="text-lg uppercase tracking-widest ">
+                {data.scheduleCode}
+              </p>
+            </div>
             <div className="inline-flex gap-x-2 my-1 w-full">
               <h3 className="text-sm font-semibold">Motivo da solicitação:</h3>
               <p className="text-sm">{data.motive}</p>

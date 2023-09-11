@@ -17,6 +17,7 @@ import {
   dateToDDMMAA,
   dateToDefaultDb,
 } from "@/utils/dateFunctions";
+import { v4, v1, v3 } from "uuid";
 
 const scheduleFormSchema = z.object({
   service: z.string(),
@@ -185,6 +186,11 @@ export function ScheduleForm() {
     }
   };
 
+  const generateScheduleId = () => {
+    const id = v4();
+    return id.slice(0, 6);
+  };
+
   const checkIfTimeIsAvaiableToday = (date: string, inputTime: string) => {
     const currentDate = new Date();
     const inputDate = new Date(date);
@@ -236,7 +242,7 @@ export function ScheduleForm() {
         created_by: user?.uid,
         status: 0,
         reservedTimes,
-        scheduleCode: user?.uid.slice(0, 4),
+        scheduleCode: generateScheduleId(),
       });
 
       notifySuccess("Agendamento realizado com sucesso!");

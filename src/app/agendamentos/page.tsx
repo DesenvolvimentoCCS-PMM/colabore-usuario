@@ -45,10 +45,6 @@ export default function Agendamentos() {
     }`,
   };
 
-  if (!hasUserLogged) {
-    router.push("/entrar");
-  }
-
   return (
     <Container>
       {loading ? (

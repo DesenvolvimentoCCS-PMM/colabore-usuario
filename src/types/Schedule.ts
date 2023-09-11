@@ -18,4 +18,5 @@ export interface ScheduleDataType {
   hasCoffeBreak: string;
   lgpd: boolean;
   reservedTimes: string[];
+  scheduleCode: string;
 }
