@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ButtonHTMLAttributes, ReactNode } from "react";
 
 interface DefaultButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  isLink?: boolean;
+  islink?: boolean;
   href?: string;
   children: ReactNode;
 }
@@ -13,7 +13,7 @@ export function Button(props: DefaultButtonProps) {
 
   return (
     <>
-      {props.isLink ? (
+      {props.islink ? (
         <Link href={props.href!} className={defaultStyle}>
           {props.children}
         </Link>

@@ -17,7 +17,7 @@ import {
   dateToDDMMAA,
   dateToDefaultDb,
 } from "@/utils/dateFunctions";
-import { v4, v1, v3 } from "uuid";
+import { v4 } from "uuid";
 
 const scheduleFormSchema = z.object({
   service: z.string(),
@@ -578,7 +578,7 @@ export function ScheduleForm() {
           )}
 
           <div className="flex justify-end pt-6">
-            <Button isLink={false} type="submit" disabled={isFetching}>
+            <Button islink={false} type="submit" disabled={isFetching}>
               {isFetching ? "Agendando..." : "Agendar >"}
             </Button>
           </div>

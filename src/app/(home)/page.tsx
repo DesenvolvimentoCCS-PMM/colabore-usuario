@@ -47,7 +47,7 @@ export default function Home() {
               Já tenho cadastro
             </Link>
 
-            <Button href={"/cadastro"} isLink>
+            <Button href={"/cadastro"} islink>
               <Clock size={20} color="white" />
               Cadastra-se
             </Button>

@@ -24,7 +24,7 @@ export function SchedulePagination({ data }: SchedulePaginationProps) {
 
   const notShowData = () => {
     return (
-      <div className="flex flex-col justify-center items-center">
+      <div className="flex flex-col justify-center items-center ">
         <h1 className="text-blueCol text-lg text-center font-medium pt-10">
           Ainda não há informações para exibir. 😕
         </h1>
@@ -41,7 +41,7 @@ export function SchedulePagination({ data }: SchedulePaginationProps) {
   };
 
   return (
-    <div className="mt-4 space-y-8">
+    <div className="mt-4 space-y-4">
       {/* Dados */}
 
       {data.length === 0 ? notShowData() : showDatas()}
@@ -65,8 +65,8 @@ export function SchedulePagination({ data }: SchedulePaginationProps) {
       </div>
 
       {/* Botão agendar */}
-      <div className="flex justify-center pt-4">
-        <Button isLink href="/agendamentos/agendar">
+      <div className="flex justify-center">
+        <Button href="/agendamentos/agendar">
           Agendar
           <Clock size={24} />
         </Button>

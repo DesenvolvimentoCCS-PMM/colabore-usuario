@@ -171,7 +171,7 @@ export function SigninForm() {
         </div>
 
         <div className="flex flex-col justify-center items-center gap-y-6 pt-6">
-          <Button isLink={false} type="submit" disabled={isLogging}>
+          <Button islink={false} type="submit" disabled={isLogging}>
             {isLogging ? "Entrando..." : "Entrar >"}
           </Button>
 

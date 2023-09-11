@@ -4,41 +4,49 @@ import { Container } from "@/components/Container";
 import { ScheduleForm } from "./scheduleForm";
 import Link from "next/link";
 import { useUserLoggedContext } from "@/context/userLogged";
-import { useRouter } from "next/navigation";
 
 export default function Agendar() {
-  const { push } = useRouter();
   const { hasUserLogged } = useUserLoggedContext();
 
-  if (!hasUserLogged) {
-    push("/entrar");
-  }
   return (
     <Container>
-      <nav className="absolute top-28">
-        <Link href={"/agendamentos"} className="text-gray-400  text-xs">
-          agendamentos {" > "}
-        </Link>
-
-        <span className="bg-blueCol text-white p-1 rounded-lg text-xs">
-          agendar
-        </span>
-      </nav>
-      <main>
-        <section className="space-y-4 max-w-md pl-2 sm:pl-8">
-          <h1 className="text-2xl text-yellowCol font-medium sm:text-5xl">
-            Espaço Colabore
+      {!hasUserLogged ? (
+        <div>
+          <h1 className="text-md text-red-500">
+            Apenas usuários logados podem acessar essa página!
           </h1>
-          <p className="text-base font-normal sm:text-lg">
-            Preencha o formulário para relaizar o seu agendamento
-          </p>
-        </section>
+          <Link href={"/entrar"} className="text-md underline text-purple-900">
+            Logar
+          </Link>
+        </div>
+      ) : (
+        <>
+          <nav className="absolute top-28">
+            <Link href={"/agendamentos"} className="text-gray-400  text-xs">
+              agendamentos {" > "}
+            </Link>
 
-        <section className="mt-10">
-          <h2 className="bg-yellowCol text-white p-3">Agendamento</h2>
-          <ScheduleForm />
-        </section>
-      </main>
+            <span className="bg-blueCol text-white p-1 rounded-lg text-xs">
+              agendar
+            </span>
+          </nav>
+          <main>
+            <section className="space-y-4 max-w-md pl-2 sm:pl-8">
+              <h1 className="text-2xl text-yellowCol font-medium sm:text-5xl">
+                Espaço Colabore
+              </h1>
+              <p className="text-base font-normal sm:text-lg">
+                Preencha o formulário para relaizar o seu agendamento
+              </p>
+            </section>
+
+            <section className="mt-10">
+              <h2 className="bg-yellowCol text-white p-3">Agendamento</h2>
+              <ScheduleForm />
+            </section>
+          </main>
+        </>
+      )}
     </Container>
   );
 }
