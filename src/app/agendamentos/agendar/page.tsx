@@ -10,17 +10,7 @@ export default function Agendar() {
 
   return (
     <Container>
-      {!hasUserLogged ? (
-        <div>
-          <p className="text-md text-red-500">
-            Apenas usuários logados podem acessar essa página!
-          </p>
-          <Link href={"/entrar"} className="text-md underline text-purple-900">
-            Logar
-          </Link>
-        </div>
-      ) : (
-        <>
+     
           <nav className="absolute top-28">
             <Link href={"/agendamentos"} className="text-gray-400  text-xs">
               agendamentos {" > "}
@@ -45,8 +35,6 @@ export default function Agendar() {
               <ScheduleForm />
             </section>
           </main>
-        </>
-      )}
     </Container>
   );
 }
