@@ -15,6 +15,52 @@ import { doc, setDoc } from "firebase/firestore";
 import InputMask from "react-input-mask";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
+const isValidCPF = (cpf: string) => {
+  cpf = cpf.replace(/[^\d]+/g, '');
+
+  if (cpf === '' || cpf.length !== 11) {
+    return false;
+  }
+
+  // Verifica se todos os dígitos são iguais
+  for (let i = 1; i < 11; i++) {
+    if (cpf[i] !== cpf[0]) {
+      break;
+    }
+    if (i === 10) {
+      return false;
+    }
+  }
+
+  // Calcula o primeiro dígito verificador
+  let sum = 0;
+  for (let i = 0; i < 9; i++) {
+    sum += parseInt(cpf.charAt(i)) * (10 - i);
+  }
+  let remainder = 11 - (sum % 11);
+  if (remainder === 10 || remainder === 11) {
+    remainder = 0;
+  }
+  if (remainder !== parseInt(cpf.charAt(9))) {
+    return false;
+  }
+
+  // Calcula o segundo dígito verificador
+  sum = 0;
+  for (let i = 0; i < 10; i++) {
+    sum += parseInt(cpf.charAt(i)) * (11 - i);
+  }
+  remainder = 11 - (sum % 11);
+  if (remainder === 10 || remainder === 11) {
+    remainder = 0;
+  }
+  if (remainder !== parseInt(cpf.charAt(10))) {
+    return false;
+  }
+
+  return true;
+};
+
 const signupSchema = z
   .object({
     fullName: z
@@ -50,7 +96,10 @@ const signupSchema = z
       .string()
       .nonempty("*O CPF é obrigatório")
       .min(12, "*O CPF deve ter 11 dígitos")
-      .max(14, "*O CPF deve ter 11 dígitos"),
+      .max(14, "*O CPF deve ter 11 dígitos")
+      .refine((cpf) => isValidCPF(cpf), {
+        message: "CPF inválido",
+      }),
     birthDate: z.string().nonempty("*A data de nascimento é obrigatória"),
     otherPhone: z.string(),
     profession: z.string().nonempty("*A profissão é obrigatória!"),
@@ -285,6 +334,7 @@ export function SignupForm() {
                 <input {...inputProps} type="tel" />
               )}
             />
+            
             {errors.cpf && (
               <small className="text-red-500 text-[10px] ml-2">
                 {errors.cpf.message}
