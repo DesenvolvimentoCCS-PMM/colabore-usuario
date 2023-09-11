@@ -47,40 +47,47 @@ export function ScheduleList() {
 
   return (
     <div className="w-full pt-24">
-    {user && !user.emailVerified ? (
-      <div className="text-red-500 mb-4">
-        <p>
-          Você precisa confirmar seu email para ter acesso a essa página. Caso
-          não tenha recebido o email de confirmação, {" "}
-          <button
-            className="text-blue-500"
-            onClick={() => sendEmailVerification(user)}
-          >
-            clique aqui
-          </button>
-          .
-        </p>
-      </div>
-    ) : (
-      <div>
-        <div className="flex items-center justify-between flex-wrap gap-4 mb-10">
-          <div className="flex items-center gap-x-2">
-            <div className="h-2 w-2 bg-blueCol"></div>
-            <span>Agendado</span>
+      {user && !user.emailVerified ? (
+        <div className="text-red-500 mb-4">
+          <p>
+            Você precisa confirmar seu email para ter acesso a essa página. Caso
+            não tenha recebido o email de confirmação,{" "}
+            <button
+              className="text-blue-500"
+              onClick={() => sendEmailVerification(user)}
+            >
+              clique aqui.
+            </button>
+            <div className="mt-4">
+              <button
+                className="bg-blueCol py-2 px-4 rounded-2xl text-white"
+                onClick={updateScheduleView}
+              >
+                Já verifiquei
+              </button>
+            </div>
+          </p>
+        </div>
+      ) : (
+        <div>
+          <div className="flex items-center justify-between flex-wrap gap-4 mb-10">
+            <div className="flex items-center gap-x-2">
+              <div className="h-2 w-2 bg-blueCol"></div>
+              <span>Agendado</span>
 
-            <div className="h-2 w-2 bg-green-600"></div>
-            <span>Concluídos</span>
+              <div className="h-2 w-2 bg-green-600"></div>
+              <span>Concluídos</span>
 
-            <div className="h-2 w-2 bg-red-500"></div>
-            <span>Cancelados</span>
+              <div className="h-2 w-2 bg-red-500"></div>
+              <span>Cancelados</span>
+            </div>
+
+            <Filter setFilteredData={setDataFiltered} data={data} />
           </div>
 
-          <Filter setFilteredData={setDataFiltered} data={data} />
+          <SchedulePagination data={dataFiltered} />
         </div>
-
-        <SchedulePagination data={dataFiltered} />
-      </div>
-    )}
-  </div>
-);
+      )}
+    </div>
+  );
 }

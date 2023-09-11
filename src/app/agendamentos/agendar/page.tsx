@@ -12,9 +12,9 @@ export default function Agendar() {
     <Container>
       {!hasUserLogged ? (
         <div>
-          <h1 className="text-md text-red-500">
+          <p className="text-md text-red-500">
             Apenas usuários logados podem acessar essa página!
-          </h1>
+          </p>
           <Link href={"/entrar"} className="text-md underline text-purple-900">
             Logar
           </Link>
