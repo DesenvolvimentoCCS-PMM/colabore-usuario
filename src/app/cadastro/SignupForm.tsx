@@ -13,7 +13,7 @@ import { notifyError, notifySuccess } from "@/components/Toast";
 import { Button } from "@/components/buttons/DefaultButton";
 import { doc, setDoc } from "firebase/firestore";
 import InputMask from "react-input-mask";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 
 const isValidCPF = (cpf: string) => {
   cpf = cpf.replace(/[^\d]+/g, '');
@@ -182,27 +182,41 @@ export function SignupForm() {
     }
   };
 
-  const signupUser = (data: signupSchemaType) => {
-    createUserWithEmailAndPassword(auth, data.email, data.password)
-      .then(({ user }) => {
-        const uid = user?.uid;
-        registerUser(data, uid);
-      })
-      .catch((error) => {
-        console.log(error);
-        if (error.code === "auth/email-already-in-use") {
-          notifyError("Esse e-mail já está em uso!");
-        } else {
-          notifyError("Ops! Algo deu errado. Tente novamente mais tarde.");
-        }
-      });
+  const signupUser = async (data: signupSchemaType) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+      const user = userCredential.user;
+  
+      // Enviar o email de verificação
+      await sendEmailVerification(user);
+  
+      const uid = user.uid;
+      await registerUser(data, uid);
+    } catch (error: any) {
+      console.error(error);
+  
+      if (error.code === "auth/email-already-in-use") {
+        notifyError("Esse e-mail já está em uso!");
+      } else {
+        notifyError("Ops! Algo deu errado. Tente novamente mais tarde.");
+      }
+    }
   };
-  const registerUser = async (allData: signupSchemaType, id: string) => {
-    const { passwordConfirmation, password, ...data } = allData;
-    await setDoc(doc(db, "users", id), data);
-    notifySuccess("Usuário criado com sucesso!");
-    router.push("/agendamentos");
+  
+  const registerUser = async (allData: any, id:string) => {
+    try {
+      const { passwordConfirmation, password, ...data } = allData;
+      await setDoc(doc(db, "users", id), data);
+      notifySuccess("Usuário criado com sucesso!");
+  
+      // Após o registro e envio de email, você pode redirecionar o usuário para a página de confirmação ou para onde desejar.
+      router.push("/agendamentos");
+    } catch (error) {
+      console.error(error);
+      notifyError("Ops! Algo deu errado. Tente novamente mais tarde.");
+    }
   };
+  
 
   const onSubmit: SubmitHandler<signupSchemaType> = (data) => {
     signupUser(data);
