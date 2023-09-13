@@ -237,6 +237,8 @@ export function ScheduleForm() {
         userInfo: {
           name: userData.fullName,
           email: user?.email,
+          cpf: userData.cpf,
+          whatsapp: userData.whatsapp,
         },
         ...data,
         created_by: user?.uid,
@@ -266,7 +268,7 @@ export function ScheduleForm() {
         {/* Serviço */}
         <div className="flex flex-col gap-2 relative">
           <label
-            htmlFor="servico"
+            htmlFor="service"
             className={`font-semibold text-purpleCol ${
               errors.service && "text-red-500"
             } sm:text-lg`}
@@ -308,7 +310,7 @@ export function ScheduleForm() {
             </label>
             <input
               type="date"
-              id="data"
+              id="date"
               {...register("date")}
               onClick={() => setTimeIsValid(false)}
               className="bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full max-w-max"
