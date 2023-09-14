@@ -26,7 +26,7 @@ export default function Agendar() {
                 Espaço Colabore
               </h1>
               <p className="text-base font-normal sm:text-lg">
-                Preencha o formulário para relaizar o seu agendamento
+                Preencha o formulário para realizar o seu agendamento
               </p>
             </section>
 
