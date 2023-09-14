@@ -49,7 +49,7 @@ export default function Home() {
 
             <Button href={"/cadastro"} islink>
               <Clock size={20} color="white" />
-              Cadastra-se
+              Cadastre-se
             </Button>
           </div>
         </section>
