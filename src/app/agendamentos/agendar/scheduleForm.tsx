@@ -12,6 +12,8 @@ import { notifyError, notifySuccess } from "@/components/Toast";
 import { useRouter } from "next/navigation";
 import { useUserDataContext } from "@/context/userContext";
 import { useScheduleContext } from "@/context/schedulesContext";
+import emailjs from '@emailjs/browser';
+
 import {
   currentDate,
   dateToDDMMAA,
@@ -245,10 +247,11 @@ export function ScheduleForm() {
         status: 0,
         reservedTimes,
         scheduleCode: generateScheduleId(),
+        
       });
-
       notifySuccess("Agendamento realizado com sucesso!");
       setIsFetching(false);
+      sendEmail(data);
       push("/agendamentos");
     } catch (error) {
       notifyError(
@@ -258,6 +261,29 @@ export function ScheduleForm() {
       throw new Error();
     }
   };
+
+  function sendEmail() {
+
+    const templateParams = {
+      date: inputDate,
+      time: inputTime,
+      service: inputService,
+      name: userData.fullName,
+      email: user?.email,
+      cpf: userData.cpf,
+      whatsapp: userData.whatsapp,
+    };
+
+    emailjs.send('service_mr1wja3', 'template_3llwjbz', templateParams, 'O2Li5jhZOOyYODvgB')
+      .then((res) => {
+        console.log('success email!', res.status, res.text);
+      })
+      .catch((error) => {
+        console.error('error sending email:', error);
+      });
+  }
+  
+  
 
   return (
     <form
