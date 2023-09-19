@@ -272,6 +272,9 @@ export function ScheduleForm() {
       email: user?.email,
       cpf: userData.cpf,
       whatsapp: userData.whatsapp,
+      motive: inputService,
+      obs: inputService,
+      to_email: user?.email
     };
 
     emailjs.send('service_mr1wja3', 'template_3llwjbz', templateParams, 'O2Li5jhZOOyYODvgB')
