@@ -63,12 +63,9 @@ const scheduleFormSchema = z.object({
       { message: "Data indisponível! Não funcionamos no fim de semana." }
     )
     .refine((date) => {
-      const currentDate = new Date().toLocaleDateString();
+      const currentDate = new Date();
       const inputDate = new Date(date);
-      inputDate.setDate(inputDate.getDate() + 1);
-      const localeInputDate = inputDate.toLocaleDateString();
-
-      return currentDate <= localeInputDate;
+      return currentDate <= inputDate;
     }, "Essa data já passou!"),
   startHour: z.string().nonempty("*Selecione um horário para continuar!"),
   totTime: z.string().nonempty("*Campo obrigatório"),
