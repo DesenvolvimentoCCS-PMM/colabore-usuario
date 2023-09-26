@@ -64,7 +64,10 @@ const scheduleFormSchema = z.object({
     )
     .refine((date) => {
       const currentDate = new Date();
+      currentDate.setUTCHours(0, 0, 0, 0);
       const inputDate = new Date(date);
+      inputDate.setUTCHours(0, 0, 0, 0);
+
       return currentDate <= inputDate;
     }, "Essa data já passou!"),
   startHour: z.string().nonempty("*Selecione um horário para continuar!"),
