@@ -12,7 +12,7 @@ import { notifyError, notifySuccess } from "@/components/Toast";
 import { useRouter } from "next/navigation";
 import { useUserDataContext } from "@/context/userContext";
 import { useScheduleContext } from "@/context/schedulesContext";
-import emailjs from '@emailjs/browser';
+import emailjs from "@emailjs/browser";
 
 import {
   currentDate,
@@ -122,7 +122,6 @@ export function ScheduleForm() {
     formState: { errors },
   } = useForm<scheduleFormSchemaType>({
     resolver: zodResolver(scheduleFormSchema),
-
     defaultValues: {
       totTime: "",
       hasCoffeBreak: "",
@@ -169,12 +168,16 @@ export function ScheduleForm() {
       );
 
       const scheduleAlreadyExists = scheduleData.some((data) => {
-        return (
-          //Deve acontecer:
-          timeIsReserved &&
-          data.date === inputDate &&
-          inputService === data.service
-        );
+        if (inputService === "Coworking (máximo 6 pessoas)") {
+          //Para saber se o coworking está disponivel, teremos q verificar a quantidade de computadores disponiveis, portanto o usuario poderá agendar no mesmo horario caso seja coworking.
+        } else {
+          return (
+            //Deve acontecer:
+            timeIsReserved &&
+            data.date === inputDate &&
+            inputService === data.service
+          );
+        }
       });
 
       if (scheduleAlreadyExists) {
@@ -244,14 +247,14 @@ export function ScheduleForm() {
         },
         ...data,
         created_by: user?.uid,
+        created_at: new Date(),
         status: 0,
         reservedTimes,
         scheduleCode: generateScheduleId(),
-        
       });
       notifySuccess("Agendamento realizado com sucesso!");
       setIsFetching(false);
-      sendEmail(data);
+      // sendEmail(data);
       push("/agendamentos");
     } catch (error) {
       notifyError(
@@ -263,7 +266,6 @@ export function ScheduleForm() {
   };
 
   function sendEmail() {
-
     const templateParams = {
       date: inputDate,
       time: inputTime,
@@ -274,19 +276,23 @@ export function ScheduleForm() {
       whatsapp: userData.whatsapp,
       motive: inputService,
       obs: inputService,
-      to_email: user?.email
+      to_email: user?.email,
     };
 
-    emailjs.send('service_mr1wja3', 'template_3llwjbz', templateParams, 'O2Li5jhZOOyYODvgB')
+    emailjs
+      .send(
+        "service_mr1wja3",
+        "template_3llwjbz",
+        templateParams,
+        "O2Li5jhZOOyYODvgB"
+      )
       .then((res) => {
-        console.log('success email!', res.status, res.text);
+        console.log("success email!", res.status, res.text);
       })
       .catch((error) => {
-        console.error('error sending email:', error);
+        console.error("error sending email:", error);
       });
   }
-  
-  
 
   return (
     <form
