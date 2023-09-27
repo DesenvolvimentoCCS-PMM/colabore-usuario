@@ -221,7 +221,7 @@ export function ScheduleForm() {
     });
 
     if (inputService === coworkingServiceText) {
-      return coworkingList.length > maxCoworkingAccepteds;
+      return coworkingList.length >= maxCoworkingAccepteds;
     }
 
     return scheduleData.some((data) => {
