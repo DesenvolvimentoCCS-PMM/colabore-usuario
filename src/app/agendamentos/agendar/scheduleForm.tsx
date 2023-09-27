@@ -14,11 +14,6 @@ import { useUserDataContext } from "@/context/userContext";
 import { useScheduleContext } from "@/context/schedulesContext";
 import emailjs from "@emailjs/browser";
 
-import {
-  currentDate,
-  dateToDDMMAA,
-  dateToDefaultDb,
-} from "@/utils/dateFunctions";
 import { v4 } from "uuid";
 
 const scheduleFormSchema = z.object({
@@ -160,28 +155,15 @@ export function ScheduleForm() {
       return notifyError("Preencha todos os campos para continuar!");
     } else {
       //Pegar os horarios reservados do bd
-      const timeIsReserved = getReservedTimes(inputTime);
 
-      const timeNotAvaiableForCurrentDay = checkIfTimeIsAvaiableToday(
-        inputDate,
-        inputTime
-      );
+      const timeNotAvaiableForCurrentDay = checkIfTimeIsAvaiableToday();
 
-      const scheduleAlreadyExists = scheduleData.some((data) => {
-        if (inputService === "Coworking (máximo 6 pessoas)") {
-          //Para saber se o coworking está disponivel, teremos q verificar a quantidade de computadores disponiveis, portanto o usuario poderá agendar no mesmo horario caso seja coworking.
-        } else {
-          return (
-            //Deve acontecer:
-            timeIsReserved &&
-            data.date === inputDate &&
-            inputService === data.service
-          );
-        }
-      });
+      const scheduleAlreadyExists = checkIfScheduleAlreadyExists();
+
+      console.log(scheduleAlreadyExists);
 
       if (scheduleAlreadyExists) {
-        return notifyError("Esse agendamento já foi realizado.");
+        return notifyError("Não há mais vagas para esse agendamento.");
       } else if (timeNotAvaiableForCurrentDay) {
         return notifyError("Este horário não está mais disponivel para hoje.");
       } else {
@@ -196,13 +178,13 @@ export function ScheduleForm() {
     return id.slice(0, 6);
   };
 
-  const checkIfTimeIsAvaiableToday = (date: string, inputTime: string) => {
+  const checkIfTimeIsAvaiableToday = () => {
     const currentDate = new Date();
-    const inputDate = new Date(date);
-    inputDate.setDate(inputDate.getDate() + 1);
+    const userData = new Date(inputDate);
+    userData.setDate(userData.getDate() + 1);
 
     const datesIsEquals =
-      currentDate.toLocaleDateString() === inputDate.toLocaleDateString();
+      currentDate.toLocaleDateString() === userData.toLocaleDateString();
 
     const inputHours = Number(inputTime.split(":")[0]);
     const currentHours = currentDate.getHours();
@@ -226,9 +208,26 @@ export function ScheduleForm() {
     return reservedTimes;
   };
 
-  const getReservedTimes = (inputTime: string) => {
+  const checkIfScheduleAlreadyExists = () => {
+    const coworkingServiceText = "Coworking (máximo 6 pessoas)";
+    const maxCoworkingAccepteds = 6;
+
+    const coworkingList = scheduleData.filter((data) => {
+      return (
+        data.service === coworkingServiceText &&
+        data.date === inputDate &&
+        data.status === 0
+      );
+    });
+
+    if (inputService === coworkingServiceText) {
+      return coworkingList.length > maxCoworkingAccepteds;
+    }
+
     return scheduleData.some((data) => {
-      return data.reservedTimes.includes(inputTime);
+      if (data.service === inputService && data.date === inputDate) {
+        return data.reservedTimes.includes(inputTime);
+      }
     });
   };
 
