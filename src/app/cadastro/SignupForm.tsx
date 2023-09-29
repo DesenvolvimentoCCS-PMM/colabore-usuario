@@ -11,14 +11,17 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { notifyError, notifySuccess } from "@/components/Toast";
 import { Button } from "@/components/buttons/DefaultButton";
-import { doc, setDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import InputMask from "react-input-mask";
-import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
 
 const isValidCPF = (cpf: string) => {
-  cpf = cpf.replace(/[^\d]+/g, '');
+  cpf = cpf.replace(/[^\d]+/g, "");
 
-  if (cpf === '' || cpf.length !== 11) {
+  if (cpf === "" || cpf.length !== 11) {
     return false;
   }
 
@@ -101,7 +104,7 @@ const signupSchema = z
         message: "CPF inválido",
       }),
     birthDate: z.string().nonempty("*A data de nascimento é obrigatória"),
-    otherPhone: z.string(),
+    gender: z.string().nonempty("*O gênero é obrigatório!"),
     profession: z.string().nonempty("*A profissão é obrigatória!"),
     password: z
       .string()
@@ -131,10 +134,10 @@ const signupSchema = z
       }),
     }),
   })
-  .refine((fields) => fields.whatsapp !== fields.otherPhone, {
-    message: "Os números de telefone devem ser diferentes!",
-    path: ["otherPhone"],
-  })
+  // .refine((fields) => fields.whatsapp !== fields.otherPhone, {
+  //   message: "Os números de telefone devem ser diferentes!",
+  //   path: ["otherPhone"],
+  // })
   .refine((fields) => fields.password === fields.passwordConfirmation, {
     message: "As senhas devem ser iguais!",
     path: ["passwordConfirmation"],
@@ -184,17 +187,21 @@ export function SignupForm() {
 
   const signupUser = async (data: signupSchemaType) => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
       const user = userCredential.user;
-  
+
       // Enviar o email de verificação
       await sendEmailVerification(user);
-  
+
       const uid = user.uid;
       await registerUser(data, uid);
     } catch (error: any) {
       console.error(error);
-  
+
       if (error.code === "auth/email-already-in-use") {
         notifyError("Esse e-mail já está em uso!");
       } else {
@@ -202,13 +209,13 @@ export function SignupForm() {
       }
     }
   };
-  
-  const registerUser = async (allData: any, id:string) => {
+
+  const registerUser = async (allData: any, id: string) => {
     try {
       const { passwordConfirmation, password, ...data } = allData;
       await setDoc(doc(db, "users", id), data);
       notifySuccess("Usuário criado com sucesso!");
-  
+
       // Após o registro e envio de email, você pode redirecionar o usuário para a página de confirmação ou para onde desejar.
       router.push("/agendamentos");
     } catch (error) {
@@ -216,7 +223,6 @@ export function SignupForm() {
       notifyError("Ops! Algo deu errado. Tente novamente mais tarde.");
     }
   };
-  
 
   const onSubmit: SubmitHandler<signupSchemaType> = (data) => {
     signupUser(data);
@@ -348,7 +354,7 @@ export function SignupForm() {
                 <input {...inputProps} type="tel" />
               )}
             />
-            
+
             {errors.cpf && (
               <small className="text-red-500 text-[10px] ml-2">
                 {errors.cpf.message}
@@ -356,28 +362,29 @@ export function SignupForm() {
             )}
           </div>
 
-          {/* OTHER NUMBER */}
+          {/* GENDER */}
           <div className="flex flex-col w-full sm:w-1/3 gap-y-2">
             <label
-              htmlFor="otherPhone"
+              htmlFor="gender"
               className={`text-sm font-medium ${
-                errors.otherPhone ? "text-red-500" : ""
+                errors.gender ? "text-red-500" : ""
               } `}
             >
-              Outro telefone
+              Gênero
             </label>
-            <InputMask
-              placeholder="(21)99999-9999"
-              {...register("otherPhone")}
+            <select
+              {...register("gender")}
               className={`bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full} sm:text-base`}
-              mask="(99)99999-9999"
-              inputRef={(inputProps: any) => (
-                <input {...inputProps} type="tel" />
-              )}
-            />
-            {errors.otherPhone && (
+            >
+              <option selected value={"masc"}>
+                Masculino
+              </option>
+              <option value={"fem"}>Feminino</option>
+              <option value={"other"}>Outro</option>
+            </select>
+            {errors.gender && (
               <small className="text-red-500 text-[10px] ml-2">
-                {errors.otherPhone.message}
+                {errors.gender.message}
               </small>
             )}
           </div>
