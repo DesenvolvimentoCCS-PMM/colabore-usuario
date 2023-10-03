@@ -131,7 +131,7 @@ export function ScheduleForm() {
 
   const [isFetching, setIsFetching] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  const [timeIsValid, setTimeIsValid] = useState<null | boolean>(null);
+  const [isVerified, setIsVerified] = useState<null | boolean>(null);
   const [showAlertTime, setShowAlertTime] = useState(false);
 
   useEffect(() => {
@@ -168,7 +168,7 @@ export function ScheduleForm() {
         return notifyError("Este horário não está mais disponivel para hoje.");
       } else {
         notifySuccess("Horário disponível, prossiga!");
-        return setTimeIsValid(true);
+        return setIsVerified(true);
       }
     }
   };
@@ -264,6 +264,10 @@ export function ScheduleForm() {
     }
   };
 
+  const requestFormVerifiy = () => {
+    setIsVerified(false);
+  };
+
   function sendEmail() {
     const templateParams = {
       date: inputDate,
@@ -312,7 +316,7 @@ export function ScheduleForm() {
           <select
             id="service"
             {...register("service")}
-            onChange={() => setTimeIsValid(false)}
+            onChange={requestFormVerifiy}
             className="bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full max-w-xs indent-5"
           >
             <option>Reunião {"(máximo 6 pessoas)"}</option>
@@ -347,7 +351,7 @@ export function ScheduleForm() {
               type="date"
               id="date"
               {...register("date")}
-              onClick={() => setTimeIsValid(false)}
+              onClick={requestFormVerifiy}
               className="bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full max-w-max"
             />
             {errors.date && (
@@ -370,6 +374,7 @@ export function ScheduleForm() {
             <select
               className="bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full max-w-max"
               {...register("startHour")}
+              onClick={requestFormVerifiy}
             >
               {inputTotTime === "2"
                 ? hoursWith2hUsage.map((hour, index) => {
@@ -408,6 +413,7 @@ export function ScheduleForm() {
               value={1}
               {...register("totTime")}
               className="cursor-pointer"
+              onClick={requestFormVerifiy}
             />
             <label
               htmlFor="oneHour"
@@ -421,6 +427,7 @@ export function ScheduleForm() {
               value={2}
               {...register("totTime")}
               className="cursor-pointer"
+              onClick={requestFormVerifiy}
             />
             <label
               htmlFor="twoHour"
@@ -442,7 +449,7 @@ export function ScheduleForm() {
             </small>
           )}
         </div>
-        {!timeIsValid && (
+        {!isVerified && (
           <div className="flex justify-end">
             <button
               onClick={handleTime}
@@ -456,7 +463,7 @@ export function ScheduleForm() {
       </div>
 
       {/* Hora e Coffe Break */}
-      {timeIsValid && (
+      {isVerified && (
         <>
           <div
             className={`flex flex-col flex-wrap gap-6 sm:flex-row-reverse sm:justify-end`}
