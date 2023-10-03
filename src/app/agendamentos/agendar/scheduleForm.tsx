@@ -312,6 +312,7 @@ export function ScheduleForm() {
           <select
             id="service"
             {...register("service")}
+            onChange={() => setTimeIsValid(false)}
             className="bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full max-w-xs indent-5"
           >
             <option>Reunião {"(máximo 6 pessoas)"}</option>
