@@ -12,38 +12,27 @@ import { sendEmailVerification } from "firebase/auth";
 import { notifySuccess } from "@/components/Toast";
 
 export function ScheduleList() {
+  const { scheduleData } = useScheduleContext();
   const [data, setData] = useState<ScheduleDataType[]>([]);
   const [dataFiltered, setDataFiltered] = useState<ScheduleDataType[]>([]);
 
   const { updateScheduleView } = useUpdateScheduleView();
-  const { setScheduleData } = useScheduleContext();
+
+  const user = auth.currentUser;
+
   useEffect(() => {
     getData();
   }, [updateScheduleView]);
 
-  const user = auth.currentUser;
-
-  const getData = async () => {
-    const querySnapshot = await getDocs(collection(db, "schedules"));
-    const allDocuments: DocumentData[] = [];
-
-    querySnapshot.forEach((doc) => {
-      allDocuments.push({
-        ...doc.data(),
-        uid: doc.id,
-      });
-    });
-
-    const data = allDocuments as ScheduleDataType[];
-    const dataToDisplay = data.filter((doc) => {
+  const getData = () => {
+    const dataToDisplay = scheduleData.filter((doc) => {
       if (user) {
         return doc.created_by === user?.uid;
       }
     });
 
-    setScheduleData(data);
-    setData(dataToDisplay);
     setDataFiltered(dataToDisplay);
+    setData(dataToDisplay);
   };
 
   const reloadPage = () => {

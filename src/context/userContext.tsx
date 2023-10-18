@@ -1,17 +1,22 @@
 "use client";
 
+import { auth, db } from "@/services/firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { useRouter } from "next/navigation";
 import {
   Dispatch,
   ReactNode,
   SetStateAction,
   createContext,
   useContext,
+  useEffect,
   useState,
 } from "react";
 
 interface UserContextType {
   userData: User;
-  setUserData: Dispatch<SetStateAction<User>>;
+  loadingData: boolean;
 }
 
 const UserContext = createContext<UserContextType>({
@@ -34,7 +39,7 @@ const UserContext = createContext<UserContextType>({
     terms: false,
     uid: "",
   },
-  setUserData: () => {},
+  loadingData: true,
 });
 
 export const UserContextProvider = ({ children }: { children: ReactNode }) => {
@@ -57,9 +62,31 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     terms: false,
     uid: "",
   });
+  const [loadingData, setLoadingData] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const uid = user.uid;
+        const docRef = doc(db, "users", uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data() as User;
+
+          setUserData({ ...data, uid });
+        }
+
+        setLoadingData(false);
+      } else {
+        router.push("/entrar");
+      }
+    });
+  }, []);
 
   return (
-    <UserContext.Provider value={{ userData, setUserData }}>
+    <UserContext.Provider value={{ userData, loadingData }}>
       {children}
     </UserContext.Provider>
   );

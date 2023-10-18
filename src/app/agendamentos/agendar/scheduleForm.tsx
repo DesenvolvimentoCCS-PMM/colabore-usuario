@@ -147,7 +147,6 @@ export function ScheduleForm() {
   const { scheduleData } = useScheduleContext();
   const { push } = useRouter();
   const user = auth.currentUser;
-
   const handleTime = () => {
     const fieldsEmpty = !inputDate || !inputTime || !inputTotTime;
 
@@ -242,7 +241,6 @@ export function ScheduleForm() {
 
     const reservedTimes = setReservedTimes(inputTime, inputTotTime);
     const id = v4().slice(0, 6);
-
     try {
       await addDoc(collection(db, "schedules"), {
         userInfo: {

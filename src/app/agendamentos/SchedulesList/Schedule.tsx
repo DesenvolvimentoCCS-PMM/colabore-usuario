@@ -28,7 +28,6 @@ export function Schedule({ data }: ScheduleDataProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { userData } = useUserDataContext();
   const { updateScheduleView } = useUpdateScheduleView();
-
   const cancelSchedule = async () => {
     const cDate = new Date().toLocaleDateString();
 
