@@ -160,8 +160,6 @@ export function ScheduleForm() {
 
       const scheduleAlreadyExists = checkIfScheduleAlreadyExists();
 
-      console.log(scheduleAlreadyExists);
-
       if (scheduleAlreadyExists) {
         return notifyError("Não há mais vagas para esse agendamento.");
       } else if (timeNotAvaiableForCurrentDay) {
@@ -171,11 +169,6 @@ export function ScheduleForm() {
         return setIsVerified(true);
       }
     }
-  };
-
-  const generateScheduleId = () => {
-    const id = v4();
-    return id.slice(0, 6);
   };
 
   const checkIfTimeIsAvaiableToday = () => {
@@ -211,6 +204,7 @@ export function ScheduleForm() {
   const checkIfScheduleAlreadyExists = () => {
     const coworkingServiceText = "Coworking (máximo 6 pessoas)";
     const maxCoworkingAccepteds = 6;
+    const userHours = setReservedTimes(inputTime, inputTotTime);
 
     const coworkingList = scheduleData.filter((data) => {
       return (
@@ -220,36 +214,49 @@ export function ScheduleForm() {
       );
     });
 
+    //Se for coworking
     if (inputService === coworkingServiceText) {
       return coworkingList.length >= maxCoworkingAccepteds;
-    }
+    } else {
+      //Se for Reunião ou Palestra
+      const reservedsHours: string[] = [].sort();
 
-    return scheduleData.some((data) => {
-      if (data.service === inputService && data.date === inputDate) {
-        return data.reservedTimes.includes(inputTime);
-      }
-    });
+      //Pega todos os horarios reservados do dia e adiciona na lista
+      scheduleData.map((data) => {
+        if (data.service === inputService && data.date === inputDate) {
+          data.reservedTimes.map((dt) => {
+            reservedsHours.push(dt);
+          });
+        }
+      });
+
+      //Compara os horarios que o usuario vai reservar com os já reservado.
+      return reservedsHours.some((hour) => {
+        return userHours.includes(hour);
+      });
+    }
   };
 
   const submit: SubmitHandler<scheduleFormSchemaType> = async (data) => {
     setIsFetching(true);
 
     const reservedTimes = setReservedTimes(inputTime, inputTotTime);
+    const id = v4().slice(0, 6);
 
     try {
-      const dataToDb = await addDoc(collection(db, "schedules"), {
+      await addDoc(collection(db, "schedules"), {
         userInfo: {
           name: userData.fullName,
           email: user?.email,
           cpf: userData.cpf,
           whatsapp: userData.whatsapp,
         },
-        ...data,
         created_by: user?.uid,
         created_at: new Date(),
         status: 0,
         reservedTimes,
-        scheduleCode: generateScheduleId(),
+        scheduleCode: id,
+        ...data,
       });
       notifySuccess("Agendamento realizado com sucesso!");
       setIsFetching(false);
