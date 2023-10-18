@@ -43,9 +43,7 @@ export function Schedule({ data }: ScheduleDataProps) {
     } else {
       if (confirm("Confirmar cancelamento do agendamento? ")) {
         try {
-          const docRef = doc(db, "agendamento", data.uid);
-
-          await updateDoc(docRef, {
+          await updateDoc(doc(db, "schedules", data.uid), {
             status: 2,
             deleted_at: currentDate(),
             deleted_by: userData.fullName,
@@ -61,8 +59,6 @@ export function Schedule({ data }: ScheduleDataProps) {
     }
     //Notificar a equipe ?
   };
-
-  const downloadVoucher = () => {};
 
   const toggleModal = () => {
     setIsOpen(!isOpen);
