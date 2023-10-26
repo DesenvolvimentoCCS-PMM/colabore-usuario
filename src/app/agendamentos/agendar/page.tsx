@@ -4,9 +4,30 @@ import { Container } from "@/components/Container";
 import { ScheduleForm } from "./scheduleForm";
 import Link from "next/link";
 import { useUserLoggedContext } from "@/context/userLogged";
+import axios from "axios";
 
 export default function Agendar() {
   const { hasUserLogged } = useUserLoggedContext();
+
+  const enviarEmail = async () => {
+    const data = {
+      destinatario: "luanhenriquemiguelalves@gmail.com",
+      assunto: "Assunto do E-mail",
+      mensagem: "Corpo do E-mail",
+    };
+
+    try {
+      const response = await axios.post(
+        "https://us-central1-colaboredatabase.cloudfunctions.net/sendEmail",
+        data
+      );
+      console.log("Resposta da função Firebase:", response.data);
+      // Faça algo com a resposta, se necessário
+    } catch (error) {
+      console.error("Erro ao chamar a função Firebase:", error);
+      // Trate o erro, se necessário
+    }
+  };
 
   return (
     <Container>
@@ -33,6 +54,8 @@ export default function Agendar() {
           <h2 className="bg-yellowCol text-white p-3">Agendamento</h2>
           <ScheduleForm />
         </section>
+
+        <button onClick={enviarEmail}>Enviar Email</button>
       </main>
     </Container>
   );

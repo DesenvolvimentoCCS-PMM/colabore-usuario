@@ -9,8 +9,6 @@ import { SchedulePageSkeletonLoading } from "@/components/loading/SchedulePageSk
 export default function Agendamentos() {
   const { loadingData, userData } = useUserDataContext();
 
-  console.log(userData);
-
   const formations = {
     name: `${userData.fullName.split(" ")[0]} ${
       userData.fullName.split(" ")[1]

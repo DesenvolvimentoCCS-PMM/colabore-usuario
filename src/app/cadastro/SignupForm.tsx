@@ -17,6 +17,8 @@ import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
 } from "firebase/auth";
+import { useScheduleContext } from "@/context/schedulesContext";
+import { useUserDataContext } from "@/context/userContext";
 
 const isValidCPF = (cpf: string) => {
   cpf = cpf.replace(/[^\d]+/g, "");
@@ -134,10 +136,6 @@ const signupSchema = z
       }),
     }),
   })
-  // .refine((fields) => fields.whatsapp !== fields.otherPhone, {
-  //   message: "Os números de telefone devem ser diferentes!",
-  //   path: ["otherPhone"],
-  // })
   .refine((fields) => fields.password === fields.passwordConfirmation, {
     message: "As senhas devem ser iguais!",
     path: ["passwordConfirmation"],
@@ -151,6 +149,7 @@ export function SignupForm() {
     useState(false);
   // const [imageFile, setImageFile] = useState<File>();
   const router = useRouter();
+  const { userData } = useUserDataContext();
 
   const {
     register,
@@ -162,6 +161,8 @@ export function SignupForm() {
     resolver: zodResolver(signupSchema),
     mode: "onBlur",
   });
+
+  console.log(userData);
 
   const cep = watch("cep");
 

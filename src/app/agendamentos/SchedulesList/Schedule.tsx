@@ -28,6 +28,7 @@ export function Schedule({ data }: ScheduleDataProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { userData } = useUserDataContext();
   const { updateScheduleView } = useUpdateScheduleView();
+
   const cancelSchedule = async () => {
     const cDate = new Date().toLocaleDateString();
 
@@ -178,7 +179,7 @@ export function Schedule({ data }: ScheduleDataProps) {
               )}
               {scheduleConfigs.deleted && (
                 <button
-                  className="text-white bg-red-300 p-3 rounded-3xl text-sm flex items-center justify-center gap-x-1 w-full max-w-xs  sm:w-max"
+                  className="text-white bg-red-300 p-3 rounded-3xl text-sm flex items-center justify-center gap-x-1 max-w-xs w-max"
                   disabled
                 >
                   <XCircle size={26} />

@@ -47,10 +47,13 @@ export default function Home() {
               Já tenho cadastro
             </Link>
 
-            <Button href={"/cadastro"} islink>
+            <Link
+              href={"/cadastro"}
+              className="flex items-center gap-x-2 rounded-3xl bg-[#CC9935] px-10 py-2 max-w-max text-white font-medium text-sm uppercase transition-all disabled:opacity-50 disabled:pointer-events-none sm:text-base hover:opacity-90 hover:scale-95"
+            >
               <Clock size={20} color="white" />
               Cadastre-se
-            </Button>
+            </Link>
           </div>
         </section>
       </main>

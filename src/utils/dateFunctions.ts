@@ -20,18 +20,18 @@ export function dateToText(date: string) {
   const day = newDate.getDate() + 1;
   const month = newDate.getMonth();
 
-  return `${day < 10 ? "0" + day : day} ${months[month]}`;
+  const splitedDay = date.split("-")[2];
+
+  return `${splitedDay} ${months[month]}`;
 }
 
-export function dateToDDMMAA(date: string) {
-  const newDate = new Date(date);
-  const day = newDate.getDate() + 1;
-  const month = newDate.getMonth() + 1;
-  const year = newDate.getFullYear();
+export function dateToDDMMAA(date: string, isCurrentDay: boolean) {
+  const splitDate = date.split("-");
+  const day = splitDate[2];
+  const month = splitDate[1];
+  const year = splitDate[0];
 
-  return `${day < 10 ? "0" + day : day}/${
-    month < 10 ? "0" + month : month
-  }/${year}`;
+  return `${day}/${month}/${year}`;
 }
 
 export function currentDate() {

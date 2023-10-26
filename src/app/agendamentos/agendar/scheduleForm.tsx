@@ -15,6 +15,7 @@ import { useScheduleContext } from "@/context/schedulesContext";
 import emailjs from "@emailjs/browser";
 
 import { v4 } from "uuid";
+import { useUpdateScheduleView } from "@/context/schedulesViewContext";
 
 const scheduleFormSchema = z.object({
   service: z.string(),
@@ -145,8 +146,10 @@ export function ScheduleForm() {
   //Contexts
   const { userData } = useUserDataContext();
   const { scheduleData } = useScheduleContext();
+  const { updateScheduleView } = useUpdateScheduleView();
   const { push } = useRouter();
   const user = auth.currentUser;
+
   const handleTime = () => {
     const fieldsEmpty = !inputDate || !inputTime || !inputTotTime;
 
@@ -259,6 +262,7 @@ export function ScheduleForm() {
       notifySuccess("Agendamento realizado com sucesso!");
       setIsFetching(false);
       // sendEmail(data);
+      updateScheduleView();
       push("/agendamentos");
     } catch (error) {
       notifyError(
