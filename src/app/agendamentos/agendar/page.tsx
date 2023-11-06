@@ -1,10 +1,10 @@
 "use client";
 
 import { Container } from "@/components/Container";
-import { ScheduleForm } from "./scheduleForm";
-import Link from "next/link";
 import { useUserLoggedContext } from "@/context/userLogged";
 import axios from "axios";
+import Link from "next/link";
+import { ScheduleForm } from "./scheduleForm";
 
 export default function Agendar() {
   const { hasUserLogged } = useUserLoggedContext();
@@ -54,8 +54,6 @@ export default function Agendar() {
           <h2 className="bg-yellowCol text-white p-3">Agendamento</h2>
           <ScheduleForm />
         </section>
-
-        <button onClick={enviarEmail}>Enviar Email</button>
       </main>
     </Container>
   );
