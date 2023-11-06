@@ -1,15 +1,14 @@
 "use client";
 
-import { ScheduleDataType } from "@/types/Schedule";
-import { Filter } from "./Filter";
-import { useEffect, useState } from "react";
-import { SchedulePagination } from "./SchedulePagination";
-import { DocumentData, collection, getDocs } from "firebase/firestore";
-import { auth, db } from "@/services/firebase";
-import { useUpdateScheduleView } from "@/context/schedulesViewContext";
-import { useScheduleContext } from "@/context/schedulesContext";
-import { sendEmailVerification } from "firebase/auth";
 import { notifySuccess } from "@/components/Toast";
+import { useScheduleContext } from "@/context/schedulesContext";
+import { useUpdateScheduleView } from "@/context/schedulesViewContext";
+import { auth } from "@/services/firebase";
+import { ScheduleDataType } from "@/types/Schedule";
+import { sendEmailVerification } from "firebase/auth";
+import { useEffect, useState } from "react";
+import { Filter } from "./Filter";
+import { SchedulePagination } from "./SchedulePagination";
 
 export function ScheduleList() {
   const { scheduleData } = useScheduleContext();

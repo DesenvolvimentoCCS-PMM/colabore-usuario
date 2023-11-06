@@ -1,24 +1,24 @@
 "use client";
 
-import { useState } from "react";
-import { currentDate, dateToDDMMAA, dateToText } from "@/utils/dateFunctions";
-import {
-  CaretDown,
-  EnvelopeSimple,
-  WhatsappLogo,
-  Checks,
-  CaretUp,
-  XCircle,
-  Note,
-} from "phosphor-react";
-import { ScheduleDataType } from "@/types/Schedule";
+import { notifyError, notifySuccess } from "@/components/Toast";
+import { ScheduleVoucher } from "@/components/Voucher";
+import { useUpdateScheduleView } from "@/context/schedulesViewContext";
 import { useUserDataContext } from "@/context/userContext";
 import { db } from "@/services/firebase";
-import { notifyError, notifySuccess } from "@/components/Toast";
-import { useUpdateScheduleView } from "@/context/schedulesViewContext";
+import { ScheduleDataType } from "@/types/Schedule";
+import { currentDate, dateToDDMMAA, dateToText } from "@/utils/dateFunctions";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import { doc, updateDoc } from "firebase/firestore";
-import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
-import { ScheduleVoucher } from "@/components/Voucher";
+import {
+  CaretDown,
+  CaretUp,
+  Checks,
+  EnvelopeSimple,
+  Note,
+  WhatsappLogo,
+  XCircle,
+} from "phosphor-react";
+import { useState } from "react";
 
 interface ScheduleDataProps {
   data: ScheduleDataType;

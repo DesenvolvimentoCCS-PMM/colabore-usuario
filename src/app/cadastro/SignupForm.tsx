@@ -1,24 +1,23 @@
 "use client";
 
-import { z } from "zod";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
-import EyeIcon from "@/assets/icons/eyeIcon.svg";
 import CloseEyeIcon from "@/assets/icons/closeEyeIcon.svg";
-import { auth, db } from "../../services/firebase";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import EyeIcon from "@/assets/icons/eyeIcon.svg";
 import { notifyError, notifySuccess } from "@/components/Toast";
 import { Button } from "@/components/buttons/DefaultButton";
-import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
-import InputMask from "react-input-mask";
+import { useUserDataContext } from "@/context/userContext";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
 } from "firebase/auth";
-import { useScheduleContext } from "@/context/schedulesContext";
-import { useUserDataContext } from "@/context/userContext";
+import { doc, setDoc } from "firebase/firestore";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import InputMask from "react-input-mask";
+import { z } from "zod";
+import { auth, db } from "../../services/firebase";
 
 const isValidCPF = (cpf: string) => {
   cpf = cpf.replace(/[^\d]+/g, "");
