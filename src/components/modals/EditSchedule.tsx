@@ -1,22 +1,22 @@
 "use client";
 
 //React
-import { Fragment, useState, useRef } from "react";
+import { Fragment, useState } from "react";
 //UI
 import { Dialog, Transition } from "@headlessui/react";
-import { notifySuccess, notifyError } from "../Toast";
+import { notifyError, notifySuccess } from "../Toast";
 //Firebase
 import { db } from "@/services/firebase";
 import { doc, updateDoc } from "firebase/firestore";
 //Utils
-import { currentDate, dateToDefaultDb } from "@/utils/dateFunctions";
 import { useUpdateScheduleView } from "@/context/schedulesViewContext";
+import { currentDate } from "@/utils/dateFunctions";
 //Icon
 import { PencilSimple, X } from "phosphor-react";
 //Validation configs
-import { z } from "zod";
-import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
 
 interface RescheduleProps {
   uid: string;
@@ -80,7 +80,7 @@ export function Reschedule({ uid, username }: RescheduleProps) {
         alteradoPor: username,
         alteradoEm: currentDate(),
         horario: data.time,
-        data: dateToDefaultDb(data.date),
+        data: new Date(),
       });
       updateScheduleView();
       notifySuccess("Agendamento alterado com sucesso!");
