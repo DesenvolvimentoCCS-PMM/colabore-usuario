@@ -1,21 +1,28 @@
 "use client";
 
-import { array, z } from "zod";
-import { Button } from "@/components/buttons/DefaultButton";
-import { ChatCenteredText, Info } from "phosphor-react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
-import { addDoc, collection } from "firebase/firestore";
-import { auth, db } from "@/services/firebase";
 import { notifyError, notifySuccess } from "@/components/Toast";
-import { useRouter } from "next/navigation";
-import { useUserDataContext } from "@/context/userContext";
+import { Button } from "@/components/buttons/DefaultButton";
 import { useScheduleContext } from "@/context/schedulesContext";
-import emailjs from "@emailjs/browser";
-
-import { v4 } from "uuid";
 import { useUpdateScheduleView } from "@/context/schedulesViewContext";
+import { useUserDataContext } from "@/context/userContext";
+import { auth, db } from "@/services/firebase";
+import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
+import { addDoc, collection } from "firebase/firestore";
+import { useRouter } from "next/navigation";
+import { ChatCenteredText, Info } from "phosphor-react";
+import { useEffect, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { v4 } from "uuid";
+import { z } from "zod";
+
+import dayjs from "dayjs";
+import ptBr from "dayjs/locale/pt-br";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+
+//Configurando para pt-br
+dayjs.extend(localizedFormat);
+dayjs.locale(ptBr);
 
 const scheduleFormSchema = z.object({
   service: z.string(),
@@ -244,11 +251,12 @@ export function ScheduleForm() {
 
     const reservedTimes = setReservedTimes(inputTime, inputTotTime);
     const id = v4().slice(0, 6);
+
     try {
       await addDoc(collection(db, "schedules"), {
         userInfo: {
           name: userData.fullName,
-          email: user?.email,
+          email: userData.email,
           cpf: userData.cpf,
           whatsapp: userData.whatsapp,
         },
@@ -259,6 +267,7 @@ export function ScheduleForm() {
         scheduleCode: id,
         ...data,
       });
+      sendMail(userData.email, userData.fullName, inputDate, reservedTimes[0]);
       notifySuccess("Agendamento realizado com sucesso!");
       setIsFetching(false);
       // sendEmail(data);
@@ -277,35 +286,22 @@ export function ScheduleForm() {
     setIsVerified(false);
   };
 
-  function sendEmail() {
-    const templateParams = {
-      date: inputDate,
-      time: inputTime,
-      service: inputService,
-      name: userData.fullName,
-      email: user?.email,
-      cpf: userData.cpf,
-      whatsapp: userData.whatsapp,
-      motive: inputService,
-      obs: inputService,
-      to_email: user?.email,
-    };
-
-    emailjs
-      .send(
-        "service_mr1wja3",
-        "template_3llwjbz",
-        templateParams,
-        "O2Li5jhZOOyYODvgB"
-      )
-      .then((res) => {
-        console.log("success email!", res.status, res.text);
-      })
-      .catch((error) => {
-        console.error("error sending email:", error);
-      });
+  function sendMail(email: string, name: string, date: string, time: string) {
+    axios.post(
+      "http://localhost:3000/api/email",
+      {
+        email,
+        name,
+        time,
+        date: dayjs(date).format("DD/MM/YYYY"),
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
   }
-
   return (
     <form
       className="pl-2 space-y-6 mt-10 sm:pl-8"

@@ -1,38 +1,39 @@
-import { NextRequest, NextResponse } from "next/server";
-import z from "zod";
-import nodemailer from "nodemailer";
+import { NextResponse } from "next/server";
+import { createTransport } from "nodemailer";
 
-const transporter = nodemailer.createTransport({
-  host: "kinghost.smtpkl.com.br",
-  port: 465,
-  secure: true,
-  auth: {
-    user: "4d90b6c22554db6b9aaee213d3cedcde",
-    pass: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0ZDkwYjZjMjI1NTRkYjZiOWFhZWUyMTNkM2NlZGNkZSIsImF1ZCI6ImNsaWVudGVraW5nMzk4NDAyIiwiaWF0IjoxNjk0NTQzNDMwLjI5MzY2OTUsImp0aSI6IjI0ZGJhMWI5MDY1NTliNmQwZjQ1M2E0NTI1YTQwOGNiIn0.HtL70Ar2_hZYHc8itmR5eO8MTqTVOyeRnugXnjT7Ei8",
-  },
-});
+interface bodyType {
+  email: string;
+  name: string;
+  date: string;
+  time: string;
+}
 
-export async function POST(req: NextRequest, res: NextResponse) {
-  const bodySchema = z.object({
-    to: z.string(),
-    msg: z.string(),
-    subject: z.string(),
+export async function POST(req: Request) {
+  const res: bodyType = await req.json();
+
+  let transporter = createTransport({
+    service: "gmail", // Você pode mudar para outro provedor de e-mail
+    auth: {
+      user: process.env.MAIL_USER, // Seu endereço de e-mail
+      pass: process.env.MAIL_PASSWORD, // Sua senha de e-maild
+    },
   });
 
-  const { msg, subject, to } = bodySchema.parse(req.body);
-
-  const emailOptions = {
-    from: "Espaço Colabore Mesquita <no-reply@colabore.kinglala>",
-    to,
-    subject,
-    msg,
+  // Configuração do e-mail
+  let mailOptions = {
+    from: "Espaço Colabore Mesquita", // Seu endereço de e-mail
+    to: res.email, // Endereço de e-mail do destinatário
+    subject: "[Espaço Colabore] Horário agendado!",
+    text: `Olá ${res.name}, seu horário no Espaço Colabore foi agendado com sucesso, aguardamos você no dia ${res.date} às ${res.time}, lembre-se de chegar com 15 minutos de antecedência! 
+    Qualquer dúvida basta acessar o seu painel de agendamento.
+    `, // Conteúdo do e-mail em texto sem formatação
   };
-
-  transporter.sendMail(emailOptions, (error, info) => {
+  // Envia o e-mail
+  transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      return NextResponse.json({ message: "Erro ao enviar e-mail:" });
+      return NextResponse.json({ error: "E-mail not sent! [ERROR]: " + error });
+    } else {
+      return NextResponse.json({ log: "Email sent successfully" });
     }
-
-    return NextResponse.json({ message: "E-mail enviado com sucesso!" });
   });
 }

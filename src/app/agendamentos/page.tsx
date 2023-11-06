@@ -1,10 +1,10 @@
 "use client";
 
 import { Container } from "@/components/Container";
-import { ScheduleList } from "./SchedulesList";
 import { LogoutButton } from "@/components/buttons/LogoutButton";
-import { useUserDataContext } from "@/context/userContext";
 import { SchedulePageSkeletonLoading } from "@/components/loading/SchedulePageSkeletonLoading";
+import { useUserDataContext } from "@/context/userContext";
+import { ScheduleList } from "./SchedulesList";
 
 export default function Agendamentos() {
   const { loadingData, userData } = useUserDataContext();
