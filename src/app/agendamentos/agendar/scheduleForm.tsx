@@ -288,7 +288,7 @@ export function ScheduleForm() {
 
   function sendMail(email: string, name: string, date: string, time: string) {
     axios.post(
-      "https://colabore.mesquita.rj.gov.br/api/email",
+      "https://colabore-email.onrender.com/send-email",
       {
         email,
         name,
