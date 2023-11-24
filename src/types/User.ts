@@ -16,4 +16,5 @@ interface User {
   lgpd: boolean;
   terms: boolean;
   uid: string;
+  imageRights: boolean;
 }

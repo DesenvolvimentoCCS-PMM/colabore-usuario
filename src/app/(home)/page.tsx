@@ -5,7 +5,6 @@ import Image from "next/image";
 import Ilustration from "@/assets/ilustration-home.jpg";
 import Logo from "@/assets/logoColabore.png";
 import Link from "next/link";
-import { Button } from "@/components/buttons/DefaultButton";
 import { Clock } from "phosphor-react";
 
 export default function Home() {
@@ -39,7 +38,7 @@ export default function Home() {
             Cadastre-se e aproveite!
           </p>
 
-          <div className="flex flex-col-reverse justify-center items-center gap-4 mt-10 flex-wrap-reverse md:flex-row md:justify-end">
+          <div className="flex flex-col-reverse justify-center items-center gap-4 mt-10 flex-wrap-reverse lg:flex-row lg:justify-end">
             <Link
               href={"/entrar"}
               className="text-sm text-blueCol sm:text-base"

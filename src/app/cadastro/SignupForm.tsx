@@ -1,7 +1,5 @@
 "use client";
 
-import CloseEyeIcon from "@/assets/icons/closeEyeIcon.svg";
-import EyeIcon from "@/assets/icons/eyeIcon.svg";
 import { notifyError, notifySuccess } from "@/components/Toast";
 import { Button } from "@/components/buttons/DefaultButton";
 import { useUserDataContext } from "@/context/userContext";
@@ -18,6 +16,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import InputMask from "react-input-mask";
 import { z } from "zod";
 import { auth, db } from "../../services/firebase";
+import { Eye, EyeSlash } from "phosphor-react";
+import Link from "next/link";
 
 const isValidCPF = (cpf: string) => {
   cpf = cpf.replace(/[^\d]+/g, "");
@@ -134,6 +134,11 @@ const signupSchema = z
         message: "É necessário concordar com nossos termos para prosseguir!",
       }),
     }),
+    imageRights: z.literal(true, {
+      errorMap: () => ({
+        message: "É necessário concordar com nossos termos para prosseguir!",
+      }),
+    }),
   })
   .refine((fields) => fields.password === fields.passwordConfirmation, {
     message: "As senhas devem ser iguais!",
@@ -160,8 +165,6 @@ export function SignupForm() {
     resolver: zodResolver(signupSchema),
     mode: "onBlur",
   });
-
-  console.log(userData);
 
   const cep = watch("cep");
 
@@ -678,9 +681,9 @@ export function SignupForm() {
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
-                  <Image src={CloseEyeIcon} alt="Fechar olho" />
+                  <EyeSlash size={20} alt="Esconder senha" color="white" />
                 ) : (
-                  <Image src={EyeIcon} alt="Abrir olho" />
+                  <Eye size={20} alt="Mostrar senha" color="white" />
                 )}
               </button>
             </div>
@@ -719,9 +722,9 @@ export function SignupForm() {
                 }
               >
                 {showPasswordConfirmation ? (
-                  <Image src={CloseEyeIcon} alt="Fechar olho" />
+                  <EyeSlash size={20} alt="Esconder senha" color="white" />
                 ) : (
-                  <Image src={EyeIcon} alt="Abrir olho" />
+                  <Eye size={20} alt="Mostrar senha" color="white" />
                 )}
               </button>
             </div>
@@ -786,6 +789,39 @@ export function SignupForm() {
         {errors.lgpd && (
           <small className="text-red-500 text-[10px] pl-10 pt-2">
             {errors.lgpd.message}
+          </small>
+        )}
+
+        {/* IMAGE RIGHTS */}
+        <div className="flex items-start w-full mt-5">
+          <input
+            type="checkbox"
+            {...register("imageRights")}
+            id="imageRights"
+            className={`${
+              errors.imageRights ? "border-red-500" : ""
+            } p-3 rounded-2xl outline-[#420EAD] outline-1 bg-white border text-sm font-base transition-all cursor-pointer`}
+          />
+          <label
+            htmlFor="imageRights"
+            className={`text-sm font-medium cursor-pointer ${
+              errors.imageRights && "text-red-500"
+            }  ml-2`}
+          >
+            Ao utilizar os serviços, eu concordo com as{" "}
+            <Link
+              href={"/termos-de-uso"}
+              target="_blank"
+              className="font-medium text-purple-800"
+            >
+              políticas de privacidade e termos de uso, autorizando o uso de
+              imagens.
+            </Link>
+          </label>
+        </div>
+        {errors.imageRights && (
+          <small className="text-red-500 text-[10px] pl-10 pt-2">
+            {errors.imageRights.message}
           </small>
         )}
 

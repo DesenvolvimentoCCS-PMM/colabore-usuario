@@ -11,6 +11,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { usePathname } from "next/navigation";
 
 interface UserContextType {
   userData: User;
@@ -20,6 +21,7 @@ interface UserContextType {
 const UserContext = createContext<UserContextType>({
   userData: {
     fullName: "",
+    imageRights: false,
     birthDate: "",
     cep: "",
     city: "",
@@ -58,10 +60,12 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     photo: "",
     lgpd: false,
     terms: false,
+    imageRights: false,
     uid: "",
   });
   const [loadingData, setLoadingData] = useState(true);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
@@ -77,7 +81,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         }
 
         setLoadingData(false);
-      } else {
+      } else if (pathname != "/termos-de-uso") {
         router.push("/entrar");
       }
     });
