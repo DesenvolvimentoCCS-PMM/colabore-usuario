@@ -94,6 +94,7 @@ const scheduleFormSchema = z.object({
 });
 
 const hoursWith1hUsage = [
+  "09:00",
   "10:00",
   "11:00",
   "12:00",
@@ -101,18 +102,15 @@ const hoursWith1hUsage = [
   "14:00",
   "15:00",
   "16:00",
-  "17:00",
-  "18:00",
 ];
 const hoursWith2hUsage = [
+  "09:00",
   "10:00",
   "11:00",
   "12:00",
   "13:00",
   "14:00",
   "15:00",
-  "16:00",
-  "17:00",
 ];
 
 type scheduleFormSchemaType = z.infer<typeof scheduleFormSchema>;
@@ -211,7 +209,7 @@ export function ScheduleForm() {
   };
 
   const checkIfScheduleAlreadyExists = () => {
-    const coworkingServiceText = "Coworking (máximo 6 pessoas)";
+    const coworkingServiceText = "Coworking";
     const maxCoworkingAccepteds = 6;
     const userHours = setReservedTimes(inputTime, inputTotTime);
 
@@ -325,7 +323,7 @@ export function ScheduleForm() {
             className="bg-blueCol text-white p-4 rounded-[20px] text-sm outline-none w-full max-w-xs indent-5"
           >
             <option>Reunião {"(máximo 6 pessoas)"}</option>
-            <option>Coworking {"(máximo 6 pessoas)"}</option>
+            <option>Coworking</option>
             <option>Palestras {"(máximo 20 pessoas)"}</option>
           </select>
           {errors.service && (
