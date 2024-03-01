@@ -29,6 +29,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
       if (user) {
+        if (pathname === "/entrar") {
+          router.push("agendamentos");
+        }
+
         const uid = user.uid;
         const docRef = doc(db, "users", uid);
         const docSnap = await getDoc(docRef);

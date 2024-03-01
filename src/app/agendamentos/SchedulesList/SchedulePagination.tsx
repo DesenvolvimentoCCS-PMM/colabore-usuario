@@ -15,7 +15,7 @@ interface SchedulePaginationProps {
 }
 
 export function SchedulePagination({ data }: SchedulePaginationProps) {
-  const [datasPerPage, setDatasPerPage] = useState(5);
+  const datasPerPage = 5;
   const [currentPage, setCurrentPage] = useState(0);
 
   const qtdPages = Math.ceil(data.length / datasPerPage);
