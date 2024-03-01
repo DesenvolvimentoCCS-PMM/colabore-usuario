@@ -7,7 +7,6 @@ import { Toast } from "@/components/Toast";
 import { UserContextProvider } from "@/context/userContext";
 import { ScheduleViewProvider } from "@/context/schedulesViewContext";
 import { SchedulesContextProvider } from "@/context/schedulesContext";
-import { UserLoggedProvider } from "@/context/userLogged";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -26,20 +25,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="pt-br">
       <body className={`${poppins.variable} font-sans min-h-screen`}>
-        <ScheduleViewProvider>
-          <SchedulesContextProvider>
-            <UserLoggedProvider>
-              <UserContextProvider>
-                <Toast />
-                <Header />
-                {children}
-                <Footer />
-              </UserContextProvider>
-            </UserLoggedProvider>
-          </SchedulesContextProvider>
-        </ScheduleViewProvider>
+        <UserContextProvider>
+          <ScheduleViewProvider>
+            <SchedulesContextProvider>
+              <Toast />
+              <Header />
+              {children}
+              <Footer />
+            </SchedulesContextProvider>
+          </ScheduleViewProvider>
+        </UserContextProvider>
       </body>
     </html>
   );

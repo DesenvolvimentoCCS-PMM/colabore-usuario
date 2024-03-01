@@ -2,7 +2,6 @@
 
 import { notifyError, notifySuccess } from "@/components/Toast";
 import { Button } from "@/components/buttons/DefaultButton";
-import { useUserDataContext } from "@/context/userContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   createUserWithEmailAndPassword,
@@ -19,6 +18,7 @@ import { auth, db } from "../../services/firebase";
 import { Eye, EyeSlash } from "phosphor-react";
 import Link from "next/link";
 
+//Validação do CPF
 const isValidCPF = (cpf: string) => {
   cpf = cpf.replace(/[^\d]+/g, "");
 
@@ -65,6 +65,7 @@ const isValidCPF = (cpf: string) => {
   return true;
 };
 
+//Validações do formulário
 const signupSchema = z
   .object({
     fullName: z
@@ -151,10 +152,10 @@ export function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirmation, setShowPasswordConfirmation] =
     useState(false);
-  // const [imageFile, setImageFile] = useState<File>();
-  const router = useRouter();
-  const { userData } = useUserDataContext();
 
+  const router = useRouter();
+
+  //Configurações do React Hook Form
   const {
     register,
     handleSubmit,
@@ -166,10 +167,11 @@ export function SignupForm() {
     mode: "onBlur",
   });
 
-  const cep = watch("cep");
-
   const handleCEP = async () => {
     try {
+      const cep = watch("cep");
+
+      //Request para api de CEP
       const req = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
       const data = (await req.json()) as Cep;
 
@@ -183,36 +185,11 @@ export function SignupForm() {
         setValue("state", data.uf);
       }
     } catch (error) {
-      console.error("Erro inesperado:", error);
       notifyError("Erro inesperado ao consultar o CEP!");
     }
   };
 
-  const signupUser = async (data: signupSchemaType) => {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        data.email,
-        data.password
-      );
-      const user = userCredential.user;
-
-      // Enviar o email de verificação
-      await sendEmailVerification(user);
-
-      const uid = user.uid;
-      await registerUser(data, uid);
-    } catch (error: any) {
-      console.error(error);
-
-      if (error.code === "auth/email-already-in-use") {
-        notifyError("Esse e-mail já está em uso!");
-      } else {
-        notifyError("Ops! Algo deu errado. Tente novamente mais tarde.");
-      }
-    }
-  };
-
+  //Cadastra os dados do usuario no banco de dados
   const registerUser = async (allData: any, id: string) => {
     try {
       const { passwordConfirmation, password, ...data } = allData;
@@ -227,29 +204,39 @@ export function SignupForm() {
     }
   };
 
-  const onSubmit: SubmitHandler<signupSchemaType> = (data) => {
-    signupUser(data);
+  const handleSignupUser: SubmitHandler<signupSchemaType> = async (data) => {
+    try {
+      //Cria o usuario no Authentication do Firebase.
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
+      const user = userCredential.user;
+      const uid = user.uid;
+
+      // Enviar o email de verificação.
+      await sendEmailVerification(user);
+
+      //Salva os dados e o id do usuario no banco de dados.
+      await registerUser(data, uid);
+    } catch (error: any) {
+      console.error(error);
+
+      if (error.code === "auth/email-already-in-use") {
+        notifyError("Esse e-mail já está em uso!");
+      } else {
+        notifyError("Ops! Algo deu errado. Tente novamente mais tarde.");
+      }
+    }
   };
-
-  // const handleSelectedFile = (files: FileList | null) => {
-  //   if (files) {
-  //     const maxSize = 5000000;
-  //     const selectedFile = files[0];
-
-  //     if (selectedFile && selectedFile.size <= maxSize) {
-  //       setImageFile(selectedFile);
-  //       console.log(selectedFile);
-  //     } else if (selectedFile && selectedFile.size > maxSize) {
-  //       notifyError("Ops! O arquivo dever ser menor que 5MB");
-  //     } else {
-  //       setImageFile(undefined);
-  //     }
-  //   }
-  // };
 
   return (
     <div className="w-full">
-      <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1">
+      <form
+        onSubmit={handleSubmit(handleSignupUser)}
+        className="grid grid-cols-1"
+      >
         <h2 className="mt-5 relative left-0 text-white w-full px-5 py-3 flex font-medium bg-amber-500">
           Dados pessoais
         </h2>
@@ -419,27 +406,6 @@ export function SignupForm() {
               </small>
             )}
           </div>
-
-          {/* PHOTO  */}
-          {/* <div className="flex flex-col w-1/3 gap-y-2">
-            <label htmlFor="photo" className={`text-sm font-medium `}>
-              Foto
-            </label>
-            <input
-              type="file"
-              id="userPhoto"
-              className="sr-only"
-              onChange={(files) => handleSelectedFile(files.target.files)}
-            />
-            <label
-              htmlFor="userPhoto"
-              className={`flex items-center justify-center w-full h-12 rounded-2xl  bg-white border-2 `}
-            >
-              <span className="text-sm font-medium">
-                {imageFile ? imageFile.name : "Selecione um arquivo"}
-              </span>
-            </label>
-          </div> */}
         </div>
 
         <h2 className="mt-5 relative left-0 text-white w-full px-5 py-3 flex font-medium bg-amber-500">

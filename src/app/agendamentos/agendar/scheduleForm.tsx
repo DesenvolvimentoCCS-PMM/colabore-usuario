@@ -4,7 +4,7 @@ import { notifyError, notifySuccess } from "@/components/Toast";
 import { Button } from "@/components/buttons/DefaultButton";
 import { useScheduleContext } from "@/context/schedulesContext";
 import { useUpdateScheduleView } from "@/context/schedulesViewContext";
-import { useUserDataContext } from "@/context/userContext";
+import { UserContextProvider, useUserDataContext } from "@/context/userContext";
 import { auth, db } from "@/services/firebase";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
@@ -149,11 +149,11 @@ export function ScheduleForm() {
   }, [inputTotTime]);
 
   //Contexts
-  const { userData } = useUserDataContext();
+  const { user } = useUserDataContext();
   const { scheduleData } = useScheduleContext();
   const { updateScheduleView } = useUpdateScheduleView();
   const { push } = useRouter();
-  const user = auth.currentUser;
+  const userAuth = auth.currentUser;
 
   const handleTime = () => {
     const fieldsEmpty = !inputDate || !inputTime || !inputTotTime;
@@ -180,11 +180,11 @@ export function ScheduleForm() {
 
   const checkIfTimeIsAvaiableToday = () => {
     const currentDate = new Date();
-    const userData = new Date(inputDate);
-    userData.setDate(userData.getDate() + 1);
+    const user = new Date(inputDate);
+    user.setDate(user.getDate() + 1);
 
     const datesIsEquals =
-      currentDate.toLocaleDateString() === userData.toLocaleDateString();
+      currentDate.toLocaleDateString() === user.toLocaleDateString();
 
     const inputHours = Number(inputTime.split(":")[0]);
     const currentHours = currentDate.getHours();
@@ -253,19 +253,19 @@ export function ScheduleForm() {
     try {
       await addDoc(collection(db, "schedules"), {
         userInfo: {
-          name: userData.fullName,
-          email: userData.email,
-          cpf: userData.cpf,
-          whatsapp: userData.whatsapp,
+          name: user.fullName,
+          email: user.email,
+          cpf: user.cpf,
+          whatsapp: user.whatsapp,
         },
-        created_by: user?.uid,
+        created_by: userAuth?.uid,
         created_at: new Date(),
         status: 0,
         reservedTimes,
         scheduleCode: id,
         ...data,
       });
-      sendMail(userData.email, userData.fullName, inputDate, reservedTimes[0]);
+      sendMail(user.email, user.fullName, inputDate, reservedTimes[0]);
       notifySuccess("Agendamento realizado com sucesso!");
       setIsFetching(false);
       // sendEmail(data);

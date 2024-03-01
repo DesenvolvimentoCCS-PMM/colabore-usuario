@@ -14,58 +14,19 @@ import {
 import { usePathname } from "next/navigation";
 
 interface UserContextType {
-  userData: User;
+  user: User;
   loadingData: boolean;
 }
 
-const UserContext = createContext<UserContextType>({
-  userData: {
-    fullName: "",
-    imageRights: false,
-    birthDate: "",
-    cep: "",
-    city: "",
-    cpf: "",
-    email: "",
-    neighborhood: "",
-    number: "",
-    otherPhone: "",
-    profession: "",
-    state: "",
-    street: "",
-    whatsapp: "",
-    photo: "",
-    lgpd: false,
-    terms: false,
-    uid: "",
-  },
-  loadingData: true,
-});
+const UserContext = createContext<UserContextType>({} as UserContextType);
 
 export const UserContextProvider = ({ children }: { children: ReactNode }) => {
-  const [userData, setUserData] = useState<User>({
-    fullName: "",
-    birthDate: "",
-    cep: "",
-    city: "",
-    cpf: "",
-    email: "",
-    neighborhood: "",
-    number: "",
-    otherPhone: "",
-    profession: "",
-    state: "",
-    street: "",
-    whatsapp: "",
-    photo: "",
-    lgpd: false,
-    terms: false,
-    imageRights: false,
-    uid: "",
-  });
+  const [user, setUser] = useState<User>({} as User);
   const [loadingData, setLoadingData] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
+
+  console.log("renderizou contexto");
 
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
@@ -77,7 +38,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         if (docSnap.exists()) {
           const data = docSnap.data() as User;
 
-          setUserData({ ...data, uid });
+          setUser({ ...data, uid });
         }
 
         setLoadingData(false);
@@ -88,7 +49,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ userData, loadingData }}>
+    <UserContext.Provider value={{ user, loadingData }}>
       {children}
     </UserContext.Provider>
   );

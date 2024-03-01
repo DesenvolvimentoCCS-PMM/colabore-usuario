@@ -26,7 +26,7 @@ interface ScheduleDataProps {
 
 export function Schedule({ data }: ScheduleDataProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const { userData } = useUserDataContext();
+  const { user } = useUserDataContext();
   const { updateScheduleView } = useUpdateScheduleView();
 
   const cancelSchedule = async () => {
@@ -46,7 +46,7 @@ export function Schedule({ data }: ScheduleDataProps) {
           await updateDoc(doc(db, "schedules", data.uid), {
             status: 2,
             deleted_at: currentDate(),
-            deleted_by: userData.fullName,
+            deleted_by: user.fullName,
           });
           updateScheduleView();
           notifySuccess("Agendamento cancelado com sucesso!");
@@ -85,7 +85,7 @@ export function Schedule({ data }: ScheduleDataProps) {
     scheduled: data.status === 0,
     deleted: data.status === 2,
     completed: data.status === 1,
-    hasAdmin: userData.fullName.includes("Admin"),
+    hasAdmin: user.fullName.includes("Admin"),
   };
 
   const whatsappLink = `https://api.whatsapp.com/send?phone=${formatations.whatsapp}`;

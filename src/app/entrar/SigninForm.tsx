@@ -7,14 +7,13 @@ import Image from "next/image";
 import Logo from "@/assets/logoColabore.svg";
 import EyeIcon from "@/assets/icons/eyeIcon.svg";
 import CloseEyeIcon from "@/assets/icons/closeEyeIcon.svg";
-import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../services/firebase";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ForgetPassword } from "@/app/entrar/ForgetPassword";
 import { notifyError } from "@/components/Toast";
 import { Button } from "@/components/buttons/DefaultButton";
-import { useUserLoggedContext } from "@/context/userLogged";
 
 const signinSchema = z.object({
   email: z
@@ -36,17 +35,7 @@ export function SigninForm() {
   const [isLogging, setIsLogging] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const { setHasUserLogged } = useUserLoggedContext();
-
   const router = useRouter();
-
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        router.push("/agendamentos");
-      }
-    });
-  }, []);
 
   const {
     register,
@@ -61,7 +50,6 @@ export function SigninForm() {
     setIsLogging(true);
     signInWithEmailAndPassword(auth, data.email, data.password)
       .then(() => {
-        setHasUserLogged(true);
         router.push("/agendamentos");
       })
       .catch((error) => {
@@ -87,10 +75,6 @@ export function SigninForm() {
         }
       })
       .finally(() => setIsLogging(false));
-  };
-
-  const handleShowPassword = () => {
-    setShowPassword(!showPassword);
   };
 
   return (
@@ -160,7 +144,7 @@ export function SigninForm() {
               errors.password && "bottom-9"
             }`}
             type="button"
-            onClick={handleShowPassword}
+            onClick={() => setShowPassword((state) => !state)}
           >
             {showPassword ? (
               <Image src={EyeIcon} alt="Olho aberto" color="black" />

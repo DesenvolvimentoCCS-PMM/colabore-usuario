@@ -7,13 +7,7 @@ import { useUserDataContext } from "@/context/userContext";
 import { ScheduleList } from "./SchedulesList";
 
 export default function Agendamentos() {
-  const { loadingData, userData } = useUserDataContext();
-
-  const formations = {
-    name: `${userData.fullName.split(" ")[0]} ${
-      userData.fullName.split(" ")[1]
-    }`,
-  };
+  const { loadingData, user } = useUserDataContext();
 
   return (
     <Container>
@@ -27,7 +21,13 @@ export default function Agendamentos() {
           <header className="flex justify-between items-center w-full">
             <div className=" space-y-4 w-full max-w-sm">
               <h1 className="text-blueCol font-medium text-3xl sm:text-4xl">
-                Olá, <span className="underline">{formations.name}!</span>
+                Olá,{" "}
+                <span className="underline">
+                  {`${user.fullName.split(" ")[0]} ${
+                    user.fullName.split(" ")[1]
+                  }`}
+                  !
+                </span>
               </h1>
               <p className="text-gray-900 text-base sm:text-lg">
                 Acompanhe seu histórico e faça um novo agendamento aqui
