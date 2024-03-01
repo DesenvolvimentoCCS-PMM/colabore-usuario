@@ -26,8 +26,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const pathname = usePathname();
 
-  console.log("renderizou contexto");
-
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -55,6 +53,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const useUserDataContext = () => {
+export const useUserContext = () => {
   return useContext(UserContext);
 };

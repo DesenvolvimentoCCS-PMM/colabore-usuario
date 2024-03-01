@@ -3,7 +3,7 @@
 import { notifyError, notifySuccess } from "@/components/Toast";
 import { ScheduleVoucher } from "@/components/Voucher";
 import { useUpdateScheduleView } from "@/context/schedulesViewContext";
-import { useUserDataContext } from "@/context/userContext";
+import { useUserContext } from "@/context/userContext";
 import { db } from "@/services/firebase";
 import { ScheduleDataType } from "@/types/Schedule";
 import { currentDate, dateToDDMMAA, dateToText } from "@/utils/dateFunctions";
@@ -26,7 +26,7 @@ interface ScheduleDataProps {
 
 export function Schedule({ data }: ScheduleDataProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const { user } = useUserDataContext();
+  const { user } = useUserContext();
   const { updateScheduleView } = useUpdateScheduleView();
 
   const cancelSchedule = async () => {

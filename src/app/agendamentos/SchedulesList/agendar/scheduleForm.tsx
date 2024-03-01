@@ -4,7 +4,7 @@ import { notifyError, notifySuccess } from "@/components/Toast";
 import { Button } from "@/components/buttons/DefaultButton";
 import { useScheduleContext } from "@/context/schedulesContext";
 import { useUpdateScheduleView } from "@/context/schedulesViewContext";
-import { UserContextProvider, useUserDataContext } from "@/context/userContext";
+import { UserContextProvider, useUserContext } from "@/context/userContext";
 import { auth, db } from "@/services/firebase";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
@@ -149,7 +149,7 @@ export function ScheduleForm() {
   }, [inputTotTime]);
 
   //Contexts
-  const { user } = useUserDataContext();
+  const { user } = useUserContext();
   const { scheduleData } = useScheduleContext();
   const { updateScheduleView } = useUpdateScheduleView();
   const { push } = useRouter();

@@ -3,11 +3,11 @@
 import { Container } from "@/components/Container";
 import { LogoutButton } from "@/components/buttons/LogoutButton";
 import { SchedulePageSkeletonLoading } from "@/components/loading/SchedulePageSkeletonLoading";
-import { useUserDataContext } from "@/context/userContext";
+import { useUserContext } from "@/context/userContext";
 import { ScheduleList } from "./SchedulesList";
 
 export default function Agendamentos() {
-  const { loadingData, user } = useUserDataContext();
+  const { loadingData, user } = useUserContext();
 
   return (
     <Container>
