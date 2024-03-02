@@ -2,6 +2,7 @@
 
 import { notifyError, notifySuccess } from "@/components/Toast";
 import { ScheduleVoucher } from "@/components/Voucher";
+import { CancelSchedule } from "@/app/agendamentos/SchedulesList/schedule/actions/CancelSchedule";
 import { useUpdateScheduleView } from "@/context/schedulesViewContext";
 import { useUserContext } from "@/context/userContext";
 import { db } from "@/services/firebase";
@@ -19,6 +20,7 @@ import {
   XCircle,
 } from "phosphor-react";
 import { useState } from "react";
+import { ScheduleDetails } from "./scheduleDetails";
 
 interface ScheduleDataProps {
   data: ScheduleDataType;
@@ -26,39 +28,6 @@ interface ScheduleDataProps {
 
 export function Schedule({ data }: ScheduleDataProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const { user } = useUserContext();
-  const { updateScheduleView } = useUpdateScheduleView();
-
-  const cancelSchedule = async () => {
-    const cDate = new Date().toLocaleDateString();
-
-    const date = new Date(data.date);
-    date.setDate(date.getDate() + 1);
-    const inputDate = date.toLocaleDateString();
-
-    if (cDate === inputDate) {
-      notifyError(
-        "Lamentamos informar que não é possível cancelar o agendamento hoje, pois já é o dia do agendamento. Caso haja necessidade de alteração, por favor, entre em contato conosco para que possamos ajudá-lo(a) "
-      );
-    } else {
-      if (confirm("Confirmar cancelamento do agendamento? ")) {
-        try {
-          await updateDoc(doc(db, "schedules", data.uid), {
-            status: 2,
-            deleted_at: currentDate(),
-            deleted_by: user.fullName,
-          });
-          updateScheduleView();
-          notifySuccess("Agendamento cancelado com sucesso!");
-        } catch (error) {
-          notifyError(
-            "Não foi possível cancelar o agendamento, tente novamente mais tarde!"
-          );
-        }
-      }
-    }
-    //Notificar a equipe ?
-  };
 
   const toggleModal = () => {
     setIsOpen(!isOpen);
@@ -76,16 +45,12 @@ export function Schedule({ data }: ScheduleDataProps) {
     completedColor:
       data.status === 1 && "bg-green-600 text-gray-300 border-black",
     deletedColor: data.status === 2 && "bg-red-500 text-white",
-    scheduledTextColor: data.status === 0 && "text-blueCol",
-    completedTextColor: data.status === 1 && "text-green-600",
-    deletedTextColor: data.status === 2 && "text-red-500",
   };
 
   const scheduleConfigs = {
     scheduled: data.status === 0,
     deleted: data.status === 2,
     completed: data.status === 1,
-    hasAdmin: user.fullName.includes("Admin"),
   };
 
   const whatsappLink = `https://api.whatsapp.com/send?phone=${formatations.whatsapp}`;
@@ -157,16 +122,7 @@ export function Schedule({ data }: ScheduleDataProps) {
               </PDFDownloadLink>
 
               {scheduleConfigs.scheduled && (
-                <button
-                  className="px-3 py-3 rounded-3xl text-sm flex items-center justify-center gap-x-1 max-w-xs transition-all group bg-red-500 hover:scale-95 hover:brightness-95 sm:w-max "
-                  onClick={cancelSchedule}
-                >
-                  <XCircle size={26} className="text-white" />
-
-                  <span className="w-0 m-[-2px] overflow-hidden text-white transition-all duration-300 group-hover:w-20 group-hover:m-auto">
-                    Cancelar
-                  </span>
-                </button>
+                <CancelSchedule data={data} date={data.date} />
               )}
               {scheduleConfigs.completed && (
                 <button
@@ -204,88 +160,7 @@ export function Schedule({ data }: ScheduleDataProps) {
       </div>
 
       {/* Container dos detalhes */}
-      <div
-        className={`border shadow-sm relative -top-1 z-10 w-full overflow-auto transition-all duration-300 ${
-          isOpen ? "lg:h-64 p-3 scale-100" : "h-0 p-0 scale-0"
-        }`}
-      >
-        <h2 className="text-lg font-medium underline my-2">
-          Detalhes da solicitação
-        </h2>
-
-        <div className="grid grid-cols-1 gap-8">
-          {/* Col 1 */}
-          <div className="flex flex-col">
-            <div className="inline-flex items-center gap-x-2 my-1 w-full">
-              <h3 className="text-sm font-semibold ">Código de agendamento:</h3>
-              <p className="text-lg uppercase tracking-widest ">
-                {data.scheduleCode}
-              </p>
-            </div>
-            <div className="inline-flex gap-x-2 my-1 w-full">
-              <h3 className="text-sm font-semibold">Motivo da solicitação:</h3>
-              <p className="text-sm">{data.motive}</p>
-            </div>
-
-            <div className="inline-flex gap-x-2 my-1 w-full">
-              <h3 className="text-sm font-semibold">Observação:</h3>
-              <p className="text-sm">{data.obs}</p>
-            </div>
-
-            <div className="inline-flex gap-x-2 my-1 items-center">
-              <h3 className="text-sm font-semibold">Status:</h3>
-              <span
-                className={`text-sm p-1 rounded-3xl font-semibold ${styleVariants.completedTextColor} ${styleVariants.deletedTextColor} ${styleVariants.scheduledTextColor}`}
-              >
-                {scheduleConfigs.scheduled && "Agendado"}
-                {scheduleConfigs.completed && "Concluído"}
-                {scheduleConfigs.deleted && "Cancelado"}
-              </span>
-            </div>
-
-            {/* Data de agendamentos concluidos */}
-            {data.conclued_at && !scheduleConfigs.deleted && (
-              <div className="inline-flex gap-x-2 my-1 items-center">
-                <h3 className="text-sm font-semibold">Concluído em:</h3>
-                <span className={`text-sm text-green-500 font-semibold p-1 `}>
-                  {dateToDDMMAA(data.conclued_at)}
-                </span>
-              </div>
-            )}
-
-            {/* Data de agendamentos cancelados */}
-            {data.deleted_at && !scheduleConfigs.completed && (
-              <div className="inline-flex gap-x-2 my-1 items-center">
-                <h3 className="text-sm font-semibold">Excluído em:</h3>
-                <span className={`text-sm text-red-500 font-semibold p-1 `}>
-                  {dateToDDMMAA(data.deleted_at)}
-                </span>
-              </div>
-            )}
-
-            <div className="flex items-center gap-x-2 my-1">
-              <h3 className="text-sm font-semibold">
-                Agendado para:
-                <span className="text-sm font-normal ml-2">
-                  {dateToDDMMAA(data.date)}
-                </span>
-              </h3>
-
-              <h3 className="text-sm font-semibold">
-                Horário:
-                <span className="text-sm font-normal ml-2">
-                  {data.startHour} às {formatations.endTime}
-                </span>
-              </h3>
-            </div>
-
-            <div className="inline-flex gap-x-2 my-1">
-              <h3 className="text-sm font-semibold">Serviço:</h3>
-              <span className="text-sm">{data.service}</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ScheduleDetails data={data} isOpen={isOpen} />
     </div>
   );
 }

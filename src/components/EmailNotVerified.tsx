@@ -1,7 +1,7 @@
 import { User, sendEmailVerification } from "firebase/auth";
 import { notifySuccess } from "./Toast";
 
-export function EmailNotVerified({ user }: { user: User }) {
+export function EmailNotVerified({ userAuth }: { userAuth: User }) {
   const reloadPage = () => {
     window.location.reload();
   };
@@ -14,7 +14,7 @@ export function EmailNotVerified({ user }: { user: User }) {
         <button
           className="text-blue-500"
           onClick={() => {
-            sendEmailVerification(user);
+            sendEmailVerification(userAuth);
             notifySuccess(
               "E-mail enviado, verifique a sua caixa de mensagens!"
             );

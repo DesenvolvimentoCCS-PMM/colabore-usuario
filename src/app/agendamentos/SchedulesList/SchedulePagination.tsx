@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/buttons/DefaultButton";
-import { Schedule } from "./Schedule";
+import { Schedule } from "./schedule";
 import { ScheduleDataType } from "@/types/Schedule";
 import { useState } from "react";
 import { Clock } from "phosphor-react";

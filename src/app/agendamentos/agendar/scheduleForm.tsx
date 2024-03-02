@@ -198,13 +198,12 @@ export function ScheduleForm() {
 
     const splitedFullStartHour = inputTime.split(":"); //['12', '00']
     const startHour = splitedFullStartHour[0]; //'12'
-    const endHour = eval(`${startHour} + ${usageTime}`); //'14'
+    const endHour = String(Number(startHour) + Number(usageTime)); //'14'
 
     for (let i = Number(startHour); i <= Number(endHour); i++) {
       const newTime = `${String(i)}:00`;
       reservedTimes.push(newTime);
     }
-
     return reservedTimes;
   };
 
@@ -300,6 +299,7 @@ export function ScheduleForm() {
       }
     );
   }
+
   return (
     <form
       className="pl-2 space-y-6 mt-10 sm:pl-8"
@@ -625,9 +625,13 @@ export function ScheduleForm() {
           )}
 
           <div className="flex justify-end pt-6">
-            <Button islink={false} type="submit" disabled={isFetching}>
+            <button
+              className="flex items-center gap-x-2 rounded-3xl bg-[#CC9935] px-10 py-2 max-w-max text-white font-medium text-sm uppercase disabled:opacity-50 disabled:pointer-events-none sm:text-base "
+              type="submit"
+              disabled={isFetching}
+            >
               {isFetching ? "Agendando..." : "Agendar >"}
-            </Button>
+            </button>
           </div>
         </>
       )}

@@ -18,3 +18,7 @@ export function dateToDDMMAA(date: string) {
 export function currentDate() {
   return dayjs().format("DD-MM-YYYY");
 }
+
+export function currentDataToDatabase() {
+  return dayjs().format("YYYY-MM-DD");
+}

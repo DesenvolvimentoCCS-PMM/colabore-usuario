@@ -1,7 +1,6 @@
 import { Container } from "@/components/Container";
 import Link from "next/link";
 import { ScheduleForm } from "./scheduleForm";
-import { useUserContext } from "@/context/userContext";
 
 export default function Agendar() {
   return (

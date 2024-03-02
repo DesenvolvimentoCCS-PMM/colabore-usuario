@@ -5,6 +5,7 @@ export interface ScheduleDataType {
     email: string;
   };
   created_by: string;
+  cancelMotive?: string;
   conclued_at?: string;
   deleted_by?: string;
   deleted_at?: string;

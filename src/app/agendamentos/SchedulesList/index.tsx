@@ -10,15 +10,16 @@ import { useEffect, useState } from "react";
 import { Filter } from "./Filter";
 import { SchedulePagination } from "./SchedulePagination";
 import { EmailNotVerified } from "@/components/EmailNotVerified";
+import { useUserContext } from "@/context/userContext";
 
 export function ScheduleList() {
   const { scheduleData } = useScheduleContext();
   const [data, setData] = useState<ScheduleDataType[]>([]);
   const [dataFiltered, setDataFiltered] = useState<ScheduleDataType[]>([]);
-
   const { updateScheduleView } = useUpdateScheduleView();
+  const { user } = useUserContext();
 
-  const user = auth.currentUser;
+  const userAuth = auth.currentUser;
 
   useEffect(() => {
     getData();
@@ -27,7 +28,7 @@ export function ScheduleList() {
   const getData = () => {
     const dataToDisplay = scheduleData.filter((doc) => {
       if (user) {
-        return doc.created_by === user?.uid;
+        return doc.created_by === user.uid;
       }
     });
 
@@ -35,14 +36,10 @@ export function ScheduleList() {
     setData(dataToDisplay);
   };
 
-  const reloadPage = () => {
-    window.location.reload();
-  };
-
   return (
     <div className="w-full pt-24">
-      {user && !user.emailVerified ? (
-        <EmailNotVerified user={user} />
+      {userAuth && !userAuth.emailVerified ? (
+        <EmailNotVerified userAuth={userAuth} />
       ) : (
         <div>
           <div className="flex items-center justify-between flex-wrap gap-4 mb-10">
