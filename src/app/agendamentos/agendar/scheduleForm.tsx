@@ -140,6 +140,7 @@ export function ScheduleForm() {
   const [isVerified, setIsVerified] = useState<null | boolean>(null);
   const [showAlertTime, setShowAlertTime] = useState(false);
 
+  //Altera o input de horario de acordo com o tempo de uso.
   useEffect(() => {
     if (inputTotTime === "2") {
       setShowAlertTime(true);
@@ -148,36 +149,38 @@ export function ScheduleForm() {
     }
   }, [inputTotTime]);
 
-  //Contexts
+  //Contextos
   const { user } = useUserContext();
   const { scheduleData } = useScheduleContext();
   const { updateScheduleView } = useUpdateScheduleView();
   const { push } = useRouter();
   const userAuth = auth.currentUser;
 
+  //Lida com toda logica de agendamento
   const handleTime = () => {
     const fieldsEmpty = !inputDate || !inputTime || !inputTotTime;
 
     if (fieldsEmpty) {
       return notifyError("Preencha todos os campos para continuar!");
+    }
+
+    //Pegar os horarios reservados do bd
+
+    const timeNotAvaiableForCurrentDay = checkIfTimeIsAvaiableToday();
+
+    const scheduleAlreadyExists = checkIfScheduleAlreadyExists();
+
+    if (scheduleAlreadyExists) {
+      return notifyError("Não há mais vagas para esse agendamento.");
+    } else if (timeNotAvaiableForCurrentDay) {
+      return notifyError("Este horário não está mais disponivel para hoje.");
     } else {
-      //Pegar os horarios reservados do bd
-
-      const timeNotAvaiableForCurrentDay = checkIfTimeIsAvaiableToday();
-
-      const scheduleAlreadyExists = checkIfScheduleAlreadyExists();
-
-      if (scheduleAlreadyExists) {
-        return notifyError("Não há mais vagas para esse agendamento.");
-      } else if (timeNotAvaiableForCurrentDay) {
-        return notifyError("Este horário não está mais disponivel para hoje.");
-      } else {
-        notifySuccess("Horário disponível, prossiga!");
-        return setIsVerified(true);
-      }
+      notifySuccess("Horário disponível, prossiga!");
+      return setIsVerified(true);
     }
   };
 
+  //Verifica se a disponibilidade do agendamento no dia atual (função auxiliar)
   const checkIfTimeIsAvaiableToday = () => {
     const currentDate = new Date();
     const user = new Date(inputDate);
@@ -192,25 +195,22 @@ export function ScheduleForm() {
     return datesIsEquals && inputHours <= currentHours;
   };
 
-  const setReservedTimes = (inputTime: string, usageTime: string) => {
-    //Exemplo => inputTime: '12:00' / usageTime: '2'
-    const reservedTimes: string[] = [];
+  //Cria o array de horarios reservados (função auxiliar)
+  const calculateReservedHours = () => {
+    const startHour = Number(inputTime.split(":")[0]);
+    const endHour = startHour + Number(inputTotTime);
 
-    const splitedFullStartHour = inputTime.split(":"); //['12', '00']
-    const startHour = splitedFullStartHour[0]; //'12'
-    const endHour = String(Number(startHour) + Number(usageTime)); //'14'
-
-    for (let i = Number(startHour); i <= Number(endHour); i++) {
-      const newTime = `${String(i)}:00`;
-      reservedTimes.push(newTime);
-    }
-    return reservedTimes;
+    return Array.from({ length: endHour - startHour + 1 }, (_, index) => {
+      const newTime = `${startHour + index}:00`;
+      return newTime;
+    });
   };
 
+  //Verifica a disponibilidade do agendamento (função auxiliar)
   const checkIfScheduleAlreadyExists = () => {
     const coworkingServiceText = "Coworking";
     const maxCoworkingAccepteds = 6;
-    const userHours = setReservedTimes(inputTime, inputTotTime);
+    const userHours = calculateReservedHours();
 
     const coworkingList = scheduleData.filter((data) => {
       return (
@@ -243,46 +243,49 @@ export function ScheduleForm() {
     }
   };
 
+  //Salva o agendamento do usuário no banco de dados
   const submit: SubmitHandler<scheduleFormSchemaType> = async (data) => {
-    setIsFetching(true);
+    // setIsFetching(true);
 
-    const reservedTimes = setReservedTimes(inputTime, inputTotTime);
+    const reservedTimes = calculateReservedHours();
     const id = v4().slice(0, 6);
+    console.log(reservedTimes);
 
-    try {
-      await addDoc(collection(db, "schedules"), {
-        userInfo: {
-          name: user.fullName,
-          email: user.email,
-          cpf: user.cpf,
-          whatsapp: user.whatsapp,
-        },
-        created_by: userAuth?.uid,
-        created_at: new Date(),
-        status: 0,
-        reservedTimes,
-        scheduleCode: id,
-        ...data,
-      });
-      sendMail(user.email, user.fullName, inputDate, reservedTimes[0]);
-      notifySuccess("Agendamento realizado com sucesso!");
-      setIsFetching(false);
-      // sendEmail(data);
-      updateScheduleView();
-      push("/agendamentos");
-    } catch (error) {
-      notifyError(
-        "Não foi possível realizar seu agendamento, tente mais tarde!"
-      );
-      setIsFetching(false);
-      throw new Error();
-    }
+    // try {
+    //   await addDoc(collection(db, "schedules"), {
+    //     userInfo: {
+    //       name: user.fullName,
+    //       email: user.email,
+    //       cpf: user.cpf,
+    //       whatsapp: user.whatsapp,
+    //     },
+    //     created_by: userAuth?.uid,
+    //     created_at: new Date(),
+    //     status: 0,
+    //     reservedTimes,
+    //     scheduleCode: id,
+    //     ...data,
+    //   });
+    //   sendMail(user.email, user.fullName, inputDate, reservedTimes[0]);
+    //   notifySuccess("Agendamento realizado com sucesso!");
+    //   setIsFetching(false);
+    //   updateScheduleView();
+    //   push("/agendamentos");
+    // } catch (error) {
+    //   notifyError(
+    //     "Não foi possível realizar seu agendamento, tente mais tarde!"
+    //   );
+    //   setIsFetching(false);
+    //   throw new Error();
+    // }
   };
 
+  //Pede a verificação de disponibilidade após interagir com algum campo do formulario
   const requestFormVerifiy = () => {
     setIsVerified(false);
   };
 
+  //Notifica o agendamento no email
   function sendMail(email: string, name: string, date: string, time: string) {
     axios.post(
       "https://colabore-email.onrender.com/send-email",
@@ -448,7 +451,7 @@ export function ScheduleForm() {
           {showAlertTime && (
             <small className="text-yellow-500 bg-yellow-100  font-semibold p-2 text-xs max-w-xs">
               {"[AVISO]"} Agendamentos com 2h de uso só podem ser agendados até
-              às 17h.
+              às 15h.
             </small>
           )}
         </div>
