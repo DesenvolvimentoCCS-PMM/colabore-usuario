@@ -19,6 +19,7 @@ import { z } from "zod";
 import dayjs from "dayjs";
 import ptBr from "dayjs/locale/pt-br";
 import localizedFormat from "dayjs/plugin/localizedFormat";
+import { currentDate } from "@/utils/dateFunctions";
 
 //Configurando para pt-br
 dayjs.extend(localizedFormat);
@@ -164,35 +165,65 @@ export function ScheduleForm() {
       return notifyError("Preencha todos os campos para continuar!");
     }
 
-    //Pegar os horarios reservados do bd
-
-    const timeNotAvaiableForCurrentDay = checkIfTimeIsAvaiableToday();
-
-    const scheduleAlreadyExists = checkIfScheduleAlreadyExists();
-
-    if (scheduleAlreadyExists) {
-      return notifyError("Não há mais vagas para esse agendamento.");
-    } else if (timeNotAvaiableForCurrentDay) {
-      return notifyError("Este horário não está mais disponivel para hoje.");
-    } else {
-      notifySuccess("Horário disponível, prossiga!");
-      return setIsVerified(true);
-    }
+    checkIfScheduleAlreadyExists();
+    checkIfTimeIsAvaiableToday();
   };
 
   //Verifica se a disponibilidade do agendamento no dia atual (função auxiliar)
   const checkIfTimeIsAvaiableToday = () => {
-    const currentDate = new Date();
-    const user = new Date(inputDate);
-    user.setDate(user.getDate() + 1);
-
     const datesIsEquals =
-      currentDate.toLocaleDateString() === user.toLocaleDateString();
+      currentDate() === dayjs(inputDate).format("DD-MM-YYYY");
 
-    const inputHours = Number(inputTime.split(":")[0]);
-    const currentHours = currentDate.getHours();
+    const inputHour = Number(inputTime.split(":")[0]);
+    const currentHours = dayjs().hour();
 
-    return datesIsEquals && inputHours <= currentHours;
+    return datesIsEquals && inputHour <= currentHours;
+  };
+
+  //Verifica a disponibilidade do agendamento (função auxiliar)
+  const checkIfScheduleAlreadyExists = () => {
+    switch (inputService) {
+      case "Coworking":
+        const maxCoworkingAccepteds = 6;
+
+        const scheduledCoworkingList = scheduleData.filter((scheduling) => {
+          return (
+            scheduling.service === "Coworking" &&
+            scheduling.date === inputDate &&
+            scheduling.status === 0
+          );
+        }).length;
+
+        if (scheduledCoworkingList >= maxCoworkingAccepteds) {
+          return notifyError("Não há computadores disponíveis nesse horário!");
+        }
+        notifySuccess("Temos um computador para você nesse horário, prossiga!");
+        return setIsVerified(true);
+      default:
+        //Se for Reunião ou Palestra
+        const reservedHours = calculateReservedHours();
+        const allReservedsHours: string[] = [].sort();
+
+        //Pega todos os horarios reservados do dia e adiciona na lista
+        scheduleData.map((data) => {
+          if (data.service === inputService && data.date === inputDate) {
+            data.reservedTimes.map((dt) => {
+              allReservedsHours.push(dt);
+            });
+          }
+        });
+
+        //Compara os horarios que o usuario vai reservar com os já reservado.
+        if (
+          allReservedsHours.some((hour) => {
+            return reservedHours.includes(hour);
+          })
+        ) {
+          return notifyError("Não há mais vagas para esse agendamento.");
+        }
+        setIsVerified(true);
+        return notifySuccess("Horário disponível, prossiga!");
+    }
   };
 
   //Cria o array de horarios reservados (função auxiliar)
@@ -204,43 +235,6 @@ export function ScheduleForm() {
       const newTime = `${startHour + index}:00`;
       return newTime;
     });
-  };
-
-  //Verifica a disponibilidade do agendamento (função auxiliar)
-  const checkIfScheduleAlreadyExists = () => {
-    const coworkingServiceText = "Coworking";
-    const maxCoworkingAccepteds = 6;
-    const userHours = calculateReservedHours();
-
-    const coworkingList = scheduleData.filter((data) => {
-      return (
-        data.service === coworkingServiceText &&
-        data.date === inputDate &&
-        data.status === 0
-      );
-    });
-
-    //Se for coworking
-    if (inputService === coworkingServiceText) {
-      return coworkingList.length >= maxCoworkingAccepteds;
-    } else {
-      //Se for Reunião ou Palestra
-      const reservedsHours: string[] = [].sort();
-
-      //Pega todos os horarios reservados do dia e adiciona na lista
-      scheduleData.map((data) => {
-        if (data.service === inputService && data.date === inputDate) {
-          data.reservedTimes.map((dt) => {
-            reservedsHours.push(dt);
-          });
-        }
-      });
-
-      //Compara os horarios que o usuario vai reservar com os já reservado.
-      return reservedsHours.some((hour) => {
-        return userHours.includes(hour);
-      });
-    }
   };
 
   //Salva o agendamento do usuário no banco de dados
