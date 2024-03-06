@@ -20,6 +20,7 @@ import dayjs from "dayjs";
 import ptBr from "dayjs/locale/pt-br";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import { currentDate } from "@/utils/dateFunctions";
+import { ScheduleDataType } from "@/types/Schedule";
 
 //Configurando para pt-br
 dayjs.extend(localizedFormat);
@@ -205,8 +206,21 @@ export function ScheduleForm() {
         const allReservedsHours: string[] = [].sort();
 
         //Pega todos os horarios reservados do dia e adiciona na lista
-        scheduleData.map((data) => {
-          if (data.service === inputService && data.date === inputDate) {
+        scheduleData.map((data: ScheduleDataType) => {
+          if (
+            data.service === inputService &&
+            data.date === inputDate &&
+            data.status === 0
+          ) {
+            let lastTime = data.reservedTimes[data.reservedTimes.length - 1];
+            const [hour] = lastTime.split(":");
+
+            const newHour = parseInt(hour) - 1;
+
+            data.reservedTimes[
+              data.reservedTimes.length - 1
+            ] = `${newHour}:${"59"}`;
+
             data.reservedTimes.map((dt) => {
               allReservedsHours.push(dt);
             });
@@ -245,33 +259,33 @@ export function ScheduleForm() {
     const id = v4().slice(0, 6);
     console.log(reservedTimes);
 
-    // try {
-    //   await addDoc(collection(db, "schedules"), {
-    //     userInfo: {
-    //       name: user.fullName,
-    //       email: user.email,
-    //       cpf: user.cpf,
-    //       whatsapp: user.whatsapp,
-    //     },
-    //     created_by: userAuth?.uid,
-    //     created_at: new Date(),
-    //     status: 0,
-    //     reservedTimes,
-    //     scheduleCode: id,
-    //     ...data,
-    //   });
-    //   sendMail(user.email, user.fullName, inputDate, reservedTimes[0]);
-    //   notifySuccess("Agendamento realizado com sucesso!");
-    //   setIsFetching(false);
-    //   updateScheduleView();
-    //   push("/agendamentos");
-    // } catch (error) {
-    //   notifyError(
-    //     "Não foi possível realizar seu agendamento, tente mais tarde!"
-    //   );
-    //   setIsFetching(false);
-    //   throw new Error();
-    // }
+    try {
+      await addDoc(collection(db, "schedules"), {
+        userInfo: {
+          name: user.fullName,
+          email: user.email,
+          cpf: user.cpf,
+          whatsapp: user.whatsapp,
+        },
+        created_by: userAuth?.uid,
+        created_at: new Date(),
+        status: 0,
+        reservedTimes,
+        scheduleCode: id,
+        ...data,
+      });
+      sendMail(user.email, user.fullName, inputDate, reservedTimes[0]);
+      notifySuccess("Agendamento realizado com sucesso!");
+      setIsFetching(false);
+      updateScheduleView();
+      push("/agendamentos");
+    } catch (error) {
+      notifyError(
+        "Não foi possível realizar seu agendamento, tente mais tarde!"
+      );
+      setIsFetching(false);
+      throw new Error();
+    }
   };
 
   //Pede a verificação de disponibilidade após interagir com algum campo do formulario

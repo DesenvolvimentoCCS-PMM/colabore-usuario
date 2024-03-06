@@ -7,7 +7,7 @@ export function Toast() {
     <ToastContainer
       autoClose={2000}
       pauseOnHover
-      theme="colored"
+      theme="light"
       position="top-right"
     />
   );
