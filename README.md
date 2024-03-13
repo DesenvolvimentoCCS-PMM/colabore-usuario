@@ -15,7 +15,7 @@ O sistema foi desenvolvido com o propósito de facilitar o agendamento de horár
 - Verificação de horários: O sistema realiza automaticamente a verificação da disponibilidade dos serviços, baseando-se nos dados fornecidos pelo usuário no formulário de agendamento. Isso garante uma gestão eficiente e precisa dos horários disponíveis.
 
 - Gestão de horários: Oferecemos aos usuários a capacidade de gerenciar e ajustar suas agendas de forma intuitiva. Eles podem visualizar detalhes de seus agendamentos, cancelar horários conforme necessário e acessar o comprovante de reserva com facilidade.
-- 
+
 - Lembrete: Envio automático de lembretes por e-mail, para lembrar os compromissos agendados.
 
 ## Tecnologias principais:
