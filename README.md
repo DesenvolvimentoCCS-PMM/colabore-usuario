@@ -35,7 +35,7 @@ Para mais informações, acesse: <https://www.mesquita.rj.gov.br/espaco-colabore
 - Axios: Fetch de dados;
 - Phosphor Icons: Icones da interface;
 
-### Desenvolvedor
+### Desenvolvedores
 
-_Luan Henrique - Web Developer_: <https://www.linkedin.com/in/luan-henrique-407822207>
-_Eduardo Machado - Web Developer_: <https://www.linkedin.com/in/eduardo-r-machado/>
+- _Luan Henrique - Web Developer_: <https://www.linkedin.com/in/luan-henrique-407822207>
+- _Eduardo Machado - Web Developer_: <https://www.linkedin.com/in/eduardo-r-machado/>
