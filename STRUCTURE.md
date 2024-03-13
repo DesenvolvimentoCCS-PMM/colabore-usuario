@@ -43,6 +43,6 @@
 - Cadastro: `src/app/cadastro`
 - Login `src/app/entrar`
 - Painel inicial do usuário: `src/app/agendamentos`
-- Formulário de agendammento: `src/app/agendamentos/agendar`
+- Formulário de agendamento: `src/app/agendamentos/agendar`
 - Sobre nós: `src/app/como-funciona`
 - Termos de uso: `src/app/termos-de-uso`
