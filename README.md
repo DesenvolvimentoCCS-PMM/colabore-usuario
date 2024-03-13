@@ -1,34 +1,40 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Sobre o Sistema do Espaço Colabore - Usuário
 
-## Getting Started
+## O que é o Espaço Colabore ?
 
-First, run the development server:
+O Espaço Colabore é a primeiro instalação pública dedicada a estudos, reuniões e coworking de Mesquita. Inaugurado em 2022, o espaço possui um ambiente climatizado, com instalações de ponta, conexão a internet e 3 salas que destacam seus serviços. São elas sala de **Reunião** que comporta até 8 pessoas, sala de **Palestra** para 20 pessoas e um **Espaço de Coworking** com 6 computadores.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+Para mais informações, acesse: <https://www.mesquita.rj.gov.br/espaco-colabore/>
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Sistema do Espaço Colabore - Usuário:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+É um sistema projetado para realizar agendamentos de horários para os usuários do Espaço Colabore, tem como função principal gerenciar o tempo em que os usuários poderão utilizar os serviços, garantindo uma melhor administração dos profissionais. As principais funcionalidades do sistema incluem:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- Agendamento automático: Os usuário podem fazer suas próprias reservas, escolhendo **serviço, data, horário e tempo de uso** sem a necessidade de intervenção manual;
 
-## Learn More
+- Verificação de horários: Não é preciso ter um controle manual das reservas, o sistema verifica de forma automatica se o serviço está ou não disponivel de acordo com os dados que o usuário insere no formulário de agendamento;
 
-To learn more about Next.js, take a look at the following resources:
+- Gestão de horários: Permite que o usuário gerencie e ajuste sua agenda, podendo visualizar e cancelar horários.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Lembrete: Envio automático de lembres por e-mail, para lembrar os compromissos agendados.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Tecnologias principais:
 
-## Deploy on Vercel
+NEXT JS 13.4: Frontend;
+CSS e TailwindCSS: Estilização
+Javascript/Typescript: Linguagem de programação
+Firebase/Cloud Firestore: Backend e banco de dados;
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Bibliotecas/Frameworks:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- DaysJS: Manipulação de datas;
+- React-hook-form e Zod: Manipulação e Validação de Formulários;
+- React-toastify: Notificações toast;
+- Headlessui: Componentes de estilização pré prontos (dialogs);
+- Nodemailer: Envio de email;
+- Axios: Fetch de dados;
+- Phosphor Icons: Icones da interface;
+
+### Desenvolvedor
+
+_Luan Henrique - Web Developer_: <https://www.linkedin.com/in/luan-henrique-407822207>

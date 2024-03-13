@@ -1,7 +1,6 @@
 "use client";
 
 import { notifyError, notifySuccess } from "@/components/Toast";
-import { Button } from "@/components/buttons/DefaultButton";
 import { useScheduleContext } from "@/context/schedulesContext";
 import { useUpdateScheduleView } from "@/context/schedulesViewContext";
 import { useUserContext } from "@/context/userContext";
