@@ -20,10 +20,10 @@ Para mais informações, acesse: <https://www.mesquita.rj.gov.br/espaco-colabore
 
 ## Tecnologias principais:
 
-NEXT JS 13.4: Frontend;
-CSS e TailwindCSS: Estilização
-Javascript/Typescript: Linguagem de programação
-Firebase/Cloud Firestore: Backend e banco de dados;
+-NEXT JS 13.4: Frontend;
+-CSS e TailwindCSS: Estilização
+-Javascript/Typescript: Linguagem de programação
+-Firebase/Cloud Firestore: Backend e banco de dados;
 
 ### Bibliotecas/Frameworks:
 
