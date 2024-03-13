@@ -32,7 +32,7 @@
 - `src/components` - São todos os pequenos pedaços da interface que são (re)utilizados em diversas partes da interface.
   - exemplo:
     - `<Container/>` - Usado para englobar o contéudo de uma página com uma estilização padronizada.
-- `src/context` - Utilizados para fazer requisição/compartilhamento de dados e para estados globais na interface.
+- `src/context` - Utilizado para fazer requisição/compartilhamento de dados e para estados globais na interface.
 - `src/services` - Configura serviços externos da aplicação, como a configuração do Firebase, por exemplo.
 - `src/types` - Armazena as tipagens do Typescript.
 - `src/utils` - Armazena funções auxilares, que podem ser usadas para algum fim em qualquer parte da interface.
