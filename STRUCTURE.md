@@ -26,16 +26,16 @@
 
   - `/app/icon.png` - Arquivos com o nome _icon.png_ ou _favicon.ico_ definem o Favicon da aplicação.
   - `/app/layout.tsx` - Todo o sistema é gerado a partir desse arquivo, lá definimos _Metatags_, _Fonts_, _Providers_ e qualquer outra coisa que precise ser acessado no escopo global da aplicação.
-  - `/app/global.css` - Utilizado para inicializar o TailwindCSS e definir estilizações globais.
+  - `/app/global.css` - Define estilizações globais e inicializa o TailwindCSS.
 
-- `/src/assets` - Armazena recursos como imagens, videos e audios.
+- `/src/assets` - Recursos como imagens, videos e audios.
 - `src/components` - São todos os pequenos pedaços da interface que são (re)utilizados em diversas partes da interface.
   - exemplo:
     - `<Container/>` - Usado para englobar o contéudo de uma página com uma estilização padronizada.
-- `src/context` - Utilizado para fazer requisição/compartilhamento de dados e para estados globais na interface.
-- `src/services` - Configura serviços externos da aplicação, como a configuração do Firebase, por exemplo.
-- `src/types` - Armazena as tipagens do Typescript.
-- `src/utils` - Armazena funções auxilares, que podem ser usadas para algum fim em qualquer parte da interface.
+- `src/context` - Requisição/compartilhamento de dados e estados globais da interface.
+- `src/services` - Configurações de serviços externos, como a configuração do Firebase, por exemplo.
+- `src/types` - Tipagens do Typescript.
+- `src/utils` - Funções auxilares, podem ser utilizadas em qualquer parte da interface, geralmente para tratar dados.
 
 ## Páginas do Sistema
 
