@@ -20,7 +20,7 @@ O sistema foi desenvolvido com o propósito de facilitar o agendamento de horár
 
 ## Tecnologias principais:
 
-- *[NEXT JS 13.4](https://nextjs.org/docs)*: Frontend;
+- *[NEXT JS](https://nextjs.org/docs)*: Frontend;
 - *CSS e [TailwindCSS](https://tailwindcss.com/docs/)*: Estilização
 - *Javascript/Typescript*: Linguagem de programação
 - *Firebase e Cloud Firestore*: Backend e banco de dados;
