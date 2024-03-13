@@ -15,7 +15,7 @@
 
 ## Estrutura do Projeto
 
-- `/src` - Contém todos as pastas e arquivos necessárias para o funcionamento da aplicação.
+- `/src` - Contém todos as pastas e arquivos necessários para o funcionamento da aplicação.
 
 - `/src/app` - É a pasta utilizada pelo NEXT para montar o sistema de roteamento da aplicação, todas as pasta dentro de _/app_ que possuem o arquivo _page.tsx_ são uma rota da aplicação.
 
