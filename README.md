@@ -38,3 +38,4 @@ Para mais informações, acesse: <https://www.mesquita.rj.gov.br/espaco-colabore
 ### Desenvolvedor
 
 _Luan Henrique - Web Developer_: <https://www.linkedin.com/in/luan-henrique-407822207>
+_Eduardo Machado - Web Developer_: <https://www.linkedin.com/in/eduardo-r-machado/>
