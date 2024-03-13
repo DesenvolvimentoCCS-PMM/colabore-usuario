@@ -8,7 +8,7 @@ Para mais informações, acesse: <https://www.mesquita.rj.gov.br/espaco-colabore
 
 ## Sistema do Espaço Colabore - Usuário:
 
-O sistema foi desenvolvido com o propósito de facilitar o agendamento de horários para os usuários do Espaço Colabore, visando otimizar a gestão do tempo disponível para a utilização dos serviços. Sua função central é assegurar uma administração eficiente dos horários dos profissionais, promovendo uma experiência mais organizada e satisfatória para todos os envolvidos. Algumas das principais funcionalidades do sistema englobam:
+O sistema foi desenvolvido com o propósito de facilitar o agendamento de horários para os usuários do Espaço Colabore, visando otimizar a gestão do tempo disponível para a utilização dos serviços. Sua função central é assegurar uma administração eficiente dos horários, promovendo uma experiência mais organizada e satisfatória para todos os envolvidos. Algumas das principais funcionalidades do sistema englobam:
 
 - Agendamento automático: Os usuário podem fazer suas próprias reservas, escolhendo **serviço, data, horário e tempo de uso** sem a necessidade de intervenção manual;
 
