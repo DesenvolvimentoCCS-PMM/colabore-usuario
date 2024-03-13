@@ -21,9 +21,9 @@ O sistema foi desenvolvido com o propósito de facilitar o agendamento de horár
 ## Tecnologias principais:
 
 - *[NEXT JS](https://nextjs.org/docs)*: Frontend;
-- *CSS e [TailwindCSS](https://tailwindcss.com/docs/)*: Estilização
-- *Javascript/Typescript*: Linguagem de programação
-- *Firebase e Cloud Firestore*: Backend e banco de dados;
+- *CSS e [TailwindCSS](https://tailwindcss.com/docs/)*: Estilização;
+- *Javascript/Typescript*: Linguagem de programação;
+- *Firebase e Cloud Firestore*: Backend e banco de dados.
 
 ### Bibliotecas/Frameworks:
 
@@ -33,7 +33,7 @@ O sistema foi desenvolvido com o propósito de facilitar o agendamento de horár
 - *[Headlessui](https://headlessui.com/react)*: Componentes de estilização pré prontos (dialogs);
 - *[Nodemailer](https://www.nodemailer.com/)*: Envio de email;
 - *[Axios](https://axios-http.com/ptbr/docs/intro)*: Fetch de dados;
-- *[Phosphor-icons](https://phosphoricons.com/)*: Icones da interface;
+- *[Phosphor-icons](https://phosphoricons.com/)*: Icones da interface.
 
 ### Desenvolvedores
 
