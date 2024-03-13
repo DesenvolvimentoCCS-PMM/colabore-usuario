@@ -24,7 +24,7 @@
     - exemplo:
       - `/app/cadastro/SignupForm.tsx`: Componente do formulário de cadastro, exclusivo da rota de Cadastro.
 
-  - `/app/icon.png` - Arquivos com o nome _'icon.png'_ ou _'favicon.ico_ definem o Favicon da aplicação.
+  - `/app/icon.png` - Arquivos com o nome _icon.png_ ou _favicon.ico_ definem o Favicon da aplicação.
   - `/app/layout.tsx` - Todo o sistema é gerado a partir desse arquivo, lá definimos _Metatags_, _Fonts_, _Providers_ e qualquer outra coisa que precise ser acessado no escopo global da aplicação.
   - `/app/global.css` - Utilizado para inicializar o TailwindCSS e definir estilizações globais.
 
