@@ -3,7 +3,7 @@
 ### Requisitos para rodar:
 
 - [NodeJS](https://nodejs.org/en)
-- Node Package Manager (NPM)
+- Node Package Manage (Instalado juntamente com o Node)
 - [GIT](https://git-scm.com/downloads)
 
 ### Como rodar na minha máquina ?
