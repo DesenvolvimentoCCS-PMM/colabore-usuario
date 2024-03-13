@@ -20,20 +20,20 @@ O sistema foi desenvolvido com o propósito de facilitar o agendamento de horár
 
 ## Tecnologias principais:
 
-- NEXT JS 13.4: Frontend;
-- CSS e TailwindCSS: Estilização
-- Javascript/Typescript: Linguagem de programação
-- Firebase/Cloud Firestore: Backend e banco de dados;
+- *[NEXT JS 13.4](https://nextjs.org/docs)*: Frontend;
+- *CSS e [TailwindCSS](https://tailwindcss.com/docs/)*: Estilização
+- *Javascript/Typescript*: Linguagem de programação
+- *Firebase e Cloud Firestore*: Backend e banco de dados;
 
 ### Bibliotecas/Frameworks:
 
-- DaysJS: Manipulação de datas;
-- React-hook-form e Zod: Manipulação e Validação de Formulários;
-- React-toastify: Notificações toast;
-- Headlessui: Componentes de estilização pré prontos (dialogs);
-- Nodemailer: Envio de email;
-- Axios: Fetch de dados;
-- Phosphor Icons: Icones da interface;
+- *[DaysJS](https://day.js.org/)*: Manipulação de datas;
+- *[React-hook-form](https://react-hook-form.com/) e [Zod](https://zod.dev/)*: Manipulação e Validação de Formulários;
+- *[React-toastify](https://www.npmjs.com/package/react-toastify)*: Notificações toast;
+- *[Headlessui](https://headlessui.com/react)*: Componentes de estilização pré prontos (dialogs);
+- *[Nodemailer](https://www.nodemailer.com/)*: Envio de email;
+- *[Axios](https://axios-http.com/ptbr/docs/intro)*: Fetch de dados;
+- *[Phosphor-icons](https://phosphoricons.com/)*: Icones da interface;
 
 ### Desenvolvedores
 
