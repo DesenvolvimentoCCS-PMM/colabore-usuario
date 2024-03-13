@@ -1,6 +1,6 @@
 ## Cancelamento
 
-[] O agendamento é cancelado porém o horário que ele reservou não é liberado
+[x] O agendamento é cancelado porém o horário que ele reservou não é liberado
 
 ## Agendamento
 
