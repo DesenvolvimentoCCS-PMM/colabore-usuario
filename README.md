@@ -8,15 +8,15 @@ Para mais informações, acesse: <https://www.mesquita.rj.gov.br/espaco-colabore
 
 ## Sistema do Espaço Colabore - Usuário:
 
-É um sistema projetado para realizar agendamentos de horários para os usuários do Espaço Colabore, tem como função principal gerenciar o tempo em que os usuários poderão utilizar os serviços, garantindo uma melhor administração dos profissionais. As principais funcionalidades do sistema incluem:
+O sistema foi desenvolvido com o propósito de facilitar o agendamento de horários para os usuários do Espaço Colabore, visando otimizar a gestão do tempo disponível para a utilização dos serviços. Sua função central é assegurar uma administração eficiente dos horários dos profissionais, promovendo uma experiência mais organizada e satisfatória para todos os envolvidos. Algumas das principais funcionalidades do sistema englobam:
 
 - Agendamento automático: Os usuário podem fazer suas próprias reservas, escolhendo **serviço, data, horário e tempo de uso** sem a necessidade de intervenção manual;
 
-- Verificação de horários: Não é preciso ter um controle manual das reservas, o sistema verifica de forma automatica se o serviço está ou não disponivel de acordo com os dados que o usuário insere no formulário de agendamento;
+- Verificação de horários: O sistema realiza automaticamente a verificação da disponibilidade dos serviços, baseando-se nos dados fornecidos pelo usuário no formulário de agendamento. Isso garante uma gestão eficiente e precisa dos horários disponíveis.
 
-- Gestão de horários: Permite que o usuário gerencie e ajuste sua agenda, podendo visualizar e cancelar horários.
-
-- Lembrete: Envio automático de lembres por e-mail, para lembrar os compromissos agendados.
+- Gestão de horários: Oferecemos aos usuários a capacidade de gerenciar e ajustar suas agendas de forma intuitiva. Eles podem visualizar detalhes de seus agendamentos, cancelar horários conforme necessário e acessar o comprovante de reserva com facilidade.
+- 
+- Lembrete: Envio automático de lembretes por e-mail, para lembrar os compromissos agendados.
 
 ## Tecnologias principais:
 
