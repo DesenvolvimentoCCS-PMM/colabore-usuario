@@ -2,7 +2,7 @@
 
 ## O que é o Espaço Colabore ?
 
-O Espaço Colabore é a primeiro instalação pública dedicada a estudos, reuniões e coworking de Mesquita. Inaugurado em 2023, o espaço possui um ambiente climatizado, com instalações de ponta, conexão a internet e 3 salas que destacam seus serviços. São elas sala de **Reunião** que comporta até 8 pessoas, sala de **Palestra** para 20 pessoas e um **Espaço de Coworking** com 6 computadores.
+O Espaço Colabore é a primeiro instalação pública dedicada a estudos, reuniões e coworking de Mesquita. Inaugurado em 2023, o espaço possui um ambiente climatizado, com instalações de ponta, conexão gratuita a internet e 3 salas que destacam seus serviços. São elas sala de **Reunião** que comporta até 8 pessoas, sala de **Palestra** para 20 pessoas e um **Espaço de Coworking** com 6 computadores.
 
 Para mais informações, acesse: <https://www.mesquita.rj.gov.br/espaco-colabore/>
 
