@@ -1,14 +1,12 @@
 "use client";
 
 import { notifyError, notifySuccess } from "@/components/Toast";
-import { Button } from "@/components/buttons/DefaultButton";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -793,7 +791,12 @@ export function SignupForm() {
 
         {/* SUBMIT */}
         <div className="flex justify-end w-full gap-y-2 ">
-          <Button type="submit">Cadastrar</Button>
+          <button
+            className="flex items-center gap-x-2 rounded-3xl bg-[#CC9935] px-10 py-2 max-w-max text-white font-medium text-sm uppercase disabled:opacity-50 disabled:pointer-events-none sm:text-base"
+            type="submit"
+          >
+            Cadastrar
+          </button>
         </div>
       </form>
     </div>

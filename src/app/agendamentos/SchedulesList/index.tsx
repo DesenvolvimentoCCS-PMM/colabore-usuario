@@ -1,11 +1,9 @@
 "use client";
 
-import { notifySuccess } from "@/components/Toast";
 import { useScheduleContext } from "@/context/schedulesContext";
 import { useUpdateScheduleView } from "@/context/schedulesViewContext";
 import { auth } from "@/services/firebase";
 import { ScheduleDataType } from "@/types/Schedule";
-import { sendEmailVerification } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { Filter } from "./Filter";
 import { SchedulePagination } from "./SchedulePagination";
