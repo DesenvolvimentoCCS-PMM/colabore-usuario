@@ -9,6 +9,7 @@ import { Filter } from "./Filter";
 import { SchedulePagination } from "./SchedulePagination";
 import { EmailNotVerified } from "@/components/EmailNotVerified";
 import { useUserContext } from "@/context/userContext";
+import { useChangeRealtime } from "@/hooks/useChangeRealtime";
 
 export function ScheduleList() {
   const { scheduleData } = useScheduleContext();
@@ -34,11 +35,11 @@ export function ScheduleList() {
     setData(dataToDisplay);
   };
 
-  return (
-    <div className="w-full pt-24">
-      {userAuth && !userAuth.emailVerified ? (
-        <EmailNotVerified userAuth={userAuth} />
-      ) : (
+  if (userAuth && !userAuth.emailVerified) {
+    return <EmailNotVerified userAuth={userAuth} />;
+  } else {
+    return (
+      <div className="w-full pt-24">
         <div>
           <div className="flex items-center justify-between flex-wrap gap-4 mb-10">
             <div className="flex items-center gap-x-2">
@@ -57,7 +58,7 @@ export function ScheduleList() {
 
           <SchedulePagination data={dataFiltered} />
         </div>
-      )}
-    </div>
-  );
+      </div>
+    );
+  }
 }

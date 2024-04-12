@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/buttons/DefaultButton";
 import { Schedule } from "./schedule";
 import { ScheduleDataType } from "@/types/Schedule";
 import { useState } from "react";

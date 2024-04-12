@@ -20,6 +20,7 @@ import ptBr from "dayjs/locale/pt-br";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import { currentDate } from "@/utils/dateFunctions";
 import { ScheduleDataType } from "@/types/Schedule";
+import { useChangeRealtime } from "@/hooks/useChangeRealtime";
 
 //Configurando para pt-br
 dayjs.extend(localizedFormat);
@@ -121,6 +122,7 @@ export function ScheduleForm() {
     register,
     handleSubmit,
     watch,
+    trigger,
     formState: { errors },
   } = useForm<scheduleFormSchemaType>({
     resolver: zodResolver(scheduleFormSchema),
@@ -158,15 +160,18 @@ export function ScheduleForm() {
   const userAuth = auth.currentUser;
 
   //Lida com toda logica de agendamento
-  const handleTime = () => {
-    const fieldsEmpty = !inputDate || !inputTime || !inputTotTime;
+  const handleVerifyDisponibility = async () => {
+    const validationResult = await trigger([
+      "date",
+      "service",
+      "startHour",
+      "totTime",
+    ]);
 
-    if (fieldsEmpty) {
-      return notifyError("Preencha todos os campos para continuar!");
+    if (validationResult) {
+      checkIfScheduleAlreadyExists();
+      checkIfTimeIsAvaiableToday();
     }
-
-    checkIfScheduleAlreadyExists();
-    checkIfTimeIsAvaiableToday();
   };
 
   //Verifica se a disponibilidade do agendamento no dia atual (função auxiliar)
@@ -252,11 +257,8 @@ export function ScheduleForm() {
 
   //Salva o agendamento do usuário no banco de dados
   const submit: SubmitHandler<scheduleFormSchemaType> = async (data) => {
-    // setIsFetching(true);
-
     const reservedTimes = calculateReservedHours();
     const id = v4().slice(0, 6);
-    console.log(reservedTimes);
 
     try {
       await addDoc(collection(db, "schedules"), {
@@ -273,6 +275,7 @@ export function ScheduleForm() {
         scheduleCode: id,
         ...data,
       });
+
       sendMail(user.email, user.fullName, inputDate, reservedTimes[0]);
       notifySuccess("Agendamento realizado com sucesso!");
       setIsFetching(false);
@@ -293,7 +296,12 @@ export function ScheduleForm() {
   };
 
   //Notifica o agendamento no email
-  function sendMail(email: string, name: string, date: string, time: string) {
+  const sendMail = (
+    email: string,
+    name: string,
+    date: string,
+    time: string
+  ) => {
     axios.post(
       "https://colabore-email.onrender.com/send-email",
       {
@@ -308,7 +316,7 @@ export function ScheduleForm() {
         },
       }
     );
-  }
+  };
 
   return (
     <form
@@ -465,7 +473,7 @@ export function ScheduleForm() {
         {!isVerified && (
           <div className="flex justify-end">
             <button
-              onClick={handleTime}
+              onClick={handleVerifyDisponibility}
               className="bg-yellowCol text-white p-3 rounded-3xl w-max hover:opacity-80 transition-all"
               type="button"
             >
