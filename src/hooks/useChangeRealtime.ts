@@ -6,9 +6,12 @@ export function useChangeRealtime() {
   const { updateScheduleView } = useUpdateScheduleView();
 
   const setRealtimeStatus = async () => {
+    //Aciona ao logar
     const localStatus = localStorage.getItem("realtime-status");
 
     if (!localStatus) {
+      //Verifica se já existe no localStorage
+      //Recupera o status do bd e adiciona no localStorage
       const docRef = doc(db, "change-realtime", "eE7uzTjPix7TlKRIvh1d");
       const docSnap = await getDoc(docRef);
 
@@ -20,6 +23,9 @@ export function useChangeRealtime() {
   };
 
   const handleRealtimeVerification = async () => {
+    //Aciona ao clicar em 'Verificar disponibilidade'
+
+    //Recupera status do BD
     const realtimeStatusRef = doc(
       db,
       "change-realtime",
@@ -29,9 +35,11 @@ export function useChangeRealtime() {
     const docSnap = await getDoc(realtimeStatusRef);
 
     if (docSnap.exists()) {
+      //Salva o status e o status-local na memoria
       const status = docSnap.data().status;
       const localStatus = Number(localStorage.getItem("realtime-status"));
 
+      //Logica de comparação...
       if (status != localStatus) {
         updateScheduleView();
         localStorage.setItem("realtime-status", status);

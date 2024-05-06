@@ -21,10 +21,10 @@ export function ScheduleList() {
   const userAuth = auth.currentUser;
 
   useEffect(() => {
-    getData();
+    getUserData();
   }, [updateScheduleView]);
 
-  const getData = () => {
+  const getUserData = () => {
     const dataToDisplay = scheduleData.filter((doc) => {
       if (user) {
         return doc.created_by === user.uid;
