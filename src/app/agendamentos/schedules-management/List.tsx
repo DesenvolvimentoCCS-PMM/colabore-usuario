@@ -1,13 +1,10 @@
 "use client";
 
-import { Schedule } from "./schedule";
 import { ScheduleDataType } from "@/types/Schedule";
 import { useState } from "react";
-import { Clock } from "phosphor-react";
 import Image from "next/image";
-
 import NoDataImage from "@/assets/noData.svg";
-import Link from "next/link";
+import { Schedule } from "@/components/schedule";
 
 interface SchedulePaginationProps {
   data: ScheduleDataType[];
@@ -22,32 +19,25 @@ export function SchedulePagination({ data }: SchedulePaginationProps) {
   const endIndex = startIndex + datasPerPage;
   const currentDatas = data.slice(startIndex, endIndex);
 
-  const notShowData = () => {
-    return (
-      <div className="flex flex-col justify-center items-center ">
-        <h1 className="text-blueCol text-lg text-center font-medium pt-10">
-          Ainda não há informações para exibir. 😕
-        </h1>
-
-        <Image src={NoDataImage} alt="Não há dados!" className="max-w-sm" />
-      </div>
-    );
-  };
-
-  const showDatas = () => {
-    return currentDatas.map((datas, index) => {
-      return <Schedule data={datas} key={index} />;
-    });
-  };
-
   return (
     <div className="mt-4 space-y-4">
       {/* Dados */}
+      {data.length === 0 ? (
+        <div className="flex flex-col justify-center items-center ">
+          <h1 className="text-blueCol text-lg text-center font-medium pt-10">
+            Ainda não há informações para exibir. 😕
+          </h1>
 
-      {data.length === 0 ? notShowData() : showDatas()}
+          <Image src={NoDataImage} alt="Não há dados!" className="max-w-xs" />
+        </div>
+      ) : (
+        currentDatas.map((datas, index) => {
+          return <Schedule data={datas} key={index} />;
+        })
+      )}
 
-      {/* Navegação */}
-      <div className="w-full flex justify-center gap-x-4">
+      {/* Paginação */}
+      <div className="w-full flex justify-center gap-x-4 pt-6">
         {Array.from(Array(qtdPages), (_, index) => {
           return (
             <button
@@ -62,17 +52,6 @@ export function SchedulePagination({ data }: SchedulePaginationProps) {
             </button>
           );
         })}
-      </div>
-
-      {/* Botão agendar */}
-      <div className="flex justify-center">
-        <Link
-          className="flex items-center gap-x-2 rounded-3xl bg-[#CC9935] px-10 py-2 max-w-max text-white font-medium text-sm uppercase disabled:opacity-50 disabled:pointer-events-none sm:text-base"
-          href="/agendamentos/agendar"
-        >
-          Agendar
-          <Clock size={24} />
-        </Link>
       </div>
     </div>
   );

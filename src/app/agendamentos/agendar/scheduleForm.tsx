@@ -2,7 +2,6 @@
 
 import { notifyError, notifySuccess } from "@/components/Toast";
 import { useScheduleContext } from "@/context/schedulesContext";
-import { useUpdateScheduleView } from "@/context/schedulesViewContext";
 import { useUserContext } from "@/context/userContext";
 import { auth, db } from "@/services/firebase";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -154,8 +153,7 @@ export function ScheduleForm() {
 
   //Contextos
   const { user } = useUserContext();
-  const { scheduleData } = useScheduleContext();
-  const { updateScheduleView } = useUpdateScheduleView();
+  const { scheduleData, updateScheduleView } = useScheduleContext();
   const { push } = useRouter();
   const userAuth = auth.currentUser;
 

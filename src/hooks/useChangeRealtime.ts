@@ -1,9 +1,9 @@
-import { useUpdateScheduleView } from "@/context/schedulesViewContext";
+import { useScheduleContext } from "@/context/schedulesContext";
 import { db } from "@/services/firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 export function useChangeRealtime() {
-  const { updateScheduleView } = useUpdateScheduleView();
+  const { updateScheduleView } = useScheduleContext();
 
   const setRealtimeStatus = async () => {
     //Aciona ao logar

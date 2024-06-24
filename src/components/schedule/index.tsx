@@ -1,6 +1,5 @@
 "use client";
 
-import { CancelSchedule } from "@/app/agendamentos/SchedulesList/schedule/actions/CancelSchedule";
 import { ScheduleDataType } from "@/types/Schedule";
 import { dateToDDMMAA, dateToText } from "@/utils/dateFunctions";
 import {
@@ -14,6 +13,7 @@ import { useState } from "react";
 import { ScheduleDetails } from "./scheduleDetails";
 import { WhatsappContact } from "./actions/WhatsappContact";
 import { VoucherDownload } from "./actions/VoucherDownload";
+import { CancelSchedule } from "./actions/CancelSchedule";
 
 interface ScheduleDataProps {
   data: ScheduleDataType;
@@ -49,7 +49,7 @@ export function Schedule({ data }: ScheduleDataProps) {
   return (
     // Container principal
 
-    <div className="w-full max-w-7xl z-20">
+    <div className="w-full  m-auto z-20">
       {/* Container de interação*/}
       <div className="shadow-md rounded-lg bg-slate-50 z-20 relative transition-all hover:bg-slate-100">
         <div className="flex items-center lg:justify-between flex-wrap relative flex-col md:flex-row">
@@ -60,7 +60,7 @@ export function Schedule({ data }: ScheduleDataProps) {
             <p className="text-lg font-medium">{formatations.date}</p>
             <p
               className={`text-base rounded-sm px-3 border  ${
-                scheduleConfigs.scheduled ? "border-black" : "border-white"
+                scheduleConfigs.scheduled && "border-white"
               }`}
             >
               {data.startHour}

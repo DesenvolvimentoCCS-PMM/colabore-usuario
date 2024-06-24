@@ -1,28 +1,25 @@
 "use client";
 
 import { useScheduleContext } from "@/context/schedulesContext";
-import { useUpdateScheduleView } from "@/context/schedulesViewContext";
 import { auth } from "@/services/firebase";
 import { ScheduleDataType } from "@/types/Schedule";
 import { useEffect, useState } from "react";
 import { Filter } from "./Filter";
-import { SchedulePagination } from "./SchedulePagination";
+import { SchedulePagination } from "./List";
 import { EmailNotVerified } from "@/components/EmailNotVerified";
 import { useUserContext } from "@/context/userContext";
-import { useChangeRealtime } from "@/hooks/useChangeRealtime";
 
 export function ScheduleList() {
   const { scheduleData } = useScheduleContext();
   const [data, setData] = useState<ScheduleDataType[]>([]);
   const [dataFiltered, setDataFiltered] = useState<ScheduleDataType[]>([]);
-  const { updateScheduleView } = useUpdateScheduleView();
   const { user } = useUserContext();
 
   const userAuth = auth.currentUser;
 
   useEffect(() => {
     getUserData();
-  }, [updateScheduleView]);
+  }, [scheduleData]);
 
   const getUserData = () => {
     const dataToDisplay = scheduleData.filter((doc) => {
