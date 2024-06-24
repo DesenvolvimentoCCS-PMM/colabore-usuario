@@ -1,16 +1,16 @@
 import Link from "next/link";
 
-interface PageNavigationProps {
+interface PageNavigationBarProps {
   currentPage: string;
   target: string;
   targetName: string;
 }
 
-export function PageNavigation({
+export function PageNavigationBar({
   currentPage,
   target,
   targetName,
-}: PageNavigationProps) {
+}: PageNavigationBarProps) {
   return (
     <div className="flex items-center gap-x-2 absolute top-32 left-6 xl:left-0">
       <Link href={target} className="text-gray-400 text-xs underline">

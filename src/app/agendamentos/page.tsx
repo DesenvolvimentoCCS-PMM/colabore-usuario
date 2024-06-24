@@ -4,7 +4,7 @@ import { Container } from "@/components/Container";
 import { LogoutButton } from "@/components/buttons/LogoutButton";
 import { SchedulePageSkeletonLoading } from "@/components/loading/SchedulePageSkeletonLoading";
 import { useUserContext } from "@/context/userContext";
-import { ScheduleList } from "./schedules-management";
+import { ScheduleManagement } from "./schedules-management";
 import Link from "next/link";
 import { Clock } from "phosphor-react";
 
@@ -39,7 +39,7 @@ export default function Agendamentos() {
             <LogoutButton />
           </div>
 
-          <ScheduleList />
+          <ScheduleManagement />
 
           <div className="flex justify-center pt-8">
             <Link

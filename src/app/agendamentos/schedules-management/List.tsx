@@ -6,11 +6,11 @@ import Image from "next/image";
 import NoDataImage from "@/assets/noData.svg";
 import { Schedule } from "@/components/schedule";
 
-interface SchedulePaginationProps {
+interface ScheduleListProps {
   data: ScheduleDataType[];
 }
 
-export function SchedulePagination({ data }: SchedulePaginationProps) {
+export function ScheduleList({ data }: ScheduleListProps) {
   const datasPerPage = 5;
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -31,9 +31,11 @@ export function SchedulePagination({ data }: SchedulePaginationProps) {
           <Image src={NoDataImage} alt="Não há dados!" className="max-w-xs" />
         </div>
       ) : (
-        currentDatas.map((datas, index) => {
-          return <Schedule data={datas} key={index} />;
-        })
+        currentDatas
+          .sort((a, b) => a.status - b.status)
+          .map((datas, index) => {
+            return <Schedule data={datas} key={index} />;
+          })
       )}
 
       {/* Paginação */}

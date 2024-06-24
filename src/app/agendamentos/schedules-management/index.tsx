@@ -5,11 +5,11 @@ import { auth } from "@/services/firebase";
 import { ScheduleDataType } from "@/types/Schedule";
 import { useEffect, useState } from "react";
 import { Filter } from "./Filter";
-import { SchedulePagination } from "./List";
+import { ScheduleList } from "./List";
 import { EmailNotVerified } from "@/components/EmailNotVerified";
 import { useUserContext } from "@/context/userContext";
 
-export function ScheduleList() {
+export function ScheduleManagement() {
   const { scheduleData } = useScheduleContext();
   const [data, setData] = useState<ScheduleDataType[]>([]);
   const [dataFiltered, setDataFiltered] = useState<ScheduleDataType[]>([]);
@@ -53,7 +53,7 @@ export function ScheduleList() {
             <Filter setFilteredData={setDataFiltered} data={data} />
           </div>
 
-          <SchedulePagination data={dataFiltered} />
+          <ScheduleList data={dataFiltered} />
         </div>
       </div>
     );
