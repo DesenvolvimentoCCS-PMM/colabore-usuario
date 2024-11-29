@@ -7,6 +7,7 @@ interface User {
   profession: string;
   photo?: string;
   cep: string;
+  gender: string
   street: string;
   neighborhood: string;
   number: string;
