@@ -326,8 +326,6 @@ export function ScheduleForm() {
         }),
       })
 
-      console.log(response)
-
       sendMail(user.email, user.fullName, inputDate, reservedTimes[0]);
       notifySuccess("Agendamento realizado com sucesso!");
       updateScheduleView();
