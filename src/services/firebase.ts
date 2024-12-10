@@ -1,7 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getAnalytics } from 'firebase/analytics'
 import { getAuth } from "firebase/auth";
+import { getAnalytics } from 'firebase/analytics';
+import type { Analytics } from 'firebase/analytics'; 
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -12,7 +13,6 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
-
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -25,4 +25,3 @@ if (typeof window !== 'undefined') {
 }
 
 export { db, auth, analytics };
- 
