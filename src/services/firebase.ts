@@ -1,8 +1,8 @@
+import type { Analytics } from "firebase/analytics";
+import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { getAnalytics } from 'firebase/analytics';
-import type { Analytics } from 'firebase/analytics'; 
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -20,8 +20,8 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 let analytics: Analytics | null = null;
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   analytics = getAnalytics(app);
 }
 
-export { db, auth, analytics };
+export { analytics, auth, db };
