@@ -1,26 +1,19 @@
 "use client";
 
-import { notifyError, notifySuccess } from "@/components/Toast";
-import { ScheduleVoucher } from "@/components/Voucher";
-import { CancelSchedule } from "@/app/agendamentos/SchedulesList/schedule/actions/CancelSchedule";
-import { useUpdateScheduleView } from "@/context/schedulesViewContext";
-import { useUserContext } from "@/context/userContext";
-import { db } from "@/services/firebase";
 import { ScheduleDataType } from "@/types/Schedule";
-import { currentDate, dateToDDMMAA, dateToText } from "@/utils/dateFunctions";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import { doc, updateDoc } from "firebase/firestore";
+import { dateToDDMMAA, dateToText } from "@/utils/dateFunctions";
 import {
   CaretDown,
   CaretUp,
   Checks,
   EnvelopeSimple,
-  Note,
-  WhatsappLogo,
   XCircle,
 } from "phosphor-react";
 import { useState } from "react";
 import { ScheduleDetails } from "./scheduleDetails";
+import { WhatsappContact } from "./actions/WhatsappContact";
+import { VoucherDownload } from "./actions/VoucherDownload";
+import { CancelSchedule } from "./actions/CancelSchedule";
 
 interface ScheduleDataProps {
   data: ScheduleDataType;
@@ -53,12 +46,10 @@ export function Schedule({ data }: ScheduleDataProps) {
     completed: data.status === 1,
   };
 
-  const whatsappLink = `https://api.whatsapp.com/send?phone=${formatations.whatsapp}`;
-
   return (
     // Container principal
 
-    <div className="w-full max-w-7xl z-20">
+    <div className="w-full  m-auto z-20">
       {/* Container de interação*/}
       <div className="shadow-md rounded-lg bg-slate-50 z-20 relative transition-all hover:bg-slate-100">
         <div className="flex items-center lg:justify-between flex-wrap relative flex-col md:flex-row">
@@ -69,7 +60,7 @@ export function Schedule({ data }: ScheduleDataProps) {
             <p className="text-lg font-medium">{formatations.date}</p>
             <p
               className={`text-base rounded-sm px-3 border  ${
-                scheduleConfigs.scheduled ? "border-black" : "border-white"
+                scheduleConfigs.scheduled && "border-white"
               }`}
             >
               {data.startHour}
@@ -91,36 +82,14 @@ export function Schedule({ data }: ScheduleDataProps) {
 
             {/* Botões de ação */}
             <div className="flex items-center justify-center flex-wrap w-full gap-4 p-4  sm:justify-start md:w-3/5">
-              <a
-                href={whatsappLink}
-                className="px-3 py-3 rounded-3xl text-sm flex items-center h-12 justify-center gap-x-1 max-w-xs  group bg-green-600 hover:scale-95 hover:brightness-95 sm:w-max"
-                target="_blank"
-              >
-                <WhatsappLogo size={26} color="white" />
-
-                <span className="w-0 m-[-2px] opacity-0 overflow-hidden text-white transition-all duration-300 group-hover:w-32 group-hover:m-auto group-hover:opacity-100">
-                  Entrar em contato
-                </span>
-              </a>
-
-              <PDFDownloadLink
-                className="px-3 py-3 rounded-3xl text-sm flex items-center justify-center gap-x-1 max-w-xs transition-all group bg-yellow-600 hover:scale-95 hover:brightness-95 sm:w-max "
-                document={
-                  <ScheduleVoucher
-                    date={dateToDDMMAA(data.date)}
-                    name={data.userInfo.name}
-                    scheduleCode={data.scheduleCode}
-                    service={formatations.resumeService}
-                    time={data.startHour}
-                  />
-                }
-              >
-                <Note size={26} className="text-white" />
-                <span className="w-0 m-[-2px] overflow-hidden text-white transition-all duration-300 group-hover:w-28 group-hover:m-auto">
-                  Comprovante
-                </span>
-              </PDFDownloadLink>
-
+              <WhatsappContact whatsappNumber={formatations.whatsapp} />
+              <VoucherDownload
+                date={dateToDDMMAA(data.date)}
+                name={data.userInfo.name}
+                scheduleCode={data.scheduleCode}
+                service={formatations.resumeService}
+                startHour={data.startHour}
+              />
               {scheduleConfigs.scheduled && (
                 <CancelSchedule data={data} date={data.date} />
               )}

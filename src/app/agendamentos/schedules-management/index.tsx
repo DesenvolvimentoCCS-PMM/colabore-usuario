@@ -1,31 +1,27 @@
 "use client";
 
-import { notifySuccess } from "@/components/Toast";
 import { useScheduleContext } from "@/context/schedulesContext";
-import { useUpdateScheduleView } from "@/context/schedulesViewContext";
 import { auth } from "@/services/firebase";
 import { ScheduleDataType } from "@/types/Schedule";
-import { sendEmailVerification } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { Filter } from "./Filter";
-import { SchedulePagination } from "./SchedulePagination";
+import { ScheduleList } from "./List";
 import { EmailNotVerified } from "@/components/EmailNotVerified";
 import { useUserContext } from "@/context/userContext";
 
-export function ScheduleList() {
+export function ScheduleManagement() {
   const { scheduleData } = useScheduleContext();
   const [data, setData] = useState<ScheduleDataType[]>([]);
   const [dataFiltered, setDataFiltered] = useState<ScheduleDataType[]>([]);
-  const { updateScheduleView } = useUpdateScheduleView();
   const { user } = useUserContext();
 
   const userAuth = auth.currentUser;
 
   useEffect(() => {
-    getData();
-  }, [updateScheduleView]);
+    getUserData();
+  }, [scheduleData]);
 
-  const getData = () => {
+  const getUserData = () => {
     const dataToDisplay = scheduleData.filter((doc) => {
       if (user) {
         return doc.created_by === user.uid;
@@ -36,11 +32,11 @@ export function ScheduleList() {
     setData(dataToDisplay);
   };
 
-  return (
-    <div className="w-full pt-24">
-      {userAuth && !userAuth.emailVerified ? (
-        <EmailNotVerified userAuth={userAuth} />
-      ) : (
+  if (userAuth && !userAuth.emailVerified) {
+    return <EmailNotVerified userAuth={userAuth} />;
+  } else {
+    return (
+      <div className="w-full pt-24">
         <div>
           <div className="flex items-center justify-between flex-wrap gap-4 mb-10">
             <div className="flex items-center gap-x-2">
@@ -57,9 +53,9 @@ export function ScheduleList() {
             <Filter setFilteredData={setDataFiltered} data={data} />
           </div>
 
-          <SchedulePagination data={dataFiltered} />
+          <ScheduleList data={dataFiltered} />
         </div>
-      )}
-    </div>
-  );
+      </div>
+    );
+  }
 }

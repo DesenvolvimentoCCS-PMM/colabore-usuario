@@ -1,12 +1,12 @@
 import { Container } from "@/components/Container";
 import { SignupForm } from "@/app/cadastro/SignupForm";
-import { PageNavigation } from "@/components/PageNavigation";
+import { PageNavigationBar } from "@/components/PageNavigationBar";
 
 export default function Cadastro() {
   return (
     <Container>
       <div>
-        <PageNavigation
+        <PageNavigationBar
           currentPage="cadastrar"
           target="/"
           targetName="Ínicio"

@@ -2,7 +2,6 @@
 
 import { notifyError, notifySuccess } from "@/components/Toast";
 import { useScheduleContext } from "@/context/schedulesContext";
-import { useUpdateScheduleView } from "@/context/schedulesViewContext";
 import { useUserContext } from "@/context/userContext";
 import { auth, db } from "@/services/firebase";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -121,6 +120,7 @@ export function ScheduleForm() {
     register,
     handleSubmit,
     watch,
+    trigger,
     formState: { errors },
   } = useForm<scheduleFormSchemaType>({
     resolver: zodResolver(scheduleFormSchema),
@@ -152,21 +152,23 @@ export function ScheduleForm() {
 
   //Contextos
   const { user } = useUserContext();
-  const { scheduleData } = useScheduleContext();
-  const { updateScheduleView } = useUpdateScheduleView();
+  const { scheduleData, updateScheduleView } = useScheduleContext();
   const { push } = useRouter();
   const userAuth = auth.currentUser;
 
   //Lida com toda logica de agendamento
-  const handleTime = () => {
-    const fieldsEmpty = !inputDate || !inputTime || !inputTotTime;
+  const handleVerifyDisponibility = async () => {
+    const validationResult = await trigger([
+      "date",
+      "service",
+      "startHour",
+      "totTime",
+    ]);
 
-    if (fieldsEmpty) {
-      return notifyError("Preencha todos os campos para continuar!");
+    if (validationResult) {
+      checkIfScheduleAlreadyExists();
+      checkIfTimeIsAvaiableToday();
     }
-
-    checkIfScheduleAlreadyExists();
-    checkIfTimeIsAvaiableToday();
   };
 
   //Verifica se a disponibilidade do agendamento no dia atual (função auxiliar)
@@ -250,13 +252,40 @@ export function ScheduleForm() {
     });
   };
 
+
+
+  //Pede a verificação de disponibilidade após interagir com algum campo do formulario
+  const requestFormVerifiy = () => {
+    setIsVerified(false);
+  };
+
+  //Notifica o agendamento no email
+  const sendMail = (
+    email: string,
+    name: string,
+    date: string,
+    time: string
+  ) => {
+    axios.post(
+      "https://colabore-email.onrender.com/send-email",
+      {
+        email,
+        name,
+        time,
+        date: dayjs(date).format("DD/MM/YYYY"),
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  };
+
   //Salva o agendamento do usuário no banco de dados
   const submit: SubmitHandler<scheduleFormSchemaType> = async (data) => {
-    // setIsFetching(true);
-
     const reservedTimes = calculateReservedHours();
     const id = v4().slice(0, 6);
-    console.log(reservedTimes);
 
     try {
       await addDoc(collection(db, "schedules"), {
@@ -273,42 +302,44 @@ export function ScheduleForm() {
         scheduleCode: id,
         ...data,
       });
+
+      const response = await fetch("https://prod2-14.brazilsouth.logic.azure.com/workflows/9c2421ba975149e4b714e40a7ed19cef/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=eKowTk1T0gwHbTXhp4pyVka-P_GAxA1yqiDGV9mx5Mg", {
+        method: 'POST',
+        body: JSON.stringify({
+          "token": "YfmU4dJoD3Vtw5vECgCszh11HslIXT0T3OCRCq7ZZm0grphIhuakemGJXSiHE7lT",
+          "nome": user.fullName,
+          "cpf": user.cpf,
+          "data_agendamento": new Date().toLocaleDateString(),
+          "email": user.email,
+          "codigo": id,
+          "pdf": "documento.pdf",
+          "genero": user.gender,
+          "data_nascimento": user.birthDate,
+          "rua": user.street,
+          "numero": user.number,
+          "complemento": "",
+          "bairro": user.neighborhood,
+          "cidade": user.city,
+          "estado": user.state,
+          "cep": user.cep,
+          "celular": user.whatsapp
+        }),
+      })
+
       sendMail(user.email, user.fullName, inputDate, reservedTimes[0]);
       notifySuccess("Agendamento realizado com sucesso!");
-      setIsFetching(false);
       updateScheduleView();
       push("/agendamentos");
     } catch (error) {
       notifyError(
         "Não foi possível realizar seu agendamento, tente mais tarde!"
       );
-      setIsFetching(false);
       throw new Error();
     }
+    finally{
+      setIsFetching(false);
+    }
   };
-
-  //Pede a verificação de disponibilidade após interagir com algum campo do formulario
-  const requestFormVerifiy = () => {
-    setIsVerified(false);
-  };
-
-  //Notifica o agendamento no email
-  function sendMail(email: string, name: string, date: string, time: string) {
-    axios.post(
-      "https://colabore-email.onrender.com/send-email",
-      {
-        email,
-        name,
-        time,
-        date: dayjs(date).format("DD/MM/YYYY"),
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-  }
 
   return (
     <form
@@ -320,9 +351,8 @@ export function ScheduleForm() {
         <div className="flex flex-col gap-2 relative">
           <label
             htmlFor="service"
-            className={`font-semibold text-purpleCol ${
-              errors.service && "text-red-500"
-            } sm:text-lg`}
+            className={`font-semibold text-purpleCol ${errors.service && "text-red-500"
+              } sm:text-lg`}
           >
             Serviço
           </label>
@@ -354,9 +384,8 @@ export function ScheduleForm() {
           <div className="flex flex-col gap-2 relative">
             <label
               htmlFor="date"
-              className={`font-semibold text-purpleCol ${
-                errors.date && "text-red-500"
-              } sm:text-lg`}
+              className={`font-semibold text-purpleCol ${errors.date && "text-red-500"
+                } sm:text-lg`}
             >
               Data
             </label>
@@ -377,9 +406,8 @@ export function ScheduleForm() {
           <div className="flex flex-col gap-2">
             <label
               htmlFor="time"
-              className={`font-semibold text-purpleCol ${
-                errors.startHour && "text-red-500"
-              } sm:text-lg`}
+              className={`font-semibold text-purpleCol ${errors.startHour && "text-red-500"
+                } sm:text-lg`}
             >
               Horário
             </label>
@@ -391,19 +419,19 @@ export function ScheduleForm() {
             >
               {inputTotTime === "2"
                 ? hoursWith2hUsage.map((hour, index) => {
-                    return (
-                      <option value={hour} key={index}>
-                        {hour}
-                      </option>
-                    );
-                  })
+                  return (
+                    <option value={hour} key={index}>
+                      {hour}
+                    </option>
+                  );
+                })
                 : hoursWith1hUsage.map((hour, index) => {
-                    return (
-                      <option value={hour} key={index}>
-                        {hour}
-                      </option>
-                    );
-                  })}
+                  return (
+                    <option value={hour} key={index}>
+                      {hour}
+                    </option>
+                  );
+                })}
             </select>
           </div>
         </div>
@@ -412,9 +440,8 @@ export function ScheduleForm() {
       <div className="flex flex-col space-y-10 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-2">
           <span
-            className={`font-semibold text-purpleCol text-sm ${
-              errors.totTime && "text-red-500"
-            }`}
+            className={`font-semibold text-purpleCol text-sm ${errors.totTime && "text-red-500"
+              }`}
           >
             De quanto tempo você precisa?
           </span>
@@ -465,7 +492,7 @@ export function ScheduleForm() {
         {!isVerified && (
           <div className="flex justify-end">
             <button
-              onClick={handleTime}
+              onClick={handleVerifyDisponibility}
               className="bg-yellowCol text-white p-3 rounded-3xl w-max hover:opacity-80 transition-all"
               type="button"
             >
@@ -484,9 +511,8 @@ export function ScheduleForm() {
             <div className="space-y-6 max-w-sm relative md:ml-14">
               <div className="flex flex-col gap-2">
                 <span
-                  className={`font-semibold text-purpleCol text-sm ${
-                    errors.hasCoffeBreak && "text-red-500"
-                  }`}
+                  className={`font-semibold text-purpleCol text-sm ${errors.hasCoffeBreak && "text-red-500"
+                    }`}
                 >
                   Vai ter coffe break?
                 </span>
@@ -549,9 +575,8 @@ export function ScheduleForm() {
               <div className="flex justify-between items-center">
                 <label
                   htmlFor="motivo"
-                  className={`text-purpleCol font-semibold ${
-                    errors.motive && "text-red-500"
-                  } sm:text-lg`}
+                  className={`text-purpleCol font-semibold ${errors.motive && "text-red-500"
+                    } sm:text-lg`}
                 >
                   Motivo
                 </label>
@@ -584,9 +609,8 @@ export function ScheduleForm() {
             <div className="flex items-center justify-between">
               <label
                 htmlFor="obs"
-                className={`text-purpleCol font-semibold ${
-                  errors.obs && "text-red-500"
-                } sm:text-lg`}
+                className={`text-purpleCol font-semibold ${errors.obs && "text-red-500"
+                  } sm:text-lg`}
               >
                 Observações
               </label>

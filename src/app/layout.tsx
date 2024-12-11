@@ -5,7 +5,6 @@ import { Poppins } from "next/font/google";
 import { Footer } from "@/components/Footer";
 import { Toast } from "@/components/Toast";
 import { UserContextProvider } from "@/context/userContext";
-import { ScheduleViewProvider } from "@/context/schedulesViewContext";
 import { SchedulesContextProvider } from "@/context/schedulesContext";
 
 const poppins = Poppins({
@@ -28,14 +27,12 @@ export default function RootLayout({
     <html lang="pt-br">
       <body className={`${poppins.variable} font-sans min-h-screen`}>
         <UserContextProvider>
-          <ScheduleViewProvider>
-            <SchedulesContextProvider>
-              <Toast />
-              <Header />
-              {children}
-              <Footer />
-            </SchedulesContextProvider>
-          </ScheduleViewProvider>
+          <SchedulesContextProvider>
+            <Toast />
+            <Header />
+            {children}
+            <Footer />
+          </SchedulesContextProvider>
         </UserContextProvider>
       </body>
     </html>

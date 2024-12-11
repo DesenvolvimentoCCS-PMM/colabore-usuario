@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   },
 });
 
-interface ScheduleVoucherProps {
+interface VoucherSchemaProps {
   name: string;
   scheduleCode: string;
   date: string;
@@ -59,13 +59,13 @@ interface ScheduleVoucherProps {
   service: string;
 }
 
-export function ScheduleVoucher({
+export function VoucherSchema({
   name,
   scheduleCode,
   date,
   time,
   service,
-}: ScheduleVoucherProps) {
+}: VoucherSchemaProps) {
   return (
     <Document title="Comprovante - Espaço Colabore">
       <Page size="A4" style={styles.page}>

@@ -5,15 +5,11 @@ import CloseEyeIcon from "@/assets/icons/closeEyeIcon.svg";
 import EyeIcon from "@/assets/icons/eyeIcon.svg";
 import Logo from "@/assets/logoColabore.svg";
 import { notifyError } from "@/components/Toast";
-import { Button } from "@/components/buttons/DefaultButton";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { z } from "zod";
-import { auth } from "../../services/firebase";
 
 const signinSchema = z.object({
   email: z
@@ -153,9 +149,13 @@ export function SigninForm() {
         </div>
 
         <div className="flex flex-col justify-center items-center gap-y-6 pt-6">
-          <Button islink={false} type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Entrando..." : "Entrar >"}
-          </Button>
+          <button
+            className="flex items-center gap-x-2 rounded-3xl bg-[#CC9935] px-10 py-2 max-w-max text-white font-medium text-sm uppercase disabled:opacity-50 disabled:pointer-events-none sm:text-base"
+            type="submit"
+            disabled={isLogging}
+          >
+            {isLogging ? "Entrando..." : "Entrar >"}
+          </button>
 
           <ForgetPassword />
         </div>

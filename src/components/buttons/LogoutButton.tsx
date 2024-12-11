@@ -19,7 +19,7 @@ export function LogoutButton() {
 
   return (
     <button
-      className="rounded-3xl h-10 w-36 text-base border-2 border-blueCol text-blueCol ml-8 font-semibold uppercase transition-all hover:scale-95 hover:bg-blueCol hover:text-white sm:h-14 sm:w-40 sm:text-xl"
+      className="rounded-3xl h-12 w-32 text-base border-2 border-blueCol text-blueCol ml-8 font-semibold uppercase transition-all hover:scale-95 hover:bg-blueCol hover:text-white"
       onClick={logout}
     >
       {"Sair >"}

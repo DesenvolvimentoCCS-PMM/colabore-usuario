@@ -73,8 +73,8 @@ export function ForgetPassword() {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-xl  overflow-hidden rounded-3xl bg-blueCol/40 p-2 text-left text-white align-middle shadow-xl transition-all">
-                  <div className="bg-blueCol px-16 py-20 rounded-3xl">
+                <Dialog.Panel className="w-full max-w-lg overflow-hidden rounded-3xl bg-blueCol/40 p-2 text-left text-white align-middle shadow-xl transition-all">
+                  <div className="bg-blueCol px-10 py-10 rounded-3xl">
                     <Dialog.Title
                       as="h1"
                       className="text-2xl font-medium leading-6 text-white"
@@ -82,7 +82,7 @@ export function ForgetPassword() {
                       Esqueceu sua senha?
                     </Dialog.Title>
 
-                    <p className="font-light text-base my-8">
+                    <p className="font-light text-base my-5">
                       Insira seu e-mail no campo abaixo que enviaremos um link
                       de redefinição para você!
                     </p>
@@ -102,7 +102,7 @@ export function ForgetPassword() {
                       />
                     </div>
 
-                    <div className="flex justify-center">
+                    <div className="flex justify-end">
                       <button
                         className="rounded-3xl bg-[#F8CD30] h-10 w-36 text-lg text-[#3B2566] font-semibold transition-all mt-10 uppercase hover:brightness-90 hover:scale-95"
                         type="button"

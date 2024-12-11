@@ -44,8 +44,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
         }
 
         setLoadingData(false);
-      } else if (pathname != "/termos-de-uso") {
-        router.push("/entrar");
       }
     });
   }, []);

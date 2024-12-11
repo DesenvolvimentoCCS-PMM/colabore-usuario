@@ -12,17 +12,16 @@ import {
   useEffect,
   useState,
 } from "react";
-import { useUpdateScheduleView } from "./schedulesViewContext";
 
 interface ScheduleContextType {
   scheduleData: ScheduleDataType[];
   setScheduleData: Dispatch<SetStateAction<ScheduleDataType[]>>;
+  updateScheduleView: () => void;
 }
 
-const SchedulesContext = createContext<ScheduleContextType>({
-  scheduleData: [],
-  setScheduleData: () => {},
-});
+const SchedulesContext = createContext<ScheduleContextType>(
+  {} as ScheduleContextType
+);
 
 export const SchedulesContextProvider = ({
   children,
@@ -30,11 +29,11 @@ export const SchedulesContextProvider = ({
   children: ReactNode;
 }) => {
   const [scheduleData, setScheduleData] = useState<ScheduleDataType[]>([]);
-  const { updateScheduleView } = useUpdateScheduleView();
+  const [ScheduleView, setScheduleView] = useState(false);
 
   useEffect(() => {
     getData();
-  }, [updateScheduleView]);
+  }, [ScheduleView]);
 
   const getData = async () => {
     const querySnapshot = await getDocs(collection(db, "schedules"));
@@ -51,8 +50,14 @@ export const SchedulesContextProvider = ({
     setScheduleData(data);
   };
 
+  const updateScheduleView = () => {
+    setScheduleView((state) => !state);
+  };
+
   return (
-    <SchedulesContext.Provider value={{ scheduleData, setScheduleData }}>
+    <SchedulesContext.Provider
+      value={{ scheduleData, setScheduleData, updateScheduleView }}
+    >
       {children}
     </SchedulesContext.Provider>
   );

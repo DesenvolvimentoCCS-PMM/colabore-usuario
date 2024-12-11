@@ -1,15 +1,17 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { getAnalytics } from 'firebase/analytics';
+import type { Analytics } from 'firebase/analytics'; 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCpGrtuMEdradCoYTAPDkt7v2uE5APsEtw",
-  authDomain: "colaboredatabase.firebaseapp.com",
-  projectId: "colaboredatabase",
-  storageBucket: "colaboredatabase.appspot.com",
-  messagingSenderId: "260179286181",
-  appId: "1:260179286181:web:c3aca14763ce7531e5d54c",
-  measurementId: "G-SSD96RFZSN",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
@@ -17,4 +19,9 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-export { db, auth };
+let analytics: Analytics | null = null;
+if (typeof window !== 'undefined') {
+  analytics = getAnalytics(app);
+}
+
+export { db, auth, analytics };

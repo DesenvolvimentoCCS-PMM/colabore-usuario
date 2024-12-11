@@ -1,15 +1,15 @@
 "use client";
 
-import { currentDataToDatabase, currentDate } from "@/utils/dateFunctions";
+import { currentDataToDatabase } from "@/utils/dateFunctions";
 import { Dialog, Transition } from "@headlessui/react";
 import { doc, updateDoc } from "firebase/firestore";
 import { Fragment, useState } from "react";
-import { notifyError, notifySuccess } from "../../../../../components/Toast";
 import { db } from "@/services/firebase";
-import { useUpdateScheduleView } from "@/context/schedulesViewContext";
 import { XCircle } from "phosphor-react";
 import { ScheduleDataType } from "@/types/Schedule";
 import { useUserContext } from "@/context/userContext";
+import { useScheduleContext } from "@/context/schedulesContext";
+import { notifyError, notifySuccess } from "@/components/Toast";
 
 interface cancelScheduleProps {
   data: ScheduleDataType;
@@ -52,8 +52,8 @@ const motives = [
 export function CancelSchedule({ data, date }: cancelScheduleProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [motiveSelected, setMotiveSelect] = useState("");
-  const { updateScheduleView } = useUpdateScheduleView();
   const { user } = useUserContext();
+  const { updateScheduleView } = useScheduleContext();
 
   const cancelSchedule = async () => {
     if (motiveSelected) {
