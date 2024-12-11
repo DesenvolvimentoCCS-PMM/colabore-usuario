@@ -1,19 +1,19 @@
 "use client";
 
-import { z } from "zod";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
-import Logo from "@/assets/logoColabore.svg";
-import EyeIcon from "@/assets/icons/eyeIcon.svg";
-import CloseEyeIcon from "@/assets/icons/closeEyeIcon.svg";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../services/firebase";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { ForgetPassword } from "@/app/entrar/ForgetPassword";
+import CloseEyeIcon from "@/assets/icons/closeEyeIcon.svg";
+import EyeIcon from "@/assets/icons/eyeIcon.svg";
+import Logo from "@/assets/logoColabore.svg";
 import { notifyError } from "@/components/Toast";
 import { Button } from "@/components/buttons/DefaultButton";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
+import { auth } from "../../services/firebase";
 
 const signinSchema = z.object({
   email: z
@@ -32,7 +32,6 @@ const signinSchema = z.object({
 type signinSchemaType = z.infer<typeof signinSchema>;
 
 export function SigninForm() {
-  const [isLogging, setIsLogging] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const router = useRouter();
@@ -40,6 +39,7 @@ export function SigninForm() {
   const {
     register,
     handleSubmit,
+    isSubmitting,
     formState: { errors },
   } = useForm<signinSchemaType>({
     resolver: zodResolver(signinSchema),
@@ -47,7 +47,6 @@ export function SigninForm() {
   });
 
   const signin: SubmitHandler<signinSchemaType> = (data) => {
-    setIsLogging(true);
     signInWithEmailAndPassword(auth, data.email, data.password)
       .then(() => {
         router.push("/agendamentos");
@@ -73,8 +72,7 @@ export function SigninForm() {
             );
             break;
         }
-      })
-      .finally(() => setIsLogging(false));
+      });
   };
 
   return (
@@ -155,8 +153,8 @@ export function SigninForm() {
         </div>
 
         <div className="flex flex-col justify-center items-center gap-y-6 pt-6">
-          <Button islink={false} type="submit" disabled={isLogging}>
-            {isLogging ? "Entrando..." : "Entrar >"}
+          <Button islink={false} type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Entrando..." : "Entrar >"}
           </Button>
 
           <ForgetPassword />
