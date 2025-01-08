@@ -6,7 +6,7 @@ import { useUserContext } from "@/context/userContext";
 import { auth, db } from "@/services/firebase";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, query, where, getDocs  } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { ChatCenteredText, Info } from "phosphor-react";
 import { useEffect, useState } from "react";
@@ -152,7 +152,7 @@ export function ScheduleForm() {
 
   //Contextos
   const { user } = useUserContext();
-  const { scheduleData, updateScheduleView } = useScheduleContext();
+  const { scheduleData, updateScheduleView, getScheduleData} = useScheduleContext();
   const { push } = useRouter();
   const userAuth = auth.currentUser;
 
@@ -166,6 +166,7 @@ export function ScheduleForm() {
     ]);
 
     if (validationResult) {
+      await getScheduleData ()
       checkIfScheduleAlreadyExists();
       checkIfTimeIsAvaiableToday();
     }
@@ -252,8 +253,6 @@ export function ScheduleForm() {
     });
   };
 
-
-
   //Pede a verificação de disponibilidade após interagir com algum campo do formulario
   const requestFormVerifiy = () => {
     setIsVerified(false);
@@ -282,10 +281,52 @@ export function ScheduleForm() {
     );
   };
 
+
+  const IsAvailableSchedulling = async (date: string, service: string, reservedTimes: string[]) => {
+    if(service === "Coworking"){
+      const q = query(
+        collection(db, "schedules"),
+        where("service", "==", "Coworking"),
+        where("date", "==", inputDate),
+        where("status", "==", 0)
+      );
+  
+      const totCoworkings = (await getDocs(q)).size;
+
+      if(totCoworkings >= 6){
+        return false
+      }
+
+      return true
+    }
+    else {
+      const q = query(
+        collection(db, "schedules"),
+        where("service", "==", service),
+        where("date", "==", inputDate),
+        where("reservedTimes", "array-contains-any", reservedTimes),
+        where("status", "==", 0)
+      );
+      const isAvailable = (await getDocs(q)).empty;
+
+      if(isAvailable) return true
+
+      return false
+    }
+  }
+  ;
+
   //Salva o agendamento do usuário no banco de dados
   const submit: SubmitHandler<scheduleFormSchemaType> = async (data) => {
     const reservedTimes = calculateReservedHours();
+    const isAvailable = await IsAvailableSchedulling(data.date, data.service, reservedTimes);
     const id = v4().slice(0, 6);
+
+    if(!isAvailable) {
+      notifyError("Esse horário não está mais disponível, tente novamente com outro horário/dia.")
+      return
+    }
+
 
     try {
       await addDoc(collection(db, "schedules"), {
@@ -303,7 +344,7 @@ export function ScheduleForm() {
         ...data,
       });
 
-      const response = await fetch("https://prod2-14.brazilsouth.logic.azure.com/workflows/9c2421ba975149e4b714e40a7ed19cef/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=eKowTk1T0gwHbTXhp4pyVka-P_GAxA1yqiDGV9mx5Mg", {
+      await fetch("https://prod2-14.brazilsouth.logic.azure.com/workflows/9c2421ba975149e4b714e40a7ed19cef/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=eKowTk1T0gwHbTXhp4pyVka-P_GAxA1yqiDGV9mx5Mg", {
         method: 'POST',
         body: JSON.stringify({
           "token": "YfmU4dJoD3Vtw5vECgCszh11HslIXT0T3OCRCq7ZZm0grphIhuakemGJXSiHE7lT",

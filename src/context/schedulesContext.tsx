@@ -17,6 +17,7 @@ interface ScheduleContextType {
   scheduleData: ScheduleDataType[];
   setScheduleData: Dispatch<SetStateAction<ScheduleDataType[]>>;
   updateScheduleView: () => void;
+  getScheduleData: () => Promise<void>
 }
 
 const SchedulesContext = createContext<ScheduleContextType>(
@@ -56,7 +57,7 @@ export const SchedulesContextProvider = ({
 
   return (
     <SchedulesContext.Provider
-      value={{ scheduleData, setScheduleData, updateScheduleView }}
+      value={{ scheduleData, setScheduleData, updateScheduleView, getScheduleData: getData }}
     >
       {children}
     </SchedulesContext.Provider>

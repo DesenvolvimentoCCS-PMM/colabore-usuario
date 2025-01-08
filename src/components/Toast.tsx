@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 export function Toast() {
   return (
     <ToastContainer
-      autoClose={2000}
+      autoClose={3000}
       pauseOnHover
       theme="light"
       position="top-right"
