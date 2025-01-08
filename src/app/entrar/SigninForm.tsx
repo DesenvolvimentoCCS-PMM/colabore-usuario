@@ -1,18 +1,18 @@
 "use client";
 
-import { z } from "zod";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
-import Logo from "@/assets/logoColabore.svg";
-import EyeIcon from "@/assets/icons/eyeIcon.svg";
+import { ForgetPassword } from "@/app/entrar/ForgetPassword";
 import CloseEyeIcon from "@/assets/icons/closeEyeIcon.svg";
+import EyeIcon from "@/assets/icons/eyeIcon.svg";
+import Logo from "@/assets/logoColabore.svg";
+import { notifyError } from "@/components/Toast";
+import { auth } from "@/services/firebase";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../services/firebase";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ForgetPassword } from "@/app/entrar/ForgetPassword";
-import { notifyError } from "@/components/Toast";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
 
 const signinSchema = z.object({
   email: z
@@ -31,7 +31,6 @@ const signinSchema = z.object({
 type signinSchemaType = z.infer<typeof signinSchema>;
 
 export function SigninForm() {
-  const [isLogging, setIsLogging] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const router = useRouter();
@@ -39,14 +38,13 @@ export function SigninForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<signinSchemaType>({
     resolver: zodResolver(signinSchema),
     mode: "onBlur",
   });
 
   const signin: SubmitHandler<signinSchemaType> = (data) => {
-    setIsLogging(true);
     signInWithEmailAndPassword(auth, data.email, data.password)
       .then(() => {
         router.push("/agendamentos");
@@ -72,8 +70,7 @@ export function SigninForm() {
             );
             break;
         }
-      })
-      .finally(() => setIsLogging(false));
+      });
   };
 
   return (
@@ -157,9 +154,9 @@ export function SigninForm() {
           <button
             className="flex items-center gap-x-2 rounded-3xl bg-[#CC9935] px-10 py-2 max-w-max text-white font-medium text-sm uppercase disabled:opacity-50 disabled:pointer-events-none sm:text-base"
             type="submit"
-            disabled={isLogging}
+            disabled={isSubmitting}
           >
-            {isLogging ? "Entrando..." : "Entrar >"}
+            {isSubmitting ? "Entrando..." : "Entrar >"}
           </button>
 
           <ForgetPassword />
