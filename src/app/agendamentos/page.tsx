@@ -13,7 +13,7 @@ export default function Agendamentos() {
 
   return (
     <Container>
-      {loadingData ? (
+      {loadingData || !user ? (
         <SchedulePageSkeletonLoading />
       ) : (
         <>
@@ -22,15 +22,17 @@ export default function Agendamentos() {
           </span>
           <div className="flex justify-between items-center w-full">
             <div className=" space-y-4 w-full max-w-sm">
-              <h1 className="text-blueCol font-medium text-3xl">
-                Olá,{" "}
-                <span className="underline">
-                  {`${user.fullName.split(" ")[0]} ${
-                    user.fullName.split(" ")[1]
-                  }`}
-                  !
-                </span>
-              </h1>
+              {user.fullName && (
+                <h1 className="text-blueCol font-medium text-3xl">
+                  Olá,{" "}
+                  <span className="underline">
+                    {`${user.fullName.split(" ")[0]} ${
+                      user?.fullName.split(" ")[1]
+                    }`}
+                    !
+                  </span>
+                </h1>
+              )}
               <p className="text-gray-900 text-base">
                 Acompanhe seu histórico e faça um novo agendamento aqui
               </p>
