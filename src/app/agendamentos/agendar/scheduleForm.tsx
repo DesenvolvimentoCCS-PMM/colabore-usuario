@@ -6,7 +6,7 @@ import { useUserContext } from "@/context/userContext";
 import { auth, db } from "@/services/firebase";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { addDoc, collection, query, where, getDocs  } from "firebase/firestore";
+import { addDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { ChatCenteredText, Info } from "phosphor-react";
 import { useEffect, useState } from "react";
@@ -19,6 +19,7 @@ import { currentDate } from "@/utils/dateFunctions";
 import dayjs from "dayjs";
 import ptBr from "dayjs/locale/pt-br";
 import localizedFormat from "dayjs/plugin/localizedFormat";
+import { sendMail } from "@/utils/send-email";
 
 //Configurando para pt-br
 dayjs.extend(localizedFormat);
@@ -152,12 +153,15 @@ export function ScheduleForm() {
 
   //Contextos
   const { user } = useUserContext();
-  const { scheduleData, updateScheduleView, getScheduleData} = useScheduleContext();
+  const { scheduleData, updateScheduleView } = useScheduleContext();
   const { push } = useRouter();
   const userAuth = auth.currentUser;
 
   //Lida com toda logica de agendamento
   const handleVerifyDisponibility = async () => {
+    const inputDate = watch("date");
+    const inputService = watch("service");
+
     const validationResult = await trigger([
       "date",
       "service",
@@ -166,9 +170,19 @@ export function ScheduleForm() {
     ]);
 
     if (validationResult) {
-      await getScheduleData ()
-      checkIfScheduleAlreadyExists();
-      checkIfTimeIsAvaiableToday();
+      const isAvaiable = await checkIfSchedullingAlreadyExists(
+        inputService,
+        inputDate
+      );
+
+      const isNotAvaiableToday = checkIfTimeIsAvaiableToday()
+      
+      if (isAvaiable && !isNotAvaiableToday) {
+        notifySuccess("Horário disponível, prossiga!");
+        setIsVerified(true)
+      }else {
+        notifyError("Horário indisponível!");
+      }
     }
   };
 
@@ -183,62 +197,56 @@ export function ScheduleForm() {
     return datesIsEquals && inputHour <= currentHours;
   };
 
-  //Verifica a disponibilidade do agendamento (função auxiliar)
-  const checkIfScheduleAlreadyExists = () => {
-    switch (inputService) {
-      case "Coworking":
-        const maxCoworkingAccepteds = 6;
+  //Verifica a disponibilidade do agendamento 
+  const checkIfSchedullingAlreadyExists = async (
+    service: string,
+    date: string
+  ) => {
+    if (service === "Coworking") {
+      const q = query(
+        collection(db, "schedules"),
+        where("service", "==", "Coworking"),
+        where("date", "==", date),
+        where("status", "==", 0)
+      );
 
-        const scheduledCoworkingList = scheduleData.filter((scheduling) => {
-          return (
-            scheduling.service === "Coworking" &&
-            scheduling.date === inputDate &&
-            scheduling.status === 0
-          );
-        }).length;
+      const totCoworkings = (await getDocs(q)).size;
 
-        if (scheduledCoworkingList >= maxCoworkingAccepteds) {
-          return notifyError("Não há computadores disponíveis nesse horário!");
-        }
-        notifySuccess("Temos um computador para você nesse horário, prossiga!");
-        return setIsVerified(true);
-      default:
-        //Se for Reunião ou Palestra
-        const reservedHours = calculateReservedHours();
-        const allReservedsHours: string[] = [].sort();
+      if (totCoworkings >= 6) {
+        return false;
+      }
 
-        //Pega todos os horarios reservados do dia e adiciona na lista
-        scheduleData.map((data: ScheduleDataType) => {
-          if (
-            data.service === inputService &&
-            data.date === inputDate &&
-            data.status === 0
-          ) {
-            let lastTime = data.reservedTimes[data.reservedTimes.length - 1];
-            const [hour] = lastTime.split(":");
+      return true;
+    } else {
+      const q = query(
+        collection(db, "schedules"),
+        where("service", "==", service),
+        where("date", "==", date),
+        where("status", "==", 0)
+      );
 
-            const newHour = parseInt(hour) - 1;
-
-            data.reservedTimes[
-              data.reservedTimes.length - 1
-            ] = `${newHour}:${"59"}`;
-
-            data.reservedTimes.map((dt) => {
-              allReservedsHours.push(dt);
-            });
-          }
+      const schedulingData: any = [];
+      const userReservedHours = calculateReservedHours();
+      const schedullingResponse = await getDocs(q);
+      const schedullings = schedullingResponse.forEach((doc) => {
+        schedulingData.push({
+          ...doc.data(),
+          uid: doc.id,
         });
+      });
 
-        //Compara os horarios que o usuario vai reservar com os já reservado.
-        if (
-          allReservedsHours.some((hour) => {
-            return reservedHours.includes(hour);
-          })
-        ) {
-          return notifyError("Não há mais vagas para esse agendamento.");
-        }
-        setIsVerified(true);
-        return notifySuccess("Horário disponível, prossiga!");
+      const resevedTimes = schedulingData.map(
+        (scheduling: any) => scheduling.reservedTimes
+      );
+      const isReserved = resevedTimes.some((item: string[]) =>
+        item.some((time: string) => userReservedHours.includes(time))
+      );
+      
+      if(isReserved){
+        return false
+      }
+
+      return true
     }
   };
 
@@ -258,48 +266,27 @@ export function ScheduleForm() {
     setIsVerified(false);
   };
 
-  //Notifica o agendamento no email
-  const sendMail = (
-    email: string,
-    name: string,
+  const IsAvailableSchedulling = async (
     date: string,
-    time: string
+    service: string,
+    reservedTimes: string[]
   ) => {
-    axios.post(
-      "https://colabore-email.onrender.com/send-email",
-      {
-        email,
-        name,
-        time,
-        date: dayjs(date).format("DD/MM/YYYY"),
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-  };
-
-
-  const IsAvailableSchedulling = async (date: string, service: string, reservedTimes: string[]) => {
-    if(service === "Coworking"){
+    if (service === "Coworking") {
       const q = query(
         collection(db, "schedules"),
         where("service", "==", "Coworking"),
         where("date", "==", inputDate),
         where("status", "==", 0)
       );
-  
+
       const totCoworkings = (await getDocs(q)).size;
 
-      if(totCoworkings >= 6){
-        return false
+      if (totCoworkings >= 6) {
+        return false;
       }
 
-      return true
-    }
-    else {
+      return true;
+    } else {
       const q = query(
         collection(db, "schedules"),
         where("service", "==", service),
@@ -309,26 +296,30 @@ export function ScheduleForm() {
       );
       const isAvailable = (await getDocs(q)).empty;
 
-      if(isAvailable) return true
+      if (isAvailable) return true;
 
-      return false
+      return false;
     }
-  }
-  ;
+  };
 
   const submit: SubmitHandler<scheduleFormSchemaType> = async (data) => {
     const reservedTimes = calculateReservedHours();
     const id = v4().slice(0, 6);
-    const isAvailable = await IsAvailableSchedulling(data.date, data.service, reservedTimes);
+    const isAvailable = await IsAvailableSchedulling(
+      data.date,
+      data.service,
+      reservedTimes
+    );
 
     const phone = user.whatsapp.replace(/\D/g, "");
     const cpf = user.cpf.replace(/\D/g, "");
     const cep = user.cep.replace(/\D/g, "");
 
-    
-    if(!isAvailable) {
-      notifyError("Esse horário não está mais disponível, tente novamente com outro horário/dia.")
-      return
+    if (!isAvailable) {
+      notifyError(
+        "Esse horário não está mais disponível, tente novamente com outro horário/dia."
+      );
+      return;
     }
 
     try {
@@ -347,35 +338,37 @@ export function ScheduleForm() {
         ...data,
       });
 
-      const response = await axios.post(
-        "https://prod2-14.brazilsouth.logic.azure.com/workflows/9c2421ba975149e4b714e40a7ed19cef/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=eKowTk1T0gwHbTXhp4pyVka-P_GAxA1yqiDGV9mx5Mg",
-        {
-          token:
-            "YfmU4dJoD3Vtw5vECgCszh11HslIXT0T3OCRCq7ZZm0grphIhuakemGJXSiHE7lT",
-          nome: user.fullName,
-          cpf: cpf,
-          data_agendamento: new Date().toLocaleDateString(),
-          email: user.email,
-          codigo: id,
-          pdf: "documento.pdf",
-          genero: user.gender,
-          data_nascimento: user.birthDate,
-          rua: user.street,
-          numero: user.number,
-          complemento: "",
-          bairro: user.neighborhood,
-          cidade: user.city,
-          estado: user.state,
-          cep,
-          celular: phone,
-        }
-      );
+      // await axios.post(
+      //   "https://prod2-14.brazilsouth.logic.azure.com/workflows/9c2421ba975149e4b714e40a7ed19cef/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=eKowTk1T0gwHbTXhp4pyVka-P_GAxA1yqiDGV9mx5Mg",
+      //   {
+      //     token:
+      //       "YfmU4dJoD3Vtw5vECgCszh11HslIXT0T3OCRCq7ZZm0grphIhuakemGJXSiHE7lT",
+      //     nome: user.fullName,
+      //     cpf: cpf,
+      //     data_agendamento: new Date().toLocaleDateString(),
+      //     email: user.email,
+      //     codigo: id,
+      //     pdf: "documento.pdf",
+      //     genero: user.gender,
+      //     data_nascimento: user.birthDate,
+      //     rua: user.street,
+      //     numero: user.number,
+      //     complemento: "",
+      //     bairro: user.neighborhood,
+      //     cidade: user.city,
+      //     estado: user.state,
+      //     cep,
+      //     celular: phone,
+      //   }
+      // );
 
+      
       sendMail(user.email, user.fullName, inputDate, reservedTimes[0]);
       notifySuccess("Agendamento realizado com sucesso!");
       updateScheduleView();
       push("/agendamentos");
     } catch (error) {
+      console.log(error);
       notifyError(
         "Não foi possível realizar seu agendamento, tente mais tarde!"
       );
