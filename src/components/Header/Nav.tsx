@@ -44,15 +44,6 @@ export function Nav() {
           </Link>
 
           <Link
-            target="_blank"
-            href={"http://espacocolabore.mesquita.rj.gov.br/"}
-            className={`flex items-center text-sm gap-x-3 transition-allhover:scale-105`}
-          >
-            <At size={24} className="text-white sm:text-blueCol" />
-            Ir para o site
-          </Link>
-
-          <Link
             href={"/como-funciona"}
             className={`flex items-center text-sm gap-x-3 transition-all hover:scale-105`}
           >
