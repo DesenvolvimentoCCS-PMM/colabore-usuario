@@ -1,12 +1,10 @@
 "use client";
 
 import { useScheduleContext } from "@/context/schedulesContext";
-import { auth } from "@/services/firebase";
 import { ScheduleDataType } from "@/types/Schedule";
 import { useEffect, useState } from "react";
 import { Filter } from "./Filter";
 import { ScheduleList } from "./List";
-import { EmailNotVerified } from "@/components/EmailNotVerified";
 import { useUserContext } from "@/context/userContext";
 
 export function ScheduleManagement() {
@@ -15,7 +13,6 @@ export function ScheduleManagement() {
   const [dataFiltered, setDataFiltered] = useState<ScheduleDataType[]>([]);
   const { user } = useUserContext();
 
-  const userAuth = auth.currentUser;
 
   useEffect(() => {
     getUserData();
@@ -32,9 +29,6 @@ export function ScheduleManagement() {
     setData(dataToDisplay);
   };
 
-  if (userAuth && !userAuth.emailVerified) {
-    return <EmailNotVerified userAuth={userAuth} />;
-  } else {
     return (
       <div className="w-full pt-24">
         <div>
@@ -57,5 +51,4 @@ export function ScheduleManagement() {
         </div>
       </div>
     );
-  }
 }

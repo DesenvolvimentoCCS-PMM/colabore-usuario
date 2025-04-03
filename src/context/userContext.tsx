@@ -29,6 +29,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
       if (user) {
+        console.log(user)
         if (pathname === "/entrar") {
           router.push("agendamentos");
         }
@@ -45,8 +46,11 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
         setLoadingData(false);
       }
+      else { 
+        router.push("/entrar");
+      }
     });
-  }, []);
+  }, [pathname]);
 
   return (
     <UserContext.Provider value={{ user, loadingData }}>
