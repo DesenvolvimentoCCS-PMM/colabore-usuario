@@ -6,6 +6,7 @@ import Ilustration from "@/assets/ilustration-home.jpg";
 import Logo from "@/assets/logoColabore.png";
 import Link from "next/link";
 import { Clock } from "phosphor-react";
+
 export default function Home() {
   return (
     <Container center>
