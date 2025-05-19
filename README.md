@@ -23,7 +23,7 @@ O sistema foi desenvolvido com o propósito de facilitar o agendamento de horár
 - *[NEXT JS](https://nextjs.org/docs)*: Frontend;
 - *CSS e [TailwindCSS](https://tailwindcss.com/docs/)*: Estilização;
 - *Javascript/Typescript*: Linguagem de programação;
-- *Firebase e Cloud Firestore*: Backend e banco de dados.
+- *Firebase e Cloud Firestore*: Backend e banco de dados
 
 ### Bibliotecas/Frameworks:
 
